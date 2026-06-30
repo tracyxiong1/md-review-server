@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Markdown 评审循环'
+  short_description: '可视化批注、修订并跟踪 Markdown 评审。'
+  default_prompt: '使用 $markdown-review-loop 打开可视化 Markdown 评审，收集批注并生成下一版修订稿。'
