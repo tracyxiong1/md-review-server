@@ -186,10 +186,7 @@ describe('MarkdownPreview', () => {
 
     await user.click(screen.getByRole('button', { name: 'Processed comments on line 3' }));
 
-    expect(screen.getByText(`${longFilename}:12`)).toHaveAttribute(
-      'title',
-      `${longFilename}:12`,
-    );
+    expect(screen.getByText(`${longFilename}:12`)).toHaveAttribute('title', `${longFilename}:12`);
   });
 
   it('does not double count the same comment when it is both source and target anchored', () => {
