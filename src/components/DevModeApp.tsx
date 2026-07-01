@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFileList } from '../hooks/useFileList';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { useComments } from '../hooks/useComments';
+import { useReviewSummary } from '../hooks/useReviewSummary';
 import { useResizable } from '../hooks/useResizable';
 import { useFileWatch } from '../hooks/useFileWatch';
 import { FileTree } from './FileTree';
@@ -103,16 +104,33 @@ export const DevModeApp = () => {
     error: previousVersionError,
   } = useMarkdown(previousVersionFile);
   const commentState = useComments(selectedFile);
+  const { summary: reviewSummary, reload: reloadReviewSummary } = useReviewSummary(files);
+  const didTrackActiveCommentsRef = useRef(false);
+
+  const currentCommentSignature = commentState.comments
+    .map((comment) => `${comment.id}:${comment.status}:${comment.updatedAt || comment.createdAt}`)
+    .join('\n');
+
+  useEffect(() => {
+    if (!didTrackActiveCommentsRef.current) {
+      didTrackActiveCommentsRef.current = true;
+      return;
+    }
+
+    reloadReviewSummary();
+  }, [currentCommentSignature, reloadReviewSummary]);
 
   // Watch for file changes and reload current file
   useFileWatch(
     (changedPath) => {
+      reloadReviewSummary();
       if (selectedFile === changedPath) {
         reload();
         commentState.reload();
       }
     },
     (addedPath) => {
+      reloadReviewSummary();
       reloadFiles(isNewerVersionOfCurrentFile(selectedFile, addedPath) ? addedPath : null);
     },
   );
@@ -225,6 +243,7 @@ export const DevModeApp = () => {
                 onFileSelect={setSelectedFile}
                 onToggleSidebar={() => setSidebarOpen(false)}
                 autoFocusSearch={focusSearch}
+                reviewSummary={reviewSummary}
               />
             </div>
             <div className="sidebar-resizer" onMouseDown={handleMouseDown} />

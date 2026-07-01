@@ -6,7 +6,9 @@ const mocks = vi.hoisted(() => ({
   reloadFiles: vi.fn(),
   setSelectedFile: vi.fn(),
   useFileWatch: vi.fn(),
+  fileTree: vi.fn(),
   markdownPreview: vi.fn(),
+  reviewSummaryReload: vi.fn(),
 }));
 
 vi.mock('../hooks/useFileList', () => ({
@@ -54,6 +56,26 @@ vi.mock('../hooks/useComments', () => ({
   }),
 }));
 
+vi.mock('../hooks/useReviewSummary', () => ({
+  useReviewSummary: () => ({
+    comments: [],
+    summary: {
+      byFile: {
+        'sample.v3.md': {
+          file: 'sample.v3.md',
+          openCount: 2,
+          doneCount: 0,
+          allCount: 2,
+        },
+      },
+      byDirectory: {},
+    },
+    loading: false,
+    error: null,
+    reload: mocks.reviewSummaryReload,
+  }),
+}));
+
 vi.mock('../hooks/useFileWatch', () => ({
   useFileWatch: mocks.useFileWatch,
 }));
@@ -69,7 +91,10 @@ vi.mock('../hooks/useResizable', () => ({
 }));
 
 vi.mock('./FileTree', () => ({
-  FileTree: () => <div data-testid="file-tree" />,
+  FileTree: (props: unknown) => {
+    mocks.fileTree(props);
+    return <div data-testid="file-tree" />;
+  },
 }));
 
 vi.mock('./MarkdownPreview', () => ({
@@ -122,6 +147,20 @@ describe('DevModeApp', () => {
       expect.objectContaining({
         compareFilename: 'sample.v2.md',
         compareContent: '# Sample\n\nOld text\n',
+      }),
+    );
+  });
+
+  it('passes review summary to the file tree', () => {
+    render(<DevModeApp />);
+
+    expect(mocks.fileTree).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reviewSummary: expect.objectContaining({
+          byFile: expect.objectContaining({
+            'sample.v3.md': expect.objectContaining({ openCount: 2 }),
+          }),
+        }),
       }),
     );
   });
