@@ -79,10 +79,22 @@
 }
 
 .sidebar-icon-bar .theme-toggle {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border: 0;
   background: transparent;
+  border-radius: 7px;
+  color: var(--text-secondary);
+}
+
+.sidebar-icon-bar .theme-toggle:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.sidebar-icon-bar .theme-toggle svg {
+  width: 20px;
+  height: 20px;
 }
 
 .sidebar-icon-bar .theme-toggle-label {

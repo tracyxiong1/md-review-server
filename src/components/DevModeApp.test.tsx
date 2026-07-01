@@ -105,7 +105,11 @@ vi.mock('./MarkdownPreview', () => ({
 }));
 
 vi.mock('./ThemeToggle', () => ({
-  ThemeToggle: () => <button type="button">Theme</button>,
+  ThemeToggle: () => (
+    <button type="button" aria-label="Toggle theme">
+      Theme
+    </button>
+  ),
 }));
 
 describe('DevModeApp', () => {
@@ -138,6 +142,20 @@ describe('DevModeApp', () => {
       'href',
       'https://github.com/tracyxiong1/md-review-server',
     );
+  });
+
+  it('places the collapsed sidebar theme toggle in the footer group above the GitHub link', () => {
+    window.history.replaceState(null, '', '/?file=sample.v3.md');
+
+    const { container } = render(<DevModeApp />);
+
+    const spacer = container.querySelector('.icon-bar-spacer');
+    const githubLink = screen.getByLabelText('View on GitHub');
+    const themeToggle = screen.getByLabelText('Toggle theme');
+
+    expect(spacer).not.toBeNull();
+    expect(spacer!.compareDocumentPosition(themeToggle)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(themeToggle.compareDocumentPosition(githubLink)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   it('passes the previous version markdown to the preview for comparison', () => {

@@ -218,8 +218,8 @@ export const DevModeApp = () => {
                 />
               </svg>
             </button>
-            <ThemeToggle />
             <div className="icon-bar-spacer" />
+            <ThemeToggle />
             <a
               href="https://github.com/tracyxiong1/md-review-server"
               target="_blank"
