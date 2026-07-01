@@ -12,6 +12,7 @@
     "bin/skill-manager.js",
     "dist",
     "docs",
+    "server/analytics.js",
     "server/app.js",
     "server/comment-store.js",
     "server/index.js",

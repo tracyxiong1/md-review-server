@@ -7,6 +7,7 @@ import { dirname, relative, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { watch } from 'chokidar';
 import { createApp, isMarkdownFile } from './app.js';
+import { resolveAnalyticsConfig } from './analytics.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -67,6 +68,7 @@ const serverOptions = {
   readonly: READONLY,
   port: PORT,
   host: HOST,
+  analytics: resolveAnalyticsConfig({ env: process.env }),
 };
 const apiApp = createApp(serverOptions);
 

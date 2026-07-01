@@ -39,6 +39,36 @@ describe('review API', () => {
     });
   });
 
+  it('returns analytics configuration in the session', async () => {
+    const app = createApp({
+      baseDir: tempDir,
+      port: 3030,
+      host: '127.0.0.1',
+      reviewDir: '.reviews',
+      readonly: false,
+      analytics: {
+        enabled: true,
+        provider: 'umami',
+        scriptUrl: 'https://cloud.umami.is/script.js',
+        websiteId: 'website-id',
+        sanitizedPath: '/review',
+      },
+    });
+
+    const response = await app.request('/api/session');
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      analytics: {
+        enabled: true,
+        provider: 'umami',
+        scriptUrl: 'https://cloud.umami.is/script.js',
+        websiteId: 'website-id',
+        sanitizedPath: '/review',
+      },
+    });
+  });
+
   it('selects the latest versioned sibling of the active file in directory mode', async () => {
     await writeFile(join(tempDir, 'guide.md'), '# Guide original\n');
     await writeFile(join(tempDir, 'guide.v2.md'), '# Guide v2\n');

@@ -120,6 +120,7 @@ export function createApp(options = {}) {
       activeFile: options.activeFile || (markdownFilePath ? basename(markdownFilePath) : null),
       reviewDir: store.reviewDir,
       readonly,
+      analytics: options.analytics || { enabled: false },
     }),
   );
 

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { DevModeApp } from './components/DevModeApp';
 import { CliModeApp } from './components/CliModeApp';
+import { useAnalytics } from './hooks/useAnalytics';
 
 function App() {
   const [mode, setMode] = useState<'dev' | 'cli' | 'loading'>('loading');
+  useAnalytics();
 
   useEffect(() => {
     // Detect mode by checking if /api/files endpoint is available

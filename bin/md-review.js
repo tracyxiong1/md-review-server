@@ -6,6 +6,7 @@ import { existsSync, readFileSync, statSync } from 'fs';
 import { fileURLToPath } from 'url';
 import mri from 'mri';
 import { handleSkillCommand } from './skill-manager.js';
+import { resolveAnalyticsConfig } from '../server/analytics.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,8 +45,9 @@ const args = mri(rawArgs, {
     'review-dir': '.reviews',
     open: true,
     readonly: false,
+    analytics: true,
   },
-  boolean: ['help', 'version', 'open', 'readonly'],
+  boolean: ['help', 'version', 'open', 'readonly', 'analytics'],
 });
 
 if (args._[0] === 'skill') {
@@ -69,6 +71,10 @@ Options:
   --review-dir <dir>         Review sidecar directory (default: .reviews)
   --active-file <file>       Initial file to select in directory mode
   --readonly                 Disable comment write APIs
+  --no-analytics             Disable anonymous Umami pageview analytics
+  --analytics-url <url>      Override Umami script URL
+  --analytics-id <id>        Override Umami website ID
+  --analytics-path <path>    Override anonymized analytics path (default: /review)
   --no-open                  Do not open browser automatically
   -h, --help                 Show this help message
   -v, --version              Show version number
@@ -101,6 +107,16 @@ process.env.API_HOST = host;
 process.env.REVIEW_DIR = args['review-dir'];
 process.env.ACTIVE_FILE = activeFile;
 process.env.READONLY = args.readonly ? 'true' : 'false';
+
+const analytics = resolveAnalyticsConfig({ env: process.env, args });
+if (!analytics.enabled) {
+  process.env.MD_REVIEW_ANALYTICS = '0';
+} else {
+  process.env.MD_REVIEW_ANALYTICS = '1';
+  process.env.MD_REVIEW_ANALYTICS_URL = analytics.scriptUrl;
+  process.env.MD_REVIEW_ANALYTICS_ID = analytics.websiteId;
+  process.env.MD_REVIEW_ANALYTICS_PATH = analytics.sanitizedPath;
+}
 
 if (host === '0.0.0.0') {
   console.warn('Warning: md-review-server will listen on 0.0.0.0 without authentication.');
@@ -159,6 +175,9 @@ if (process.env.ACTIVE_FILE) {
 }
 if (args.readonly) {
   console.log('   Readonly: true');
+}
+if (!analytics.enabled) {
+  console.log('   Analytics: disabled');
 }
 
 // Start server
