@@ -518,6 +518,7 @@ export const MarkdownPreview = ({
             {showDiff && canCompare ? (
               <div className="markdown-diff-view">
                 <ReactDiffViewer
+                  key={`${diffKey}:${isDark ? 'dark' : 'light'}`}
                   oldValue={compareContent || ''}
                   newValue={content}
                   splitView={diffViewMode === 'split'}

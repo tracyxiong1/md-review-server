@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarkdownPreview } from './MarkdownPreview';
 import { Comment } from './CommentList';
 
@@ -8,29 +8,50 @@ vi.mock('./MermaidBlock', () => ({
   MermaidBlock: () => <div data-testid="mermaid-block" />,
 }));
 
-vi.mock('../hooks/useDarkMode', () => ({
-  useDarkMode: () => ({ isDark: false }),
-}));
-
 const diffViewerMock = vi.hoisted(() => vi.fn());
+const darkModeMock = vi.hoisted(() => ({ isDark: false }));
+const diffViewerState = vi.hoisted(() => ({ nextMountId: 0 }));
 
-vi.mock('react-diff-viewer-continued', () => ({
-  default: (props: { oldValue: string; newValue: string }) => {
-    diffViewerMock(props);
-    return (
-      <div data-testid="diff-viewer">
-        <div>old:{props.oldValue}</div>
-        <div>new:{props.newValue}</div>
-      </div>
-    );
-  },
+vi.mock('../hooks/useDarkMode', () => ({
+  useDarkMode: () => ({ isDark: darkModeMock.isDark }),
 }));
+
+vi.mock('react-diff-viewer-continued', async () => {
+  const React = await vi.importActual<typeof import('react')>('react');
+
+  return {
+    default: function MockReactDiffViewer(props: {
+      oldValue: string;
+      newValue: string;
+      useDarkTheme?: boolean;
+    }) {
+      const mountId = React.useRef(++diffViewerState.nextMountId);
+      diffViewerMock(props);
+      return (
+        <div
+          data-testid="diff-viewer"
+          data-mount-id={mountId.current}
+          data-theme={props.useDarkTheme ? 'dark' : 'light'}
+        >
+          <div>old:{props.oldValue}</div>
+          <div>new:{props.newValue}</div>
+        </div>
+      );
+    },
+  };
+});
 
 describe('MarkdownPreview', () => {
   const baseProps = {
     content: '# Test\n\nBody',
     filename: 'test.md',
   };
+
+  beforeEach(() => {
+    darkModeMock.isDark = false;
+    diffViewerState.nextMountId = 0;
+    diffViewerMock.mockClear();
+  });
 
   it('collapses the comments sidebar by default when there are no comments', () => {
     render(<MarkdownPreview {...baseProps} comments={[]} />);
@@ -324,7 +345,6 @@ describe('MarkdownPreview', () => {
 
   it('toggles between markdown preview and diff view when compare content exists', async () => {
     const user = userEvent.setup();
-    diffViewerMock.mockClear();
 
     render(
       <MarkdownPreview
@@ -385,5 +405,29 @@ describe('MarkdownPreview', () => {
     await user.click(screen.getByRole('button', { name: 'Show preview' }));
 
     expect(screen.queryByTestId('diff-viewer')).not.toBeInTheDocument();
+  });
+
+  it('remounts the diff viewer when the active theme changes', async () => {
+    const user = userEvent.setup();
+    const previewProps = {
+      content: '# Guide\n\nNew text',
+      filename: 'guide.v2.md',
+      comments: [],
+      compareFilename: 'guide.v1.md',
+      compareContent: '# Guide\n\nOld text',
+    };
+
+    const { rerender } = render(<MarkdownPreview {...previewProps} />);
+
+    await user.click(screen.getByRole('button', { name: 'Show diff' }));
+
+    expect(screen.getByTestId('diff-viewer')).toHaveAttribute('data-theme', 'light');
+    expect(screen.getByTestId('diff-viewer')).toHaveAttribute('data-mount-id', '1');
+
+    darkModeMock.isDark = true;
+    rerender(<MarkdownPreview {...previewProps} />);
+
+    expect(screen.getByTestId('diff-viewer')).toHaveAttribute('data-theme', 'dark');
+    expect(screen.getByTestId('diff-viewer')).toHaveAttribute('data-mount-id', '2');
   });
 });
