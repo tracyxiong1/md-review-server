@@ -2,6 +2,14 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.3.2](https://github.com/tracyxiong1/md-review-server/compare/v0.3.1...v0.3.2) (2026-07-02)
+
+
+### Documentation
+
+* add README showcase examples ([62882b7](https://github.com/tracyxiong1/md-review-server/commit/62882b7f6cb536975246ddaebc7ae02209f57e80))
+* document changelog automation ([ed9f353](https://github.com/tracyxiong1/md-review-server/commit/ed9f353cb41e211f6e5f2c411701196c4d8f444e))
+
 ## [0.3.1](https://github.com/tracyxiong1/md-review-server/compare/v0.3.0...v0.3.1) (2026-07-02)
 
 
