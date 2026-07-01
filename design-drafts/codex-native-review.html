@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>md-review-server Codex Native Draft</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --page: #181818;
+        --surface: #212121;
+        --surface-2: #282828;
+        --surface-3: #303030;
+        --line: #3a3a3a;
+        --line-soft: #2f2f2f;
+        --text: #f4f4f4;
+        --muted: #b4b4b4;
+        --subtle: #858585;
+        --blue: #8ecbff;
+        --green: #8fd49c;
+        --green-bg: #1f3525;
+        --red: #ff9aa2;
+        --red-bg: #3a2427;
+        --amber: #f2c57c;
+        --amber-bg: #3a2d1f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        color: var(--text);
+        background: var(--page);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .app {
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #171717;
+        border-right: 1px solid var(--line-soft);
+      }
+
+      .sidebar-top {
+        padding: 14px 14px 10px;
+      }
+
+      .workspace-name {
+        height: 34px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 0 8px;
+        color: var(--text);
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .workspace-mark {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 7px;
+      }
+
+      .search {
+        position: relative;
+        margin-top: 10px;
+      }
+
+      .search input {
+        width: 100%;
+        height: 34px;
+        padding: 0 34px 0 31px;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 10px;
+        outline: 0;
+        font-size: 13px;
+      }
+
+      .search input::placeholder {
+        color: var(--subtle);
+      }
+
+      .search svg {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: var(--subtle);
+      }
+
+      .kbd {
+        position: absolute;
+        right: 8px;
+        top: 7px;
+        height: 20px;
+        min-width: 28px;
+        display: grid;
+        place-items: center;
+        color: var(--subtle);
+        background: #191919;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 11px;
+      }
+
+      .nav {
+        flex: 1;
+        overflow: hidden;
+        padding: 6px 8px 10px;
+      }
+
+      .nav-label,
+      .version-label {
+        margin: 14px 8px 8px;
+        color: var(--subtle);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .file-row,
+      .version-row {
+        min-height: 32px;
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 7px;
+        padding: 0 8px;
+        color: var(--muted);
+        border-radius: 9px;
+        font-size: 13px;
+      }
+
+      .file-row.folder {
+        color: var(--text);
+        font-weight: 650;
+      }
+
+      .file-row.child {
+        padding-left: 25px;
+      }
+
+      .file-row.active {
+        color: var(--text);
+        background: var(--surface);
+      }
+
+      .file-row .name,
+      .version-row .name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .badge {
+        min-width: 20px;
+        height: 20px;
+        display: inline-grid;
+        place-items: center;
+        padding: 0 6px;
+        color: var(--text);
+        background: var(--surface-3);
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .version-block {
+        padding: 10px 8px 14px;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .version-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .version-row.current {
+        color: var(--text);
+        background: var(--surface);
+      }
+
+      .main {
+        min-width: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: var(--page);
+      }
+
+      .topbar {
+        min-height: 58px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: center;
+        gap: 12px;
+        padding: 0 22px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .title-stack {
+        min-width: 0;
+      }
+
+      .crumbs {
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .file-title {
+        margin-top: 2px;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 680;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pill-tabs {
+        display: inline-flex;
+        gap: 2px;
+        padding: 3px;
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 11px;
+      }
+
+      .pill-tabs button {
+        height: 30px;
+        padding: 0 11px;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .pill-tabs .active {
+        color: var(--text);
+        background: var(--surface-3);
+      }
+
+      .quiet-button {
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+        color: #171717;
+        background: #ececec;
+        border: 0;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 720;
+      }
+
+      .content {
+        min-height: 0;
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 336px;
+        gap: 18px;
+        overflow: hidden;
+        padding: 22px 22px 0;
+      }
+
+      .doc-column,
+      .comments-column {
+        min-height: 0;
+        overflow: auto;
+        padding-bottom: 112px;
+      }
+
+      .session-card {
+        max-width: 940px;
+        margin: 0 auto 14px;
+        padding: 12px 14px;
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+      }
+
+      .session-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .session-title {
+        margin: 0;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 680;
+      }
+
+      .session-copy {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 9px;
+        color: var(--green);
+        background: var(--green-bg);
+        border: 1px solid rgb(143 212 156 / 22%);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .status-chip::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 50%;
+      }
+
+      .diff-card {
+        max-width: 940px;
+        margin: 0 auto;
+        overflow: hidden;
+        background: #1c1c1c;
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+      }
+
+      .diff-meta {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 14px;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line-soft);
+        font-size: 12px;
+      }
+
+      .diff-mode {
+        display: inline-flex;
+        gap: 2px;
+        padding: 2px;
+        background: #171717;
+        border: 1px solid var(--line-soft);
+        border-radius: 9px;
+      }
+
+      .diff-mode span {
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 9px;
+        color: var(--muted);
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .diff-mode .active {
+        color: var(--text);
+        background: var(--surface-3);
+      }
+
+      .diff-table {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .pane + .pane {
+        border-left: 1px solid var(--line-soft);
+      }
+
+      .pane-title {
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        color: var(--subtle);
+        background: #191919;
+        border-bottom: 1px solid var(--line-soft);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 12px;
+      }
+
+      .pane-title strong {
+        color: var(--text);
+        font-size: 12px;
+      }
+
+      .line {
+        position: relative;
+        min-height: 29px;
+        display: grid;
+        grid-template-columns: 38px 21px minmax(0, 1fr);
+        color: var(--muted);
+      }
+
+      .ln {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-right: 9px;
+        color: var(--subtle);
+        background: rgb(255 255 255 / 2%);
+        user-select: none;
+      }
+
+      .sign {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--subtle);
+      }
+
+      .code {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        padding-right: 10px;
+        white-space: pre-wrap;
+      }
+
+      .line.del {
+        background: rgb(255 154 162 / 9%);
+      }
+
+      .line.add {
+        background: rgb(143 212 156 / 9%);
+      }
+
+      .line.focus {
+        background:
+          linear-gradient(90deg, rgb(255 255 255 / 4%), transparent 42%),
+          rgb(143 212 156 / 9%);
+      }
+
+      .word-del,
+      .word-add {
+        padding: 1px 3px;
+        border-radius: 4px;
+      }
+
+      .word-del {
+        color: var(--red);
+        background: rgb(255 154 162 / 18%);
+      }
+
+      .word-add {
+        color: var(--green);
+        background: rgb(143 212 156 / 18%);
+      }
+
+      .marker {
+        position: absolute;
+        left: -12px;
+        top: 4px;
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        color: var(--text);
+        background: #2b2b2b;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+      }
+
+      .marker svg {
+        width: 13px;
+        height: 13px;
+      }
+
+      .inline-card {
+        position: absolute;
+        left: 12px;
+        top: 31px;
+        z-index: 10;
+        width: 316px;
+        padding: 12px;
+        background: #242424;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 18px 50px rgb(0 0 0 / 36%);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .inline-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 9px;
+      }
+
+      .small-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 740;
+      }
+
+      .small-chip.resolved {
+        color: var(--green);
+        background: var(--green-bg);
+      }
+
+      .small-chip.open {
+        color: var(--blue);
+        background: #1f2d3a;
+      }
+
+      .small-chip.partial {
+        color: var(--amber);
+        background: var(--amber-bg);
+      }
+
+      .source {
+        color: var(--subtle);
+        font-size: 11px;
+      }
+
+      .inline-card p {
+        margin: 0;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .inline-card .answer {
+        margin-top: 8px;
+        padding: 8px;
+        color: var(--muted);
+        background: #1d1d1d;
+        border-radius: 10px;
+      }
+
+      .comment-panel {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .panel-head {
+        padding: 2px 2px 4px;
+      }
+
+      .panel-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .panel-head h2 {
+        margin: 0;
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      .panel-head p {
+        margin: 5px 0 0;
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .icon-button {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 10px;
+      }
+
+      .queue-card {
+        padding: 12px;
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+      }
+
+      .queue-card.active {
+        border-color: var(--line);
+        background: var(--surface-2);
+      }
+
+      .queue-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 9px;
+      }
+
+      .queue-line {
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .quote {
+        margin: 0 0 8px;
+        padding: 8px 9px;
+        color: var(--muted);
+        background: #1b1b1b;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .comment {
+        margin: 0;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.48;
+      }
+
+      .resolution {
+        margin: 10px 0 0;
+        padding-top: 10px;
+        color: var(--muted);
+        border-top: 1px solid var(--line-soft);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .handoff {
+        margin-top: auto;
+        padding: 12px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .handoff strong {
+        color: var(--text);
+      }
+
+      .composer-wrap {
+        position: fixed;
+        left: 260px;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        padding: 18px 22px 20px;
+        background: linear-gradient(180deg, rgb(24 24 24 / 0%), var(--page) 34%);
+        pointer-events: none;
+      }
+
+      .composer {
+        width: min(880px, calc(100vw - 360px));
+        min-height: 72px;
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        color: var(--text);
+        background: #2b2b2b;
+        border: 1px solid #3f3f3f;
+        border-radius: 22px;
+        box-shadow: 0 16px 50px rgb(0 0 0 / 32%);
+        pointer-events: auto;
+      }
+
+      .plus,
+      .send {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 999px;
+      }
+
+      .plus {
+        color: var(--muted);
+        background: transparent;
+      }
+
+      .send {
+        color: #161616;
+        background: #f1f1f1;
+      }
+
+      .composer-text {
+        min-width: 0;
+      }
+
+      .composer-placeholder {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .composer-meta {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .mini-pill {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 8px;
+        color: var(--muted);
+        background: #202020;
+        border-radius: 999px;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 64px minmax(0, 1fr);
+        }
+
+        .sidebar {
+          align-items: center;
+        }
+
+        .workspace-name span,
+        .search,
+        .nav,
+        .version-block {
+          display: none;
+        }
+
+        .content {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .comments-column {
+          display: none;
+        }
+
+        .composer-wrap {
+          left: 64px;
+        }
+
+        .composer {
+          width: min(820px, calc(100vw - 120px));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="workspace-name">
+            <span class="workspace-mark" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M8 8h8M8 12h5M6 3h12a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span>md-review-server</span>
+          </div>
+          <div class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="m21 21-4-4M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <input placeholder="Search files" />
+            <span class="kbd">⌘K</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Files">
+          <p class="nav-label">Files</p>
+          <div class="file-row folder"><span>▾</span><span class="name">docs</span><span>8</span></div>
+          <div class="file-row child"><span></span><span class="name">api-overview.md</span><span></span></div>
+          <div class="file-row child active">
+            <span></span><span class="name">browser-automation.v4.md</span><span class="badge">3</span>
+          </div>
+          <div class="file-row child">
+            <span></span><span class="name">browser-automation.v3.md</span><span style="color: var(--subtle)">old</span>
+          </div>
+          <div class="file-row child"><span></span><span class="name">review-template.md</span><span></span></div>
+          <div class="file-row folder"><span>▸</span><span class="name">outputs</span><span>12</span></div>
+        </nav>
+
+        <div class="version-block">
+          <p class="version-label">Versions</p>
+          <div class="version-row current"><span class="name">v4 current</span><span class="badge">3</span></div>
+          <div class="version-row"><span class="name">v3 reviewed</span><span>4 done</span></div>
+          <div class="version-row"><span class="name">v2 draft</span><span>archived</span></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="title-stack">
+            <div class="crumbs">docs / browser-automation / review session</div>
+            <div class="file-title">browser-automation-and-agent-mechanisms.v4.md</div>
+          </div>
+
+          <div class="pill-tabs" aria-label="View mode">
+            <button>Preview</button>
+            <button class="active">Diff</button>
+            <button>Source</button>
+          </div>
+
+          <button class="quiet-button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M20 6 9 17l-5-5"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Process comments
+          </button>
+        </header>
+
+        <section class="content">
+          <div class="doc-column">
+            <section class="session-card">
+              <div class="session-card-top">
+                <div>
+                  <p class="session-title">Review loop ready</p>
+                  <p class="session-copy">
+                    Comparing v3 with v4. Open comments stay in the queue; handled comments remain
+                    attached to the revised lines.
+                  </p>
+                </div>
+                <span class="status-chip">3 open</span>
+              </div>
+            </section>
+
+            <article class="diff-card">
+              <div class="diff-meta">
+                <span>Version diff</span>
+                <div class="diff-mode"><span class="active">Split</span><span>Unified</span></div>
+              </div>
+              <div class="diff-table">
+                <div class="pane">
+                  <div class="pane-title"><strong>v3</strong><span>before</span></div>
+                  <div class="line"><span class="ln">38</span><span class="sign"></span><span class="code">## Agent 与工具层边界</span></div>
+                  <div class="line"><span class="ln">39</span><span class="sign"></span><span class="code"></span></div>
+                  <div class="line del"><span class="ln">40</span><span class="sign">-</span><span class="code">工具层负责封装 <span class="word-del">自动化方案</span>。</span></div>
+                  <div class="line del"><span class="ln">41</span><span class="sign">-</span><span class="code">Agent 只需要调用工具。</span></div>
+                  <div class="line"><span class="ln">42</span><span class="sign"></span><span class="code"></span></div>
+                  <div class="line del"><span class="ln">43</span><span class="sign">-</span><span class="code">CDP 是一种浏览器控制协议。</span></div>
+                  <div class="line"><span class="ln">44</span><span class="sign"></span><span class="code"></span></div>
+                  <div class="line"><span class="ln">45</span><span class="sign"></span><span class="code">## 适用场景</span></div>
+                  <div class="line del"><span class="ln">46</span><span class="sign">-</span><span class="code">适合需要浏览器能力的任务。</span></div>
+                </div>
+
+                <div class="pane">
+                  <div class="pane-title"><strong>v4</strong><span>current draft</span></div>
+                  <div class="line"><span class="ln">38</span><span class="sign"></span><span class="code">## Agent 与工具层边界</span></div>
+                  <div class="line"><span class="ln">39</span><span class="sign"></span><span class="code"></span></div>
+                  <div class="line add"><span class="ln">40</span><span class="sign">+</span><span class="code">工具层负责封装 <span class="word-add">浏览器控制协议与执行细节</span>。</span></div>
+                  <div class="line add"><span class="ln">41</span><span class="sign">+</span><span class="code">Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。</span></div>
+                  <div class="line"><span class="ln">42</span><span class="sign"></span><span class="code"></span></div>
+                  <div class="line add focus">
+                    <span class="marker" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M8 8h7M8 12h4M6 3h12a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    <span class="ln">43</span><span class="sign">+</span><span class="code">CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span>
+                    <div class="inline-card">
+                      <div class="inline-card-head">
+                        <span class="small-chip resolved">Resolved</span>
+                        <span class="source">v3:43</span>
+                      </div>
+                      <p>补充协议差异，不要只写 CDP。</p>
+                      <p class="answer">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+                    </div>
+                  </div>
+                  <div class="line add"><span class="ln">44</span><span class="sign">+</span><span class="code">选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。</span></div>
+                  <div class="line"><span class="ln">45</span><span class="sign"></span><span class="code">## 适用场景</span></div>
+                  <div class="line add"><span class="ln">46</span><span class="sign">+</span><span class="code">适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span></div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <aside class="comments-column">
+            <div class="comment-panel">
+              <div class="panel-head">
+                <div class="panel-title-row">
+                  <h2>Comments</h2>
+                  <button class="icon-button" aria-label="Collapse comments">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="m15 18-6-6 6-6"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <p>Current file · open first</p>
+              </div>
+
+              <article class="queue-card active">
+                <div class="queue-top">
+                  <span class="queue-line">Line 43</span>
+                  <span class="small-chip resolved">Resolved</span>
+                </div>
+                <p class="quote">"CDP 是一种浏览器控制协议。"</p>
+                <p class="comment">补充协议差异，不要只写 CDP。</p>
+                <p class="resolution">已补充 CDP、WebDriver 和 WebDriver BiDi 的边界。</p>
+              </article>
+
+              <article class="queue-card">
+                <div class="queue-top">
+                  <span class="queue-line">Line 58</span>
+                  <span class="small-chip open">Open</span>
+                </div>
+                <p class="quote">"Agent 负责决策。"</p>
+                <p class="comment">这里可以再讲一下工具调用失败时的回退策略。</p>
+              </article>
+
+              <article class="queue-card">
+                <div class="queue-top">
+                  <span class="queue-line">Line 72</span>
+                  <span class="small-chip partial">Partial</span>
+                </div>
+                <p class="quote">"适合端到端验证。"</p>
+                <p class="comment">加一个不适合场景，避免读者误解成万能方案。</p>
+                <p class="resolution">已加限制，但还缺具体例子。</p>
+              </article>
+
+              <div class="handoff">
+                <strong>Codex handoff</strong><br />
+                下一轮只读取 open comments。已处理评论保留在历史角标中，方便回看为什么改成现在这样。
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <div class="composer-wrap">
+          <div class="composer" role="group" aria-label="Codex action composer">
+            <button class="plus" aria-label="Add">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 5v14M5 12h14"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+            <div class="composer-text">
+              <div class="composer-placeholder">Ask Codex to process open comments and generate v5</div>
+              <div class="composer-meta">
+                <span class="mini-pill">md-review-server</span>
+                <span>3 open comments</span>
+                <span>v4 selected</span>
+              </div>
+            </div>
+            <button class="send" aria-label="Send">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 19V5M5 12l7-7 7 7"
+                  stroke="currentColor"
+                  stroke-width="2.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

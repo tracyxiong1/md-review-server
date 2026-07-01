@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>md-review-server Codex-style Workbench Draft</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1014;
+        --bg-elevated: #15171c;
+        --bg-panel: #191c22;
+        --bg-subtle: #20242b;
+        --bg-hover: #252a32;
+        --border: #2d333d;
+        --border-strong: #3b4450;
+        --text: #edf0f4;
+        --text-muted: #a9b0ba;
+        --text-subtle: #77808c;
+        --accent: #d97745;
+        --accent-strong: #ff925c;
+        --green: #4fb477;
+        --green-bg: #153321;
+        --red: #ed6a6f;
+        --red-bg: #3a1c21;
+        --amber: #d8a451;
+        --amber-bg: #332817;
+        --blue: #71a7ff;
+        --blue-bg: #172235;
+        --shadow: 0 24px 70px rgb(0 0 0 / 34%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 20% -10%, rgb(217 119 69 / 12%), transparent 34rem),
+          linear-gradient(180deg, #111318 0%, var(--bg) 52%);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .stage {
+        min-height: 100vh;
+        padding: 28px;
+      }
+
+      .draft-shell {
+        width: min(1440px, calc(100vw - 56px));
+        height: calc(100vh - 56px);
+        min-height: 820px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px minmax(620px, 1fr) 340px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar,
+      .review-queue {
+        min-width: 0;
+        background: #14161b;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 18px 18px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .mark {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: var(--accent-strong);
+        background: rgb(217 119 69 / 12%);
+        border: 1px solid rgb(217 119 69 / 26%);
+        border-radius: 8px;
+      }
+
+      .brand-title {
+        min-width: 0;
+      }
+
+      .brand-title strong {
+        display: block;
+        font-size: 13px;
+        line-height: 1.1;
+      }
+
+      .brand-title span {
+        display: block;
+        margin-top: 3px;
+        color: var(--text-subtle);
+        font-size: 11px;
+      }
+
+      .sidebar-section {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .section-label {
+        margin: 0 6px 8px;
+        color: var(--text-subtle);
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .search {
+        position: relative;
+      }
+
+      .search input {
+        width: 100%;
+        height: 34px;
+        padding: 0 34px 0 32px;
+        color: var(--text);
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+      }
+
+      .search input::placeholder {
+        color: var(--text-subtle);
+      }
+
+      .search svg {
+        position: absolute;
+        left: 10px;
+        top: 9px;
+        color: var(--text-subtle);
+      }
+
+      .kbd {
+        position: absolute;
+        right: 8px;
+        top: 7px;
+        padding: 2px 5px;
+        color: var(--text-subtle);
+        background: #101217;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-size: 10px;
+      }
+
+      .file-list {
+        flex: 1;
+        overflow: hidden;
+        padding: 10px 8px 12px;
+      }
+
+      .tree-row {
+        display: grid;
+        grid-template-columns: 18px 1fr auto;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+        padding: 0 8px;
+        color: var(--text-muted);
+        border-radius: 7px;
+        font-size: 13px;
+      }
+
+      .tree-row.folder {
+        color: var(--text);
+        font-weight: 620;
+      }
+
+      .tree-row.child {
+        padding-left: 26px;
+      }
+
+      .tree-row.active {
+        color: var(--text);
+        background: rgb(217 119 69 / 12%);
+        outline: 1px solid rgb(217 119 69 / 22%);
+      }
+
+      .tree-row .meta {
+        color: var(--text-subtle);
+        font-size: 11px;
+      }
+
+      .tree-row .dot {
+        width: 7px;
+        height: 7px;
+        justify-self: center;
+        background: var(--accent);
+        border-radius: 99px;
+      }
+
+      .history {
+        padding: 12px;
+        border-top: 1px solid var(--border);
+      }
+
+      .version-stack {
+        display: grid;
+        gap: 6px;
+      }
+
+      .version-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 30px;
+        padding: 0 8px;
+        color: var(--text-muted);
+        background: transparent;
+        border-radius: 7px;
+        font-size: 12px;
+      }
+
+      .version-row.current {
+        color: var(--text);
+        background: var(--bg-panel);
+      }
+
+      .count-pill {
+        min-width: 21px;
+        padding: 2px 6px;
+        color: var(--text);
+        background: var(--red-bg);
+        border: 1px solid rgb(237 106 111 / 30%);
+        border-radius: 99px;
+        font-size: 11px;
+        text-align: center;
+      }
+
+      .main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: center;
+        gap: 14px;
+        min-height: 66px;
+        padding: 0 22px;
+        background: #121419;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .crumbs {
+        min-width: 0;
+      }
+
+      .crumbs .path {
+        color: var(--text-subtle);
+        font-size: 12px;
+      }
+
+      .crumbs h1 {
+        margin: 4px 0 0;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.2;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .segmented,
+      .mode-switch {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 3px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .segmented button,
+      .mode-switch button,
+      .icon-button,
+      .primary-button {
+        border: 0;
+        cursor: default;
+      }
+
+      .segmented button,
+      .mode-switch button {
+        height: 28px;
+        padding: 0 10px;
+        color: var(--text-muted);
+        background: transparent;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .segmented .active,
+      .mode-switch .active {
+        color: var(--text);
+        background: var(--bg-hover);
+        box-shadow: inset 0 0 0 1px rgb(255 255 255 / 5%);
+      }
+
+      .primary-button {
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+        color: #1b100a;
+        background: var(--accent-strong);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .workspace {
+        min-height: 0;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .context-bar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+        min-height: 48px;
+        padding: 0 22px;
+        background: #101217;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .review-state {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .state-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 24px;
+        padding: 0 8px;
+        color: var(--green);
+        background: var(--green-bg);
+        border: 1px solid rgb(79 180 119 / 28%);
+        border-radius: 99px;
+        font-weight: 700;
+      }
+
+      .state-chip::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 50%;
+      }
+
+      .doc-stage {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 22px;
+      }
+
+      .diff-card {
+        min-width: 760px;
+        overflow: hidden;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .diff-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: #111318;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .diff-title {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .diff-title + .diff-title {
+        border-left: 1px solid var(--border);
+      }
+
+      .diff-title strong {
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .diff-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        font-family:
+          "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          monospace;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .diff-pane + .diff-pane {
+        border-left: 1px solid var(--border);
+      }
+
+      .line {
+        position: relative;
+        display: grid;
+        grid-template-columns: 42px 24px minmax(0, 1fr);
+        min-height: 29px;
+        color: var(--text-muted);
+      }
+
+      .line.no {
+        background: transparent;
+      }
+
+      .line.del {
+        background: rgb(237 106 111 / 12%);
+      }
+
+      .line.add {
+        background: rgb(79 180 119 / 12%);
+      }
+
+      .line.focus {
+        background: rgb(217 119 69 / 10%);
+        box-shadow: inset 3px 0 0 var(--accent);
+      }
+
+      .ln {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: var(--text-subtle);
+        background: rgb(255 255 255 / 2%);
+        user-select: none;
+      }
+
+      .sign {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-subtle);
+      }
+
+      .code {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        padding-right: 12px;
+        white-space: pre-wrap;
+      }
+
+      .word-del,
+      .word-add {
+        padding: 1px 3px;
+        border-radius: 4px;
+      }
+
+      .word-del {
+        color: #ffb1b5;
+        background: rgb(237 106 111 / 25%);
+      }
+
+      .word-add {
+        color: #9ff0bc;
+        background: rgb(79 180 119 / 25%);
+      }
+
+      .marker {
+        position: absolute;
+        left: -15px;
+        top: 4px;
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        color: #1b100a;
+        background: var(--accent-strong);
+        border: 2px solid var(--bg-elevated);
+        border-radius: 99px;
+        box-shadow: 0 10px 24px rgb(0 0 0 / 32%);
+      }
+
+      .marker svg {
+        width: 13px;
+        height: 13px;
+      }
+
+      .inline-tip {
+        position: absolute;
+        left: 12px;
+        top: 31px;
+        z-index: 4;
+        width: 310px;
+        padding: 12px;
+        background: #1d2128;
+        border: 1px solid var(--border-strong);
+        border-radius: 9px;
+        box-shadow: 0 16px 44px rgb(0 0 0 / 38%);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      .tip-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .tip-status {
+        color: var(--green);
+        background: var(--green-bg);
+        border: 1px solid rgb(79 180 119 / 26%);
+      }
+
+      .tip-status,
+      .queue-status {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 0 7px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 760;
+      }
+
+      .tip-source {
+        color: var(--text-subtle);
+        font-size: 11px;
+      }
+
+      .tip-text {
+        margin: 0 0 8px;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .tip-resolution {
+        margin: 0;
+        padding: 8px;
+        color: var(--text-muted);
+        background: #14171d;
+        border-radius: 7px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .preview-note {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .note {
+        min-height: 76px;
+        padding: 12px;
+        background: #121419;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+      }
+
+      .note strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--text);
+        font-size: 12px;
+      }
+
+      .note span {
+        color: var(--text-subtle);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .review-queue {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--border);
+      }
+
+      .queue-header {
+        padding: 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .queue-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .queue-title h2 {
+        margin: 0;
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      .icon-button {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        color: var(--text-muted);
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .queue-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        padding: 3px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .queue-tabs button {
+        height: 28px;
+        color: var(--text-muted);
+        background: transparent;
+        border: 0;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 680;
+      }
+
+      .queue-tabs .active {
+        color: var(--text);
+        background: var(--bg-hover);
+      }
+
+      .queue-list {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 12px;
+      }
+
+      .queue-card {
+        padding: 12px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+      }
+
+      .queue-card + .queue-card {
+        margin-top: 10px;
+      }
+
+      .queue-card.active {
+        border-color: rgb(217 119 69 / 45%);
+        box-shadow: inset 0 0 0 1px rgb(217 119 69 / 12%);
+      }
+
+      .queue-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .queue-line {
+        color: var(--text-subtle);
+        font-size: 12px;
+      }
+
+      .queue-status.open {
+        color: var(--blue);
+        background: var(--blue-bg);
+        border: 1px solid rgb(113 167 255 / 28%);
+      }
+
+      .queue-status.resolved {
+        color: var(--green);
+        background: var(--green-bg);
+        border: 1px solid rgb(79 180 119 / 28%);
+      }
+
+      .queue-status.partial {
+        color: var(--amber);
+        background: var(--amber-bg);
+        border: 1px solid rgb(216 164 81 / 28%);
+      }
+
+      .quote {
+        margin: 0 0 8px;
+        padding: 8px;
+        color: var(--text-muted);
+        background: #121419;
+        border-radius: 7px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .comment {
+        margin: 0;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .resolution {
+        margin: 10px 0 0;
+        padding-top: 10px;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .queue-footer {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border-top: 1px solid var(--border);
+      }
+
+      .summary-box {
+        padding: 10px;
+        color: var(--text-muted);
+        background: #101217;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .summary-box strong {
+        color: var(--text);
+      }
+
+      @media (max-width: 1180px) {
+        .draft-shell {
+          grid-template-columns: 240px minmax(560px, 1fr);
+        }
+
+        .review-queue {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <section class="draft-shell" aria-label="Codex-style Markdown review workbench mockup">
+        <aside class="sidebar">
+          <div class="brand">
+            <div class="mark" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M7 7.5h10M7 12h7M7 16.5h4M5 3h14a2 2 0 0 1 2 2v11.5a2 2 0 0 1-2 2H9l-5 3V5a2 2 0 0 1 2-2Z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div class="brand-title">
+              <strong>Markdown Review</strong>
+              <span>local Codex workbench</span>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="m21 21-4.2-4.2M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <input value="" placeholder="Jump to file" aria-label="Jump to file" />
+              <span class="kbd">⌘K</span>
+            </div>
+          </div>
+
+          <div class="file-list">
+            <p class="section-label">Files</p>
+            <div class="tree-row folder">
+              <span>▾</span>
+              <span>docs</span>
+              <span class="meta">8</span>
+            </div>
+            <div class="tree-row child">
+              <span></span>
+              <span>api-overview.md</span>
+              <span></span>
+            </div>
+            <div class="tree-row child active">
+              <span class="dot"></span>
+              <span>browser-automation.v4.md</span>
+              <span class="count-pill">3</span>
+            </div>
+            <div class="tree-row child">
+              <span></span>
+              <span>browser-automation.v3.md</span>
+              <span class="meta">old</span>
+            </div>
+            <div class="tree-row child">
+              <span></span>
+              <span>review-template.md</span>
+              <span></span>
+            </div>
+            <div class="tree-row folder">
+              <span>▸</span>
+              <span>outputs</span>
+              <span class="meta">12</span>
+            </div>
+          </div>
+
+          <div class="history">
+            <p class="section-label">Versions</p>
+            <div class="version-stack">
+              <div class="version-row current">
+                <span>v4 current</span>
+                <span class="count-pill">3</span>
+              </div>
+              <div class="version-row">
+                <span>v3 reviewed</span>
+                <span>4 resolved</span>
+              </div>
+              <div class="version-row">
+                <span>v2 draft</span>
+                <span>archived</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="main">
+          <header class="topbar">
+            <div class="crumbs">
+              <div class="path">docs / browser-automation / review session</div>
+              <h1>browser-automation-and-agent-mechanisms.v4.md</h1>
+            </div>
+
+            <div class="segmented" aria-label="Document view">
+              <button>Preview</button>
+              <button class="active">Diff</button>
+              <button>Source</button>
+            </div>
+
+            <button class="primary-button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M20 6 9 17l-5-5"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Process open comments
+            </button>
+          </header>
+
+          <div class="workspace">
+            <div class="context-bar">
+              <div class="review-state">
+                <span class="state-chip">Review loop active</span>
+                <span>Comparing v3 to v4. Three comments still need Codex attention.</span>
+              </div>
+              <div class="mode-switch" aria-label="Diff mode">
+                <button class="active">Split</button>
+                <button>Unified</button>
+              </div>
+            </div>
+
+            <div class="doc-stage">
+              <article class="diff-card">
+                <div class="diff-header">
+                  <div class="diff-title">
+                    <strong>v3</strong>
+                    <span>before Codex revision</span>
+                  </div>
+                  <div class="diff-title">
+                    <strong>v4</strong>
+                    <span>current draft</span>
+                  </div>
+                </div>
+
+                <div class="diff-body">
+                  <div class="diff-pane">
+                    <div class="line no">
+                      <span class="ln">38</span><span class="sign"></span
+                      ><span class="code">## Agent 与工具层边界</span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">39</span><span class="sign"></span
+                      ><span class="code"></span>
+                    </div>
+                    <div class="line del">
+                      <span class="ln">40</span><span class="sign">-</span
+                      ><span class="code">工具层负责封装 <span class="word-del">自动化方案</span>。</span>
+                    </div>
+                    <div class="line del">
+                      <span class="ln">41</span><span class="sign">-</span
+                      ><span class="code">Agent 只需要调用工具。</span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">42</span><span class="sign"></span
+                      ><span class="code"></span>
+                    </div>
+                    <div class="line del">
+                      <span class="ln">43</span><span class="sign">-</span
+                      ><span class="code">CDP 是一种浏览器控制协议。</span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">44</span><span class="sign"></span
+                      ><span class="code"></span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">45</span><span class="sign"></span
+                      ><span class="code">## 适用场景</span>
+                    </div>
+                    <div class="line del">
+                      <span class="ln">46</span><span class="sign">-</span
+                      ><span class="code">适合需要浏览器能力的任务。</span>
+                    </div>
+                  </div>
+
+                  <div class="diff-pane">
+                    <div class="line no">
+                      <span class="ln">38</span><span class="sign"></span
+                      ><span class="code">## Agent 与工具层边界</span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">39</span><span class="sign"></span
+                      ><span class="code"></span>
+                    </div>
+                    <div class="line add">
+                      <span class="ln">40</span><span class="sign">+</span
+                      ><span class="code">工具层负责封装 <span class="word-add">浏览器控制协议与执行细节</span>。</span>
+                    </div>
+                    <div class="line add">
+                      <span class="ln">41</span><span class="sign">+</span
+                      ><span class="code">Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。</span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">42</span><span class="sign"></span
+                      ><span class="code"></span>
+                    </div>
+                    <div class="line add focus">
+                      <span class="marker" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h9"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="m15 8 2 2 4-4"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      <span class="ln">43</span><span class="sign">+</span
+                      ><span class="code">CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span>
+                      <div class="inline-tip">
+                        <div class="tip-top">
+                          <span class="tip-status">Resolved</span>
+                          <span class="tip-source">v3:43</span>
+                        </div>
+                        <p class="tip-text">补充协议差异，不要只写 CDP。</p>
+                        <p class="tip-resolution">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+                      </div>
+                    </div>
+                    <div class="line add">
+                      <span class="ln">44</span><span class="sign">+</span
+                      ><span class="code">选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。</span>
+                    </div>
+                    <div class="line no">
+                      <span class="ln">45</span><span class="sign"></span
+                      ><span class="code">## 适用场景</span>
+                    </div>
+                    <div class="line add">
+                      <span class="ln">46</span><span class="sign">+</span
+                      ><span class="code">适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <div class="preview-note">
+                <div class="note">
+                  <strong>更像工作台</strong>
+                  <span>把文件、版本、diff 和评论放进同一条 review flow，不再只是 Markdown 预览。</span>
+                </div>
+                <div class="note">
+                  <strong>更少干扰</strong>
+                  <span>低饱和色、细边框、小按钮，主要视觉重量留给文档内容和状态。</span>
+                </div>
+                <div class="note">
+                  <strong>更适合 Codex</strong>
+                  <span>用户圈选，Codex 处理 open comments，再回写状态，界面跟着状态变化。</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="review-queue">
+          <div class="queue-header">
+            <div class="queue-title">
+              <h2>Review queue</h2>
+              <button class="icon-button" aria-label="Collapse review queue">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="m15 18-6-6 6-6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="queue-tabs">
+              <button class="active">Open 3</button>
+              <button>Done 4</button>
+              <button>All 7</button>
+            </div>
+          </div>
+
+          <div class="queue-list">
+            <article class="queue-card active">
+              <div class="queue-card-top">
+                <span class="queue-line">Line 43</span>
+                <span class="queue-status resolved">Resolved</span>
+              </div>
+              <p class="quote">"CDP 是一种浏览器控制协议。"</p>
+              <p class="comment">补充协议差异，不要只写 CDP。</p>
+              <p class="resolution">已补充 CDP、WebDriver 和 WebDriver BiDi 的边界。</p>
+            </article>
+
+            <article class="queue-card">
+              <div class="queue-card-top">
+                <span class="queue-line">Line 58</span>
+                <span class="queue-status open">Open</span>
+              </div>
+              <p class="quote">"Agent 负责决策。"</p>
+              <p class="comment">这里可以再讲一下工具调用失败时的回退策略。</p>
+            </article>
+
+            <article class="queue-card">
+              <div class="queue-card-top">
+                <span class="queue-line">Line 72</span>
+                <span class="queue-status partial">Partial</span>
+              </div>
+              <p class="quote">"适合端到端验证。"</p>
+              <p class="comment">加一个不适合场景，避免读者误解成万能方案。</p>
+              <p class="resolution">已加限制，但还缺具体例子。</p>
+            </article>
+
+            <article class="queue-card">
+              <div class="queue-card-top">
+                <span class="queue-line">Line 91</span>
+                <span class="queue-status open">Open</span>
+              </div>
+              <p class="quote">"调用浏览器能力。"</p>
+              <p class="comment">建议补充权限边界，尤其是登录态和本地文件。</p>
+            </article>
+          </div>
+
+          <div class="queue-footer">
+            <div class="summary-box">
+              <strong>Codex handoff</strong><br />
+              下轮只读取 open comments。resolved 与 partial 会保留在历史角标中，方便对照为什么改成现在这样。
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

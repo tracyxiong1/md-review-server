@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Feishu + Codex Markdown Review Draft</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --app-bg: #f4f4f5;
+        --rail-bg: #f7f7f8;
+        --panel-bg: #fbfbfc;
+        --doc-bg: #ffffff;
+        --card-bg: #ffffff;
+        --text: #202123;
+        --muted: #5f6368;
+        --subtle: #8a8f98;
+        --border: #e3e5e8;
+        --border-strong: #d4d7dc;
+        --hover: #eceef1;
+        --active: #e8edf7;
+        --blue: #3370ff;
+        --blue-soft: #eef3ff;
+        --green: #168a45;
+        --green-soft: #eaf7ef;
+        --amber: #9a6400;
+        --amber-soft: #fff4d8;
+        --red: #c93c42;
+        --red-soft: #fff0f1;
+        --shadow: 0 16px 42px rgb(31 35 41 / 10%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        color: var(--text);
+        background: var(--app-bg);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 248px minmax(0, 1fr) 340px;
+      }
+
+      .left-panel {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--rail-bg);
+        border-right: 1px solid var(--border);
+      }
+
+      .left-header {
+        padding: 14px 14px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .workspace {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 34px;
+      }
+
+      .workspace-name {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 680;
+      }
+
+      .workspace-mark {
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 7px;
+      }
+
+      .icon-button {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 8px;
+      }
+
+      .icon-button:hover {
+        background: var(--hover);
+      }
+
+      .search {
+        position: relative;
+        margin-top: 12px;
+      }
+
+      .search svg {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: var(--subtle);
+      }
+
+      .search input {
+        width: 100%;
+        height: 34px;
+        padding: 0 36px 0 31px;
+        color: var(--text);
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        outline: 0;
+        font-size: 13px;
+      }
+
+      .search input::placeholder {
+        color: var(--subtle);
+      }
+
+      .kbd {
+        position: absolute;
+        right: 8px;
+        top: 7px;
+        min-width: 28px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+        color: var(--subtle);
+        background: #f3f4f6;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 11px;
+      }
+
+      .file-tree {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 10px 8px;
+      }
+
+      .section-label {
+        margin: 12px 8px 8px;
+        color: var(--subtle);
+        font-size: 11px;
+        font-weight: 640;
+      }
+
+      .tree-row {
+        min-height: 32px;
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 7px;
+        padding: 0 8px;
+        color: var(--muted);
+        border-radius: 8px;
+        font-size: 13px;
+      }
+
+      .tree-row.folder {
+        color: var(--text);
+        font-weight: 650;
+      }
+
+      .tree-row.child {
+        padding-left: 25px;
+      }
+
+      .tree-row.active {
+        color: var(--text);
+        background: var(--active);
+      }
+
+      .tree-row .name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .count {
+        min-width: 20px;
+        height: 20px;
+        display: inline-grid;
+        place-items: center;
+        padding: 0 6px;
+        color: var(--blue);
+        background: var(--blue-soft);
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .version-area {
+        padding: 10px 8px 14px;
+        border-top: 1px solid var(--border);
+      }
+
+      .version-row {
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 0 8px;
+        color: var(--muted);
+        border-radius: 8px;
+        font-size: 13px;
+      }
+
+      .version-row.current {
+        color: var(--text);
+        background: var(--card-bg);
+      }
+
+      .center {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--app-bg);
+      }
+
+      .topbar {
+        min-height: 56px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: center;
+        gap: 12px;
+        padding: 0 20px;
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .title-stack {
+        min-width: 0;
+      }
+
+      .crumbs {
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .title {
+        margin-top: 2px;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .view-tabs {
+        display: inline-flex;
+        gap: 2px;
+        padding: 3px;
+        background: #f0f1f3;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .view-tabs button {
+        height: 28px;
+        padding: 0 10px;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .view-tabs .active {
+        color: var(--text);
+        background: var(--card-bg);
+        box-shadow: 0 1px 2px rgb(31 35 41 / 8%);
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 10px;
+        color: var(--green);
+        background: var(--green-soft);
+        border: 1px solid #cfeada;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .status-pill::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 999px;
+      }
+
+      .doc-scroll {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 34px 42px 72px;
+      }
+
+      .doc-shell {
+        width: min(820px, 100%);
+        min-height: 980px;
+        margin: 0 auto;
+        position: relative;
+        padding: 56px 72px 86px;
+        background: var(--doc-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 6px 24px rgb(31 35 41 / 7%);
+      }
+
+      .doc-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        color: var(--subtle);
+        font-size: 13px;
+      }
+
+      .doc-meta .dot {
+        width: 4px;
+        height: 4px;
+        background: var(--border-strong);
+        border-radius: 999px;
+      }
+
+      .doc-title {
+        margin: 0 0 24px;
+        color: #17181a;
+        font-size: 34px;
+        line-height: 1.18;
+        letter-spacing: 0;
+      }
+
+      .doc-body {
+        color: #27292d;
+        font-size: 16px;
+        line-height: 1.78;
+      }
+
+      .doc-body h2 {
+        margin: 34px 0 12px;
+        color: #1f2329;
+        font-size: 22px;
+        line-height: 1.35;
+      }
+
+      .doc-body p {
+        margin: 0 0 14px;
+      }
+
+      .doc-body ul {
+        margin: 0 0 16px;
+        padding-left: 22px;
+      }
+
+      .doc-body li {
+        margin: 6px 0;
+      }
+
+      .selection {
+        position: relative;
+        background: #dbeafe;
+        border-radius: 4px;
+        box-shadow: 0 0 0 2px #dbeafe;
+      }
+
+      .selection-popover {
+        position: absolute;
+        left: 0;
+        top: -42px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        color: #fff;
+        background: #262626;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        white-space: nowrap;
+      }
+
+      .selection-popover button {
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 9px;
+        color: #fff;
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .selection-popover button:hover {
+        background: rgb(255 255 255 / 12%);
+      }
+
+      .line-marker {
+        position: absolute;
+        right: -44px;
+        top: 3px;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: var(--blue);
+        background: var(--card-bg);
+        border: 1px solid #c8d8ff;
+        border-radius: 999px;
+        box-shadow: 0 4px 14px rgb(51 112 255 / 14%);
+      }
+
+      .processed-marker {
+        position: absolute;
+        right: -44px;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: var(--green);
+        background: var(--green-soft);
+        border: 1px solid #cfeada;
+        border-radius: 999px;
+      }
+
+      .processed-marker.one {
+        top: 288px;
+      }
+
+      .processed-marker.two {
+        top: 482px;
+        color: var(--amber);
+        background: var(--amber-soft);
+        border-color: #f3ddb1;
+      }
+
+      .mini-review-tip {
+        position: absolute;
+        right: -8px;
+        top: 318px;
+        transform: translateX(100%);
+        width: 286px;
+        padding: 13px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        box-shadow: var(--shadow);
+      }
+
+      .mini-review-tip .tip-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 740;
+      }
+
+      .tag.resolved {
+        color: var(--green);
+        background: var(--green-soft);
+      }
+
+      .tag.open {
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+
+      .tag.partial {
+        color: var(--amber);
+        background: var(--amber-soft);
+      }
+
+      .tag.ignored {
+        color: var(--subtle);
+        background: #f1f2f4;
+      }
+
+      .tip-source {
+        color: var(--subtle);
+        font-size: 11px;
+      }
+
+      .mini-review-tip p {
+        margin: 0;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .mini-review-tip .answer {
+        margin-top: 8px;
+        padding: 8px;
+        color: var(--muted);
+        background: #f6f7f9;
+        border-radius: 9px;
+      }
+
+      .comment-panel {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--panel-bg);
+        border-left: 1px solid var(--border);
+      }
+
+      .comment-header {
+        padding: 14px 16px 12px;
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .comment-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .comment-title-row h2 {
+        margin: 0;
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      .comment-subtitle {
+        margin: 4px 0 12px;
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .comment-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3px;
+        padding: 3px;
+        background: #f0f1f3;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .comment-tabs button {
+        height: 28px;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .comment-tabs .active {
+        color: var(--text);
+        background: var(--card-bg);
+        box-shadow: 0 1px 2px rgb(31 35 41 / 8%);
+      }
+
+      .comment-list {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 14px;
+      }
+
+      .comment-card {
+        padding: 12px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+      }
+
+      .comment-card + .comment-card {
+        margin-top: 10px;
+      }
+
+      .comment-card.active {
+        border-color: #bed0ff;
+        box-shadow: 0 0 0 3px rgb(51 112 255 / 8%);
+      }
+
+      .comment-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .comment-source {
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .quote {
+        margin: 0 0 8px;
+        padding: 8px 9px;
+        color: var(--muted);
+        background: #f6f7f9;
+        border-radius: 9px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .comment-text {
+        margin: 0;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .comment-resolution {
+        margin: 10px 0 0;
+        padding-top: 10px;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .comment-composer {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8f9fb;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+
+      .comment-composer .selected {
+        margin-bottom: 8px;
+        padding: 7px 8px;
+        color: var(--muted);
+        background: var(--card-bg);
+        border-radius: 8px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .comment-composer textarea {
+        width: 100%;
+        min-height: 74px;
+        padding: 8px;
+        resize: none;
+        color: var(--text);
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        outline: 0;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .composer-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .ghost-button,
+      .send-button {
+        height: 30px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 680;
+      }
+
+      .ghost-button {
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+      }
+
+      .send-button {
+        color: #fff;
+        background: #202123;
+        border: 0;
+      }
+
+      .history-note {
+        margin: 14px;
+        padding: 12px;
+        color: var(--muted);
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .history-note strong {
+        color: var(--text);
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 64px minmax(0, 1fr);
+        }
+
+        .left-panel {
+          align-items: center;
+        }
+
+        .workspace-name span:not(.workspace-mark),
+        .search,
+        .file-tree,
+        .version-area {
+          display: none;
+        }
+
+        .comment-panel {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="left-panel">
+        <div class="left-header">
+          <div class="workspace">
+            <div class="workspace-name">
+              <span class="workspace-mark" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M7 7h10M7 12h7M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span>md-review-server</span>
+            </div>
+            <button class="icon-button" aria-label="Collapse files">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="m15 18-6-6 6-6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path
+                d="m21 21-4-4M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <input placeholder="Jump to file" />
+            <span class="kbd">⌘K</span>
+          </div>
+        </div>
+
+        <nav class="file-tree" aria-label="Files">
+          <p class="section-label">Files</p>
+          <div class="tree-row folder">
+            <span>▾</span><span class="name">docs</span><span>8</span>
+          </div>
+          <div class="tree-row child">
+            <span></span><span class="name">api-overview.md</span><span></span>
+          </div>
+          <div class="tree-row child active">
+            <span></span><span class="name">browser-automation.v4.md</span><span class="count">3</span>
+          </div>
+          <div class="tree-row child">
+            <span></span><span class="name">browser-automation.v3.md</span><span>old</span>
+          </div>
+          <div class="tree-row child">
+            <span></span><span class="name">review-template.md</span><span></span>
+          </div>
+          <div class="tree-row folder">
+            <span>▸</span><span class="name">outputs</span><span>12</span>
+          </div>
+        </nav>
+
+        <div class="version-area">
+          <p class="section-label">Versions</p>
+          <div class="version-row current"><span>v4 current</span><span class="count">3</span></div>
+          <div class="version-row"><span>v3 reviewed</span><span>4 done</span></div>
+          <div class="version-row"><span>v2 draft</span><span>archived</span></div>
+        </div>
+      </aside>
+
+      <main class="center">
+        <header class="topbar">
+          <div class="title-stack">
+            <div class="crumbs">docs / browser automation</div>
+            <div class="title">browser-automation-and-agent-mechanisms.v4.md</div>
+          </div>
+
+          <div class="view-tabs" aria-label="View mode">
+            <button class="active">Preview</button>
+            <button>Diff</button>
+            <button>Source</button>
+          </div>
+
+          <div class="status-pill">3 open comments</div>
+        </header>
+
+        <div class="doc-scroll">
+          <article class="doc-shell">
+            <div class="doc-meta">
+              <span>Markdown preview</span>
+              <span class="dot"></span>
+              <span>v4 current</span>
+              <span class="dot"></span>
+              <span>Saved locally</span>
+            </div>
+
+            <h1 class="doc-title">Browser Automation and Agent Mechanisms</h1>
+
+            <div class="processed-marker one" title="Resolved comment">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M20 6 9 17l-5-5"
+                  stroke="currentColor"
+                  stroke-width="2.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div class="processed-marker two" title="Partially resolved comment">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 8v5M12 17h.01"
+                  stroke="currentColor"
+                  stroke-width="2.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div class="mini-review-tip">
+              <div class="tip-head">
+                <span class="tag resolved">Resolved</span>
+                <span class="tip-source">v3:43</span>
+              </div>
+              <p>补充协议差异，不要只写 CDP。</p>
+              <p class="answer">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+            </div>
+
+            <div class="doc-body">
+              <p>
+                本文档说明浏览器自动化能力在 Agent 系统中的定位，并解释工具层、协议层和执行层之间的边界。
+              </p>
+
+              <h2>Agent 与工具层边界</h2>
+              <p>
+                工具层负责封装浏览器控制协议与执行细节。Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。
+              </p>
+              <p>
+                CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。
+              </p>
+
+              <h2>适用场景</h2>
+              <p>
+                适合端到端验证、受控浏览器操作和需要页面状态回读的任务。对于只需要纯文本处理的工作，浏览器自动化通常不是首选。
+              </p>
+
+              <p>
+                <span class="selection">
+                  <span class="selection-popover">
+                    <button>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Comment
+                    </button>
+                  </span>
+                  在涉及登录态、敏感权限或本地文件访问时，需要把授权边界写清楚。
+                  <span class="line-marker">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </span>
+                这类信息会影响用户是否应该选择浏览器自动化方案。
+              </p>
+
+              <h2>与 Codex Review Loop 的关系</h2>
+              <p>
+                用户在预览区圈选内容并创建评论。Codex 读取 open comments 后生成下一版文档，再通过 API 回写处理状态。页面不直接生成文档，只负责展示评审上下文。
+              </p>
+
+              <ul>
+                <li>左侧文件树用于切换 Markdown 文件和历史版本。</li>
+                <li>中间预览区用于阅读、圈选和查看处理角标。</li>
+                <li>右侧评论区用于编辑评论、查看状态和恢复历史评论。</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </main>
+
+      <aside class="comment-panel">
+        <div class="comment-header">
+          <div class="comment-title-row">
+            <h2>Comments</h2>
+            <button class="icon-button" aria-label="Collapse comments">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="m9 18 6-6-6-6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+          <p class="comment-subtitle">Current file · anchored to selection</p>
+          <div class="comment-tabs">
+            <button class="active">Open 3</button>
+            <button>Done 4</button>
+            <button>All 7</button>
+          </div>
+        </div>
+
+        <div class="comment-list">
+          <article class="comment-card active">
+            <div class="comment-card-head">
+              <span class="comment-source">Line 91</span>
+              <span class="tag open">Open</span>
+            </div>
+            <p class="quote">“在涉及登录态、敏感权限或本地文件访问时...”</p>
+            <p class="comment-text">建议补充权限边界，尤其是登录态和本地文件。</p>
+            <div class="comment-composer">
+              <div class="selected">Selected text is pinned to this card. New text will become a comment on the same range.</div>
+              <textarea placeholder="Add a follow-up comment..."></textarea>
+              <div class="composer-actions">
+                <button class="ghost-button">Cancel</button>
+                <button class="send-button">Comment</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="comment-card">
+            <div class="comment-card-head">
+              <span class="comment-source">Line 58</span>
+              <span class="tag open">Open</span>
+            </div>
+            <p class="quote">“Agent 负责决策、规划和结果校验...”</p>
+            <p class="comment-text">这里可以再讲一下工具调用失败时的回退策略。</p>
+          </article>
+
+          <article class="comment-card">
+            <div class="comment-card-head">
+              <span class="comment-source">Line 72</span>
+              <span class="tag partial">Partial</span>
+            </div>
+            <p class="quote">“对于只需要纯文本处理的工作...”</p>
+            <p class="comment-text">加一个不适合场景，避免读者误解成万能方案。</p>
+            <p class="comment-resolution">已加限制，但还缺具体例子。</p>
+          </article>
+
+          <article class="comment-card">
+            <div class="comment-card-head">
+              <span class="comment-source">Line 43</span>
+              <span class="tag resolved">Resolved</span>
+            </div>
+            <p class="quote">“CDP 是一种浏览器控制协议。”</p>
+            <p class="comment-text">补充协议差异，不要只写 CDP。</p>
+            <p class="comment-resolution">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+          </article>
+        </div>
+
+        <div class="history-note">
+          <strong>History stays available</strong><br />
+          Done comments do not block the next Codex loop, but they remain attached to revised lines and can be reopened.
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>

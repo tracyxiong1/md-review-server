@@ -11,6 +11,7 @@
     "bin/md-review.js",
     "bin/skill-manager.js",
     "dist",
+    "docs",
     "server/app.js",
     "server/comment-store.js",
     "server/index.js",

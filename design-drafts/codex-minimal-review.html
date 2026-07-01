@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex Minimal Markdown Review Draft</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #151515;
+        --panel: #181818;
+        --panel-2: #1f1f1f;
+        --document: #181818;
+        --floating: #202020;
+        --surface-active: #202020;
+        --control-bg: #1b1b1b;
+        --control-active: #252525;
+        --inset: #1a1a1a;
+        --line: #2a2a2a;
+        --line-soft: #232323;
+        --text: #eeeeee;
+        --text-2: #cfcfcf;
+        --body-text: #c9c9c9;
+        --muted: #8d8d8d;
+        --faint: #666666;
+        --blue: #8ab4ff;
+        --blue-bg: #1a2330;
+        --green: #95cc9a;
+        --green-bg: #1b291f;
+        --amber: #e3bc72;
+        --amber-bg: #2c2418;
+        --selection-bg: rgb(138 180 255 / 18%);
+        --active-border: rgb(138 180 255 / 18%);
+        --blue-border: rgb(138 180 255 / 18%);
+        --green-border: rgb(149 204 154 / 16%);
+        --amber-border: rgb(227 188 114 / 16%);
+        --shadow: 0 14px 36px rgb(0 0 0 / 28%);
+        --shadow-soft: 0 10px 28px rgb(0 0 0 / 24%);
+        --code-text: #dddddd;
+        --code-bg: #222222;
+      }
+
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f4f4f3;
+        --panel: #fbfbfa;
+        --panel-2: #f0f0ee;
+        --document: #ffffff;
+        --floating: #ffffff;
+        --surface-active: #eeeeec;
+        --control-bg: #eeeeec;
+        --control-active: #ffffff;
+        --inset: #f5f5f4;
+        --line: #d8d8d5;
+        --line-soft: #e5e5e2;
+        --text: #222326;
+        --text-2: #3d3e42;
+        --body-text: #4d4f54;
+        --muted: #73757b;
+        --faint: #9a9ca1;
+        --blue: #2f6fd6;
+        --blue-bg: #e8f0ff;
+        --green: #2f7d45;
+        --green-bg: #e7f4eb;
+        --amber: #936200;
+        --amber-bg: #fff3d0;
+        --selection-bg: rgb(47 111 214 / 14%);
+        --active-border: rgb(47 111 214 / 22%);
+        --blue-border: rgb(47 111 214 / 20%);
+        --green-border: rgb(47 125 69 / 18%);
+        --amber-border: rgb(147 98 0 / 20%);
+        --shadow: 0 14px 32px rgb(26 28 32 / 12%);
+        --shadow-soft: 0 10px 24px rgb(26 28 32 / 10%);
+        --code-text: #303236;
+        --code-bg: #eeeeec;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        color: var(--text);
+        background: var(--bg);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+
+      .app {
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 236px minmax(0, 1fr) 304px;
+        transition: grid-template-columns 180ms ease;
+      }
+
+      .app.comments-collapsed {
+        grid-template-columns: 236px minmax(0, 1fr) 46px;
+      }
+
+      .sidebar,
+      .comments {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--panel);
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line-soft);
+      }
+
+      .comments {
+        border-left: 1px solid var(--line-soft);
+        overflow: hidden;
+      }
+
+      .side-top,
+      .comments-top {
+        padding: 12px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .brand-row,
+      .comments-title,
+      .topbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .brand-row,
+      .comments-title {
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .brand-icon {
+        width: 21px;
+        height: 21px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+
+      .icon-button {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+      }
+
+      .icon-button:hover {
+        color: var(--text-2);
+        background: var(--panel-2);
+      }
+
+      .sidebar-toggle {
+        flex: 0 0 auto;
+      }
+
+      .theme-toggle {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 0 8px;
+        color: var(--muted);
+        border: 1px solid var(--line-soft);
+        border-radius: 7px;
+        background: var(--control-bg);
+        font-size: 12.5px;
+        font-weight: 500;
+      }
+
+      .theme-toggle:hover {
+        color: var(--text-2);
+        background: var(--panel-2);
+      }
+
+      .theme-toggle svg {
+        flex: 0 0 auto;
+      }
+
+      .theme-toggle .sun {
+        display: none;
+      }
+
+      :root[data-theme="light"] .theme-toggle .moon {
+        display: none;
+      }
+
+      :root[data-theme="light"] .theme-toggle .sun {
+        display: block;
+      }
+
+      .search {
+        position: relative;
+        margin-top: 10px;
+      }
+
+      .search svg {
+        position: absolute;
+        left: 9px;
+        top: 9px;
+        color: var(--faint);
+      }
+
+      .search input {
+        width: 100%;
+        height: 32px;
+        padding: 0 10px 0 29px;
+        color: var(--text-2);
+        background: transparent;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        outline: 0;
+        font-size: 12.5px;
+      }
+
+      .search input::placeholder {
+        color: var(--faint);
+      }
+
+      .tree,
+      .comment-list {
+        min-height: 0;
+        flex: 1;
+        overflow: hidden;
+        padding: 10px 8px;
+      }
+
+      .section-label {
+        margin: 10px 8px 7px;
+        color: var(--faint);
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .tree-row {
+        min-height: 30px;
+        display: grid;
+        grid-template-columns: 16px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 7px;
+        padding: 0 8px;
+        color: var(--muted);
+        border-radius: 7px;
+        font-size: 12.5px;
+      }
+
+      .tree-row.folder {
+        color: var(--text-2);
+      }
+
+      .tree-row.child {
+        padding-left: 24px;
+      }
+
+      .tree-row.active {
+        color: var(--text);
+        background: var(--surface-active);
+      }
+
+      .name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .count,
+      .status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .count {
+        min-width: 19px;
+        height: 19px;
+        padding: 0 6px;
+        color: var(--blue);
+        background: var(--blue-bg);
+      }
+
+      .versions {
+        padding: 10px 8px 12px;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 0 8px 12px;
+      }
+
+      .version-row {
+        min-height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0 8px;
+        color: var(--muted);
+        border-radius: 7px;
+        font-size: 12.5px;
+      }
+
+      .version-row.current {
+        color: var(--text-2);
+        background: var(--surface-active);
+      }
+
+      .main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        min-height: 54px;
+        gap: 12px;
+        padding: 0 18px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .file-meta {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .file-title {
+        overflow: hidden;
+        color: var(--text-2);
+        font-size: 14.5px;
+        font-weight: 500;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .view-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .view-toggle {
+        height: 30px;
+        min-width: 58px;
+        padding: 0 9px;
+        color: var(--text-2);
+        background: transparent;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 500;
+      }
+
+      .view-toggle:hover {
+        background: var(--panel-2);
+      }
+
+      .view-toggle::after {
+        content: "↔";
+        margin-left: 6px;
+        color: var(--faint);
+        font-size: 11px;
+      }
+
+      .diff-layout {
+        display: none;
+        align-items: center;
+        gap: 2px;
+        color: var(--muted);
+      }
+
+      .app.view-diff .diff-layout {
+        display: inline-flex;
+      }
+
+      .diff-layout button {
+        height: 28px;
+        padding: 0 7px;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .diff-layout button:hover {
+        color: var(--text-2);
+        background: var(--panel-2);
+      }
+
+      .diff-layout .active {
+        color: var(--text-2);
+        background: var(--control-bg);
+      }
+
+      .reader-scroll {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 26px 36px 72px;
+      }
+
+      .reader {
+        position: relative;
+        width: min(820px, 100%);
+        margin: 0 auto;
+      }
+
+      .app.view-diff .reader {
+        width: min(1040px, 100%);
+      }
+
+      .app.view-diff.diff-split .reader {
+        width: min(1160px, 100%);
+      }
+
+      .document {
+        padding: 34px 42px 48px;
+        color: var(--text-2);
+        background: var(--document);
+        border: 1px solid var(--line-soft);
+        border-radius: 12px;
+      }
+
+      .diff-document {
+        display: none;
+        padding: 0;
+        overflow: hidden;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .app.view-diff .preview-document,
+      .app.view-diff .marker,
+      .app.view-diff .inline-editor,
+      .app.view-diff .history-card {
+        display: none;
+      }
+
+      .app.view-diff .diff-document {
+        display: block;
+      }
+
+      .diff-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line-soft);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 12px;
+      }
+
+      .diff-stat {
+        color: var(--green);
+      }
+
+      .diff-unified,
+      .diff-split {
+        font-size: 12.5px;
+        line-height: 1.7;
+      }
+
+      .diff-split {
+        display: none;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      }
+
+      .app.diff-split .diff-unified {
+        display: none;
+      }
+
+      .app.diff-split .diff-split {
+        display: grid;
+      }
+
+      .diff-row {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        min-height: 28px;
+      }
+
+      .diff-line {
+        padding: 3px 12px;
+        color: var(--faint);
+        background: var(--inset);
+        border-right: 1px solid var(--line-soft);
+        text-align: right;
+        user-select: none;
+      }
+
+      .diff-code {
+        min-width: 0;
+        overflow: hidden;
+        padding: 3px 12px;
+        color: var(--text-2);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .diff-row.add .diff-line,
+      .diff-row.add .diff-code {
+        background: var(--green-bg);
+        background: color-mix(in srgb, var(--green-bg) 74%, transparent);
+      }
+
+      .diff-row.del .diff-line,
+      .diff-row.del .diff-code {
+        background: var(--amber-bg);
+        background: color-mix(in srgb, var(--amber-bg) 58%, transparent);
+      }
+
+      .diff-row.add .diff-code {
+        color: var(--green);
+      }
+
+      .diff-row.del .diff-code {
+        color: var(--amber);
+      }
+
+      .diff-pane:first-child {
+        border-right: 1px solid var(--line-soft);
+      }
+
+      .doc-meta {
+        margin-bottom: 17px;
+        color: var(--faint);
+        font-size: 12px;
+      }
+
+      h1,
+      h2,
+      p,
+      ul {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 22px;
+        color: var(--text);
+        font-size: 26px;
+        font-weight: 520;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 10px;
+        padding-top: 18px;
+        color: var(--text-2);
+        font-size: 17px;
+        font-weight: 520;
+        line-height: 1.35;
+      }
+
+      p,
+      li {
+        color: var(--body-text);
+        font-size: 14.5px;
+        line-height: 1.78;
+      }
+
+      p {
+        margin-bottom: 13px;
+      }
+
+      ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+      }
+
+      li {
+        margin: 4px 0;
+      }
+
+      code {
+        padding: 0.12em 0.32em;
+        color: var(--code-text);
+        background: var(--code-bg);
+        border-radius: 5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+      }
+
+      .selected {
+        position: relative;
+        background: var(--selection-bg);
+        border-radius: 4px;
+      }
+
+      .popover {
+        position: absolute;
+        left: 0;
+        top: -39px;
+        z-index: 30;
+        display: inline-flex;
+        padding: 4px;
+        color: var(--text-2);
+        background: var(--floating);
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        box-shadow: var(--shadow-soft);
+        white-space: nowrap;
+      }
+
+      .popover button {
+        height: 27px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 9px;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .inline-editor {
+        position: fixed;
+        left: var(--editor-left, 50%);
+        top: var(--editor-top, 50%);
+        z-index: 60;
+        width: min(340px, calc(100vw - 24px));
+        max-height: calc(100vh - 24px);
+        overflow: auto;
+        padding: 8px 10px 9px;
+        background: var(--floating);
+        border: 1px solid var(--line-soft);
+        border-radius: 10px;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .inline-editor[hidden] {
+        display: none;
+      }
+
+      .app.comment-editor-open .popover,
+      .app.history-card-open .popover {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .editor-head {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+
+      .inline-editor .status.open {
+        height: auto;
+        padding: 0;
+        color: var(--blue);
+        background: transparent;
+        font-size: 11.5px;
+      }
+
+      .inline-editor textarea {
+        width: 100%;
+        min-height: 54px;
+        resize: none;
+        padding: 7px 0;
+        color: var(--text-2);
+        background: transparent;
+        border: 0;
+        border-top: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--line-soft);
+        border-radius: 0;
+        outline: 0;
+        font-size: 12.8px;
+        line-height: 1.45;
+      }
+
+      .inline-editor textarea::placeholder {
+        color: var(--faint);
+      }
+
+      .editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .text-button,
+      .save-button {
+        height: 26px;
+        padding: 0 8px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .text-button {
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+      }
+
+      .save-button {
+        color: var(--text-2);
+        background: transparent;
+        border: 1px solid var(--line);
+      }
+
+      .marker {
+        position: absolute;
+        left: 12px;
+        width: 18px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        transform: translateY(-50%);
+        z-index: 12;
+      }
+
+      .marker[role="button"] {
+        cursor: pointer;
+      }
+
+      .marker[role="button"]:hover {
+        filter: brightness(1.12);
+      }
+
+      .marker[role="button"]:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+
+      .marker svg {
+        width: 11px;
+        height: 11px;
+      }
+
+      .marker.open {
+        top: 457px;
+        color: var(--blue);
+        background: var(--blue-bg);
+        border: 1px solid var(--blue-border);
+      }
+
+      .marker.done {
+        top: 299px;
+        color: var(--green);
+        background: var(--green-bg);
+        border: 1px solid var(--green-border);
+      }
+
+      .marker.partial {
+        top: 386px;
+        color: var(--amber);
+        background: var(--amber-bg);
+        border: 1px solid var(--amber-border);
+      }
+
+      .history-card {
+        position: absolute;
+        left: 34px;
+        top: 263px;
+        z-index: 25;
+        width: min(292px, calc(100% - 88px));
+        padding: 11px;
+        background: var(--floating);
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        box-shadow: var(--shadow);
+      }
+
+      .history-card[hidden] {
+        display: none;
+      }
+
+      .history-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .status {
+        height: 21px;
+        padding: 0 7px;
+      }
+
+      .status.open {
+        color: var(--blue);
+        background: var(--blue-bg);
+      }
+
+      .status.done {
+        color: var(--green);
+        background: var(--green-bg);
+      }
+
+      .status.partial {
+        color: var(--amber);
+        background: var(--amber-bg);
+      }
+
+      .source {
+        color: var(--faint);
+        font-size: 11px;
+      }
+
+      .history-card p {
+        margin: 0;
+        color: var(--text-2);
+        font-size: 12.5px;
+        line-height: 1.45;
+      }
+
+      .history-card .answer {
+        margin-top: 8px;
+        padding: 8px;
+        color: var(--muted);
+        background: var(--inset);
+        border-radius: 8px;
+      }
+
+      .comments-title h2 {
+        margin: 0;
+        color: var(--text-2);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .comments-subtitle {
+        margin: 3px 0 10px;
+        color: var(--faint);
+        font-size: 12px;
+      }
+
+      .comments-rail {
+        display: none;
+      }
+
+      .app.comments-collapsed .comments {
+        align-items: center;
+      }
+
+      .app.comments-collapsed .comments-top,
+      .app.comments-collapsed .comment-list,
+      .app.comments-collapsed .hint {
+        display: none;
+      }
+
+      .app.comments-collapsed .comments-rail {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        position: relative;
+        margin-top: 12px;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+      }
+
+      .app.comments-collapsed .comments-rail:hover {
+        color: var(--text-2);
+        background: var(--panel-2);
+      }
+
+      .rail-count {
+        position: absolute;
+        right: -2px;
+        top: -2px;
+        min-width: 14px;
+        height: 14px;
+        display: grid;
+        place-items: center;
+        padding: 0 4px;
+        color: var(--blue);
+        background: var(--blue-bg);
+        border: 1px solid var(--blue-border);
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .comment-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+        padding: 2px;
+        background: var(--control-bg);
+        border: 1px solid var(--line-soft);
+        border-radius: 9px;
+      }
+
+      .comment-tabs button {
+        height: 27px;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .comment-tabs .active {
+        color: var(--text-2);
+        background: var(--control-active);
+      }
+
+      .comment-item {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .comment-item.active {
+        padding: 11px;
+        margin: 0 -4px 4px;
+        background: var(--surface-active);
+        border: 1px solid var(--active-border);
+        border-radius: 10px;
+      }
+
+      .comment-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .comment-line {
+        color: var(--faint);
+        font-size: 12px;
+      }
+
+      .quote {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .comment-text {
+        margin: 0;
+        color: var(--text-2);
+        font-size: 12.8px;
+        line-height: 1.5;
+      }
+
+      .resolution {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .hint {
+        margin: 0 12px 12px;
+        padding-top: 10px;
+        color: var(--faint);
+        border-top: 1px solid var(--line-soft);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 56px minmax(0, 1fr) 46px;
+        }
+
+        .app.comments-collapsed {
+          grid-template-columns: 56px minmax(0, 1fr) 46px;
+        }
+
+        .brand,
+        .search,
+        .tree,
+        .versions,
+        .comments-top,
+        .comment-list,
+        .hint {
+          display: none;
+        }
+
+        .side-top {
+          padding: 12px 13px;
+        }
+
+        .brand-row {
+          justify-content: center;
+        }
+
+        .sidebar-toggle {
+          width: 30px;
+          height: 30px;
+          color: var(--muted);
+          background: var(--control-bg);
+          border: 1px solid var(--line-soft);
+        }
+
+        .comments {
+          display: flex;
+          align-items: center;
+        }
+
+        .comments-rail {
+          width: 30px;
+          height: 30px;
+          display: grid;
+          place-items: center;
+          position: relative;
+          margin-top: 12px;
+          color: var(--muted);
+          background: transparent;
+          border: 0;
+          border-radius: 7px;
+        }
+
+        .comments-rail:hover {
+          color: var(--text-2);
+          background: var(--panel-2);
+        }
+
+        .app.comments-expanded-narrow {
+          grid-template-columns: 56px minmax(0, 1fr) min(304px, 42vw);
+        }
+
+        .app.comments-expanded-narrow .comments-top,
+        .app.comments-expanded-narrow .comment-list,
+        .app.comments-expanded-narrow .hint {
+          display: block;
+        }
+
+        .app.comments-expanded-narrow .comments {
+          align-items: stretch;
+        }
+
+        .app.comments-expanded-narrow .comments-rail {
+          display: none;
+        }
+
+        .sidebar-footer {
+          display: block;
+          padding: 0 13px 12px;
+        }
+
+        .theme-toggle {
+          width: 30px;
+          height: 30px;
+          justify-content: center;
+          gap: 0;
+          padding: 0;
+        }
+
+        .theme-toggle span {
+          display: none;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .app.diff-split .diff-split {
+          grid-template-columns: 1fr;
+        }
+
+        .diff-pane:first-child {
+          border-right: 0;
+          border-bottom: 1px solid var(--line-soft);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="side-top">
+          <div class="brand-row">
+            <div class="brand">
+              <span class="brand-icon" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span>md-review-server</span>
+            </div>
+            <button class="icon-button sidebar-toggle" aria-label="Collapse files">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="m15 18-6-6 6-6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path
+                d="m21 21-4-4M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <input placeholder="Jump to file" />
+          </div>
+        </div>
+
+        <nav class="tree" aria-label="Files">
+          <p class="section-label">Files</p>
+          <div class="tree-row folder"><span>▾</span><span class="name">docs</span><span>8</span></div>
+          <div class="tree-row child"><span></span><span class="name">api-overview.md</span><span></span></div>
+          <div class="tree-row child active">
+            <span></span><span class="name">browser-automation.v4.md</span><span class="count">3</span>
+          </div>
+          <div class="tree-row child"><span></span><span class="name">browser-automation.v3.md</span><span>old</span></div>
+          <div class="tree-row child"><span></span><span class="name">review-template.md</span><span></span></div>
+          <div class="tree-row folder"><span>▸</span><span class="name">outputs</span><span>12</span></div>
+        </nav>
+
+        <div class="versions">
+          <p class="section-label">Versions</p>
+          <div class="version-row current"><span>v4 current</span><span class="count">3</span></div>
+          <div class="version-row"><span>v3 reviewed</span><span>4 done</span></div>
+          <div class="version-row"><span>v2 draft</span><span>archived</span></div>
+        </div>
+        <div class="sidebar-footer">
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+            <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 9 9 0 1 0 20.5 14.5Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.66-5.66 1.41-1.41M4.93 19.07l1.41-1.41m0-11.32L4.93 4.93m14.14 14.14-1.41-1.41M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span data-theme-label>Theme</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="file-meta">
+            <div class="file-title">browser-automation-and-agent-mechanisms.v4.md</div>
+          </div>
+          <div class="view-actions" aria-label="View controls">
+            <button class="view-toggle" type="button" data-view-toggle aria-label="Switch to Diff" title="Switch to Diff">
+              Preview
+            </button>
+            <div class="diff-layout" role="tablist" aria-label="Diff layout">
+              <button class="active" type="button" data-diff-layout="unified" role="tab" aria-selected="true">
+                Unified
+              </button>
+              <button type="button" data-diff-layout="split" role="tab" aria-selected="false">Split</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="reader-scroll">
+          <section class="reader">
+            <article class="document preview-document">
+              <div class="doc-meta">Markdown preview · v4 current · local review</div>
+              <h1>Browser Automation and Agent Mechanisms</h1>
+              <p>
+                本文档说明浏览器自动化能力在 Agent 系统中的定位，并解释工具层、协议层和执行层之间的边界。
+              </p>
+
+              <h2>Agent 与工具层边界</h2>
+              <p>
+                工具层负责封装浏览器控制协议与执行细节。Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。
+              </p>
+              <p>
+                CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。
+              </p>
+
+              <h2>适用场景</h2>
+              <p>
+                适合端到端验证、受控浏览器操作和需要页面状态回读的任务。对于只需要纯文本处理的工作，浏览器自动化通常不是首选。
+              </p>
+              <p>
+                <span class="selected">
+                  <span class="popover">
+                    <button type="button" data-editor-open>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Comment
+                    </button>
+                  </span>
+                  在涉及登录态、敏感权限或本地文件访问时，需要把授权边界写清楚。
+                </span>
+                这类信息会影响用户是否应该选择浏览器自动化方案。
+              </p>
+
+              <h2>与 Codex Review Loop 的关系</h2>
+              <p>
+                用户在预览区圈选内容并创建评论。Codex 读取 <code>open</code> comments 后生成下一版文档，再通过 API 回写处理状态。
+              </p>
+              <ul>
+                <li>左侧文件树用于切换 Markdown 文件和历史版本。</li>
+                <li>中间预览区用于阅读、圈选和查看处理角标。</li>
+                <li>右侧评论区用于编辑评论、查看状态和恢复历史评论。</li>
+              </ul>
+            </article>
+
+            <article class="document diff-document" aria-label="Markdown diff">
+              <div class="diff-head">
+                <span>browser-automation-and-agent-mechanisms.v3.md -> v4.md</span>
+                <span class="diff-stat">+4 -3</span>
+              </div>
+              <div class="diff-unified">
+                <div class="diff-row"><span class="diff-line">43</span><span class="diff-code">CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span></div>
+                <div class="diff-row del"><span class="diff-line">58</span><span class="diff-code">- Agent 负责决策、规划和结果校验。</span></div>
+                <div class="diff-row add"><span class="diff-line">58</span><span class="diff-code">+ Agent 负责决策、规划、结果校验和失败回退策略。</span></div>
+                <div class="diff-row"><span class="diff-line">72</span><span class="diff-code">适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span></div>
+                <div class="diff-row del"><span class="diff-line">91</span><span class="diff-code">- 在涉及登录态、敏感权限或本地文件访问时，需要谨慎处理。</span></div>
+                <div class="diff-row add"><span class="diff-line">91</span><span class="diff-code">+ 在涉及登录态、敏感权限或本地文件访问时，需要把授权边界写清楚。</span></div>
+              </div>
+              <div class="diff-split">
+                <div class="diff-pane">
+                  <div class="diff-row"><span class="diff-line">43</span><span class="diff-code">CDP、WebDriver 覆盖不同的接入边界。</span></div>
+                  <div class="diff-row del"><span class="diff-line">58</span><span class="diff-code">Agent 负责决策、规划和结果校验。</span></div>
+                  <div class="diff-row"><span class="diff-line">72</span><span class="diff-code">适合端到端验证、受控浏览器操作。</span></div>
+                  <div class="diff-row del"><span class="diff-line">91</span><span class="diff-code">需要谨慎处理登录态和本地文件访问。</span></div>
+                </div>
+                <div class="diff-pane">
+                  <div class="diff-row"><span class="diff-line">43</span><span class="diff-code">CDP、WebDriver 与 WebDriver BiDi 覆盖不同边界。</span></div>
+                  <div class="diff-row add"><span class="diff-line">58</span><span class="diff-code">Agent 负责决策、规划、校验和失败回退策略。</span></div>
+                  <div class="diff-row"><span class="diff-line">72</span><span class="diff-code">适合端到端验证、受控浏览器操作和状态回读。</span></div>
+                  <div class="diff-row add"><span class="diff-line">91</span><span class="diff-code">需要把授权边界写清楚，尤其是登录态和本地文件。</span></div>
+                </div>
+              </div>
+            </article>
+
+            <span class="marker done" role="button" tabindex="0" aria-label="Open resolved comment" data-history-open>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M20 6 9 17l-5-5"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span
+              class="marker partial"
+              role="button"
+              tabindex="0"
+              aria-label="Open partially resolved comment"
+              data-history-open
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 8v5M12 17h.01"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span class="marker open" role="button" tabindex="0" aria-label="Open comment editor" data-editor-open>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+
+            <aside class="inline-editor" hidden>
+              <div class="editor-head">
+                <span>Line 91 · selected text</span>
+              </div>
+              <textarea placeholder="Add a comment for this selection...">建议补充权限边界，尤其是登录态和本地文件。</textarea>
+              <div class="editor-actions">
+                <button class="text-button" type="button" data-editor-close>Cancel</button>
+                <button class="save-button" type="button" data-editor-close>Submit</button>
+              </div>
+            </aside>
+
+            <aside class="history-card" hidden>
+              <div class="history-head">
+                <span class="status done">Resolved</span>
+                <span class="source">v3:43</span>
+              </div>
+              <p>补充协议差异，不要只写 CDP。</p>
+              <p class="answer">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+            </aside>
+          </section>
+        </div>
+      </main>
+
+      <aside class="comments">
+        <button class="comments-rail" type="button" data-comments-toggle aria-label="Expand comments">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span class="rail-count">3</span>
+        </button>
+        <div class="comments-top">
+          <div class="comments-title">
+            <h2>Comments</h2>
+            <button class="icon-button" type="button" data-comments-toggle aria-label="Collapse comments">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="m9 18 6-6-6-6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="comments-subtitle">Current file · anchored to selection</div>
+          <div class="comment-tabs">
+            <button class="active">Open 3</button>
+            <button>Done 4</button>
+            <button>All 7</button>
+          </div>
+        </div>
+
+        <div class="comment-list">
+          <article class="comment-item active">
+            <div class="comment-top">
+              <span class="comment-line">Line 91</span>
+              <span class="status open">Open</span>
+            </div>
+            <p class="quote">“在涉及登录态、敏感权限或本地文件访问时...”</p>
+            <p class="comment-text">建议补充权限边界，尤其是登录态和本地文件。</p>
+          </article>
+
+          <article class="comment-item">
+            <div class="comment-top">
+              <span class="comment-line">Line 58</span>
+              <span class="status open">Open</span>
+            </div>
+            <p class="quote">“Agent 负责决策、规划和结果校验...”</p>
+            <p class="comment-text">这里可以再讲一下工具调用失败时的回退策略。</p>
+          </article>
+
+          <article class="comment-item">
+            <div class="comment-top">
+              <span class="comment-line">Line 72</span>
+              <span class="status partial">Partial</span>
+            </div>
+            <p class="quote">“对于只需要纯文本处理的工作...”</p>
+            <p class="comment-text">加一个不适合场景，避免读者误解成万能方案。</p>
+            <p class="resolution">已加限制，但还缺具体例子。</p>
+          </article>
+
+          <article class="comment-item">
+            <div class="comment-top">
+              <span class="comment-line">Line 43</span>
+              <span class="status done">Resolved</span>
+            </div>
+            <p class="quote">“CDP 是一种浏览器控制协议。”</p>
+            <p class="comment-text">补充协议差异，不要只写 CDP。</p>
+            <p class="resolution">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+          </article>
+        </div>
+
+        <div class="hint">
+          页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。
+        </div>
+      </aside>
+    </div>
+    <script>
+      (() => {
+        const root = document.documentElement;
+        const app = document.querySelector(".app");
+        const button = document.querySelector("[data-theme-toggle]");
+        const label = document.querySelector("[data-theme-label]");
+        const commentButtons = document.querySelectorAll("[data-comments-toggle]");
+        const editor = document.querySelector(".inline-editor");
+        const historyCard = document.querySelector(".history-card");
+        const selectedText = document.querySelector(".selected");
+        const readerScroll = document.querySelector(".reader-scroll");
+        const editorOpenButtons = document.querySelectorAll("[data-editor-open]");
+        const editorCloseButtons = document.querySelectorAll("[data-editor-close]");
+        const historyOpenButtons = document.querySelectorAll("[data-history-open]");
+        const viewToggle = document.querySelector("[data-view-toggle]");
+        const diffLayoutButtons = document.querySelectorAll("[data-diff-layout]");
+        const key = "md-review-theme";
+        const systemTheme = window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark";
+        const viewportPadding = 12;
+
+        const applyTheme = (theme) => {
+          root.dataset.theme = theme;
+          button?.setAttribute(
+            "aria-label",
+            theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
+          );
+          if (label) {
+            label.textContent = theme === "dark" ? "Dark theme" : "Light theme";
+          }
+        };
+
+        applyTheme(localStorage.getItem(key) || systemTheme);
+
+        button?.addEventListener("click", () => {
+          const next = root.dataset.theme === "dark" ? "light" : "dark";
+          localStorage.setItem(key, next);
+          applyTheme(next);
+        });
+
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+        const positionEditor = () => {
+          if (!editor || !selectedText || editor.hidden) return;
+
+          const selectionRect = selectedText.getBoundingClientRect();
+          const editorRect = editor.getBoundingClientRect();
+          const maxLeft = window.innerWidth - editorRect.width - viewportPadding;
+          const maxTop = window.innerHeight - editorRect.height - viewportPadding;
+          let left = selectionRect.left;
+          let top = selectionRect.bottom + 8;
+
+          if (top + editorRect.height > window.innerHeight - viewportPadding) {
+            top = selectionRect.top - editorRect.height - 8;
+          }
+
+          editor.style.setProperty(
+            "--editor-left",
+            `${Math.round(clamp(left, viewportPadding, Math.max(viewportPadding, maxLeft)))}px`,
+          );
+          editor.style.setProperty(
+            "--editor-top",
+            `${Math.round(clamp(top, viewportPadding, Math.max(viewportPadding, maxTop)))}px`,
+          );
+        };
+
+        const openEditor = () => {
+          if (!editor) return;
+          closeHistoryCard();
+          editor.hidden = false;
+          app?.classList.add("comment-editor-open");
+          requestAnimationFrame(positionEditor);
+        };
+
+        const closeEditor = () => {
+          if (!editor) return;
+          editor.hidden = true;
+          app?.classList.remove("comment-editor-open");
+        };
+
+        const openHistoryCard = () => {
+          if (!historyCard) return;
+          closeEditor();
+          historyCard.hidden = false;
+          app?.classList.add("history-card-open");
+        };
+
+        const closeHistoryCard = () => {
+          if (!historyCard) return;
+          historyCard.hidden = true;
+          app?.classList.remove("history-card-open");
+        };
+
+        const closeFloatingLayers = () => {
+          closeEditor();
+          closeHistoryCard();
+        };
+
+        const setView = (view) => {
+          const isDiff = view === "diff";
+          app?.classList.toggle("view-diff", isDiff);
+          if (viewToggle) {
+            viewToggle.textContent = isDiff ? "Diff" : "Preview";
+            viewToggle.setAttribute("aria-label", isDiff ? "Switch to Preview" : "Switch to Diff");
+            viewToggle.setAttribute("title", isDiff ? "Switch to Preview" : "Switch to Diff");
+          }
+          if (isDiff) {
+            closeFloatingLayers();
+          }
+        };
+
+        const setDiffLayout = (layout) => {
+          const split = layout === "split";
+          app?.classList.toggle("diff-split", split);
+          diffLayoutButtons.forEach((button) => {
+            const active = button.dataset.diffLayout === layout;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-selected", String(active));
+          });
+        };
+
+        editorOpenButtons.forEach((button) => button.addEventListener("click", openEditor));
+        editorCloseButtons.forEach((button) => button.addEventListener("click", closeEditor));
+        historyOpenButtons.forEach((button) => button.addEventListener("click", openHistoryCard));
+        [...editorOpenButtons, ...historyOpenButtons].forEach((button) => {
+          button.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+            button.click();
+          });
+        });
+        viewToggle?.addEventListener("click", () => {
+          setView(app?.classList.contains("view-diff") ? "preview" : "diff");
+        });
+        diffLayoutButtons.forEach((button) => {
+          button.addEventListener("click", () => setDiffLayout(button.dataset.diffLayout || "unified"));
+        });
+        readerScroll?.addEventListener("scroll", positionEditor, { passive: true });
+        window.addEventListener("resize", positionEditor);
+        setDiffLayout("unified");
+        requestAnimationFrame(positionEditor);
+
+        document.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          if (
+            target.closest(
+              ".inline-editor, .history-card, .popover, [data-editor-open], [data-history-open], [data-comments-toggle], [data-theme-toggle], [data-view-toggle], [data-diff-layout]",
+            )
+          ) {
+            return;
+          }
+
+          closeFloatingLayers();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            closeFloatingLayers();
+          }
+        });
+
+        commentButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const narrow = window.matchMedia("(max-width: 1180px)").matches;
+            if (narrow) {
+              app?.classList.toggle("comments-expanded-narrow");
+              requestAnimationFrame(positionEditor);
+              return;
+            }
+
+            app?.classList.toggle("comments-collapsed");
+            requestAnimationFrame(positionEditor);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
