@@ -80,6 +80,7 @@ jobs:
       - name: Publish to npm
         run: |
           unset NODE_AUTH_TOKEN
+          npm config delete //registry.npmjs.org/:_authToken || true
           npm publish --provenance
 
   publish-tag:
@@ -133,4 +134,5 @@ jobs:
       - name: Publish to npm
         run: |
           unset NODE_AUTH_TOKEN
+          npm config delete //registry.npmjs.org/:_authToken || true
           npm publish --provenance
