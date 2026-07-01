@@ -78,7 +78,7 @@ jobs:
         run: pnpm run build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
 
   publish-tag:
     if: ${{ github.ref_type == 'tag' }}
@@ -129,4 +129,4 @@ jobs:
         run: pnpm run build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
