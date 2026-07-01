@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0 (2026-07-01)
+
+
+### Features
+
+* add review summary navigation ([b291da5](https://github.com/tracyxiong1/md-review-server/commit/b291da56b32df540d3f3e106d311ede1e984c742))
+* refine markdown review experience ([0e5e6cc](https://github.com/tracyxiong1/md-review-server/commit/0e5e6ccb92f90f75a459810314eab2c2ca4241ce))
+
 ## [1.4.0](https://github.com/ryo-manba/md-review/compare/v1.3.3...v1.4.0) (2026-06-26)
 
 
