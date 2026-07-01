@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { clampFloatingRect } from '../lib/clampFloatingRect';
 
 interface PopoverPosition {
   x: number;
@@ -105,6 +106,7 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
   const [savedSelection, setSavedSelection] = useState<SavedSelection | null>(null);
   const [formMaxHeight, setFormMaxHeight] = useState<number | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLDivElement | null>(null);
   const savedSelectionRef = useRef<SavedSelection | null>(null);
   const isEditingRef = useRef(false);
@@ -171,6 +173,7 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
   const updatePositionFromRange = useCallback(
     (range: Range, editing = isEditingRef.current) => {
       const gapFromSelection = 8;
+      const viewportPadding = 12;
 
       if (editing) {
         const rects = range.getClientRects();
@@ -184,9 +187,28 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
         }
 
         updateFormMaxHeightFromRect(topRect);
+        const popoverRect = popoverRef.current?.getBoundingClientRect();
+        const popoverWidth = popoverRect?.width || Math.min(420, window.innerWidth - 24);
+        const popoverHeight = popoverRect?.height || 150;
+        let top = topRect.top - popoverHeight - gapFromSelection;
+
+        if (top < viewportPadding) {
+          top = topRect.bottom + gapFromSelection;
+        }
+
+        const nextPosition = clampFloatingRect({
+          left: topRect.left,
+          top,
+          width: popoverWidth,
+          height: popoverHeight,
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
+          padding: viewportPadding,
+        });
+
         setPosition({
-          x: topRect.left,
-          y: topRect.top - gapFromSelection,
+          x: nextPosition.left,
+          y: nextPosition.top,
         });
         return;
       }
@@ -266,6 +288,18 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
     }, 0);
   };
 
+  const resetPopover = useCallback(() => {
+    setComment('');
+    setIsEditing(false);
+    isEditingRef.current = false;
+    setVisible(false);
+    savedSelectionRef.current = null;
+    setSavedSelection(null);
+    updateHighlight(null);
+    setFormMaxHeight(null);
+    window.getSelection()?.removeAllRanges?.();
+  }, [updateHighlight]);
+
   const handleSubmit = () => {
     if (comment.trim() && onSubmitComment && savedSelection) {
       onSubmitComment(
@@ -279,26 +313,12 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
         savedSelection.afterText,
       );
     }
-    setComment('');
-    setIsEditing(false);
-    isEditingRef.current = false;
-    setVisible(false);
-    savedSelectionRef.current = null;
-    setSavedSelection(null);
-    updateHighlight(null);
-    setFormMaxHeight(null);
+    resetPopover();
   };
 
-  const handleCancel = () => {
-    setComment('');
-    setIsEditing(false);
-    isEditingRef.current = false;
-    setVisible(false);
-    savedSelectionRef.current = null;
-    setSavedSelection(null);
-    updateHighlight(null);
-    setFormMaxHeight(null);
-  };
+  const handleCancel = useCallback(() => {
+    resetPopover();
+  }, [resetPopover]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
@@ -325,6 +345,10 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
       if ((e.target as HTMLElement)?.closest('.selection-popover')) {
         return;
       }
+      if (isEditingRef.current) {
+        handleCancel();
+        return;
+      }
       if (!isEditingRef.current) {
         setVisible(false);
         savedSelectionRef.current = null;
@@ -340,7 +364,15 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
       document.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mousedown', handleMouseDown);
     };
-  }, [updatePosition, updateHighlight]);
+  }, [handleCancel, updatePosition, updateHighlight]);
+
+  useEffect(() => {
+    if (!visible || !isEditing || !savedSelection) return;
+
+    requestAnimationFrame(() => {
+      updatePositionFromRange(savedSelection.range, true);
+    });
+  }, [visible, isEditing, savedSelection, updatePositionFromRange]);
 
   useEffect(() => {
     if (!visible) return;
@@ -375,12 +407,14 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
 
   return (
     <div
+      ref={popoverRef}
       className="selection-popover"
+      data-testid={isEditing ? 'inline-comment-editor' : 'selection-comment-popover'}
       style={{
         position: 'fixed',
         left: position.x,
         top: position.y,
-        transform: isEditing ? 'translateY(-100%)' : 'translate(-50%, -100%)',
+        transform: isEditing ? undefined : 'translate(-50%, -100%)',
       }}
     >
       {!isEditing ? (

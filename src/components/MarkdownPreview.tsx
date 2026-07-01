@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState, type ElementType } from 'react';
+import { useRef, useEffect, useMemo, useState, type CSSProperties, type ElementType } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import remarkGfm from 'remark-gfm';
@@ -33,24 +33,97 @@ interface MarkdownPreviewProps {
 interface ProcessedCommentMarkerProps {
   line: number;
   comments: Comment[];
+  label: string;
 }
 
 const getCommentText = (comment: Comment) => comment.comment || comment.text || '';
 
 const getStatusLabel = (status = 'resolved') =>
   ({
+    open: 'Open',
     resolved: 'Resolved',
     partially_resolved: 'Partially resolved',
     unresolved: 'Unresolved',
+    ignored: 'Ignored',
   })[status] || status;
 
 const getStatusClassName = (status = 'resolved') => `status-${status.replace(/_/g, '-')}`;
 
-const ProcessedCommentMarker = ({ line, comments }: ProcessedCommentMarkerProps) => {
+const getStatusIconKind = (status = 'resolved') => {
+  if (status === 'open') {
+    return 'comment';
+  }
+
+  if (status === 'resolved') {
+    return 'check';
+  }
+
+  return 'alert';
+};
+
+const StatusMarkerIcon = ({ kind }: { kind: string }) => {
+  if (kind === 'check') {
+    return (
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m5 12 4 4 10-10" />
+      </svg>
+    );
+  }
+
+  if (kind === 'alert') {
+    return (
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 7v6" />
+        <path d="M12 17h.01" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7 8h10" />
+      <path d="M7 12h6" />
+      <path d="M5 4h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V7a3 3 0 0 1 3-3Z" />
+    </svg>
+  );
+};
+
+const ProcessedCommentMarker = ({ line, comments, label }: ProcessedCommentMarkerProps) => {
   const [open, setOpen] = useState(false);
   const markerRef = useRef<HTMLSpanElement>(null);
   const firstComment = comments[0];
   const markerStatus = firstComment.status || 'resolved';
+  const markerIconKind = getStatusIconKind(markerStatus);
 
   useEffect(() => {
     if (!open) {
@@ -62,9 +135,18 @@ const ProcessedCommentMarker = ({ line, comments }: ProcessedCommentMarkerProps)
         setOpen(false);
       }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
 
     document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [open]);
 
   return (
@@ -72,27 +154,16 @@ const ProcessedCommentMarker = ({ line, comments }: ProcessedCommentMarkerProps)
       <button
         type="button"
         className={`processed-comment-marker-button ${getStatusClassName(markerStatus)}`}
-        aria-label={`Processed comments on line ${line}`}
-        title={`Processed comments on line ${line}`}
+        data-testid={`review-marker-${firstComment.id}`}
+        data-status-icon={markerIconKind}
+        aria-label={`${label} on line ${line}`}
+        title={`${label} on line ${line}`}
         onClick={(event) => {
           event.stopPropagation();
           setOpen((value) => !value);
         }}
       >
-        <svg
-          width="15"
-          height="15"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h7" />
-          <path d="m16 8 2 2 4-4" />
-        </svg>
+        <StatusMarkerIcon kind={markerIconKind} />
         {comments.length > 1 && <span className="processed-comment-count">{comments.length}</span>}
       </button>
       {open && (
@@ -121,18 +192,27 @@ const ProcessedCommentMarker = ({ line, comments }: ProcessedCommentMarkerProps)
 
 const createComponentsWithLinePosition = (
   targetCommentsByLine: Map<number, Comment[]>,
+  sourceCommentsByLine: Map<number, Comment[]>,
 ): Components => {
   const renderMarker = (line?: number) => {
     if (typeof line !== 'number') {
       return null;
     }
 
-    const comments = targetCommentsByLine.get(line);
+    const sourceComments = sourceCommentsByLine.get(line) || [];
+    const targetComments = targetCommentsByLine.get(line) || [];
+    const comments = [...sourceComments, ...targetComments];
     if (!comments?.length) {
       return null;
     }
 
-    return <ProcessedCommentMarker line={line} comments={comments} />;
+    return (
+      <ProcessedCommentMarker
+        line={line}
+        comments={comments}
+        label={sourceComments.length > 0 ? 'Review comments' : 'Processed comments'}
+      />
+    );
   };
 
   const withLineMarker = (
@@ -217,9 +297,10 @@ export const MarkdownPreview = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const previousCommentCountRef = useRef(comments.length);
   const [activeDiffKey, setActiveDiffKey] = useState<string | null>(null);
-  const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('split');
+  const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
   const { isDark } = useDarkMode();
   const { frontmatter, body } = parseMdContent(content, filename);
+  const frontmatterEntries = Object.entries(frontmatter);
   const canCompare = Boolean(compareFilename && typeof compareContent === 'string');
   const diffKey = canCompare ? `${compareFilename}->${filename}` : null;
   const showDiff = Boolean(diffKey && activeDiffKey === diffKey);
@@ -238,10 +319,26 @@ export const MarkdownPreview = ({
 
     return next;
   }, [targetComments]);
+  const sourceCommentsByLine = useMemo(() => {
+    const next = new Map<number, Comment[]>();
+
+    for (const comment of comments) {
+      if (comment.status === 'ignored' || typeof comment.startLine !== 'number') {
+        continue;
+      }
+
+      const commentsForLine = next.get(comment.startLine) || [];
+      commentsForLine.push(comment);
+      next.set(comment.startLine, commentsForLine);
+    }
+
+    return next;
+  }, [comments]);
   const componentsWithLinePosition = useMemo(
-    () => createComponentsWithLinePosition(targetCommentsByLine),
-    [targetCommentsByLine],
+    () => createComponentsWithLinePosition(targetCommentsByLine, sourceCommentsByLine),
+    [targetCommentsByLine, sourceCommentsByLine],
   );
+  const documentMeta = 'Markdown preview · local review';
   const {
     width: commentsSidebarWidth,
     isResizing,
@@ -345,101 +442,115 @@ export const MarkdownPreview = ({
   return (
     <div
       className={`markdown-with-comments ${isResizing ? 'resizing' : ''} ${isCollapsed ? 'comments-collapsed' : ''}`}
-      style={{ paddingRight: isCollapsed ? '80px' : `${commentsSidebarWidth + 20}px` }}
+      style={{ '--comments-sidebar-width': `${commentsSidebarWidth}px` } as CSSProperties}
     >
       <div className={`markdown-container ${showDiff ? 'diff-active' : ''}`}>
         <header className="markdown-header">
           <div className="markdown-title-row">
             <h1>{filename}</h1>
             {canCompare && (
-              <button
-                type="button"
-                className="diff-toggle-button"
-                aria-label={showDiff ? 'Show rendered preview' : `Compare with ${compareFilename}`}
-                title={showDiff ? 'Show rendered preview' : `Compare with ${compareFilename}`}
-                onClick={() => setActiveDiffKey(showDiff ? null : diffKey)}
-              >
-                {showDiff ? 'Preview' : 'Compare'}
-              </button>
+              <div className="markdown-view-actions">
+                <button
+                  type="button"
+                  className="diff-toggle-button"
+                  data-testid="view-toggle"
+                  aria-label={showDiff ? 'Switch to Preview' : 'Switch to Diff'}
+                  title={showDiff ? 'Switch to Preview' : `Switch to Diff from ${compareFilename}`}
+                  onClick={() => setActiveDiffKey(showDiff ? null : diffKey)}
+                >
+                  <span>{showDiff ? 'Diff' : 'Preview'}</span>
+                  <span className="view-toggle-icon" aria-hidden="true">
+                    ↔
+                  </span>
+                </button>
+                {showDiff && (
+                  <div className="diff-view-toolbar" aria-label="Diff view mode">
+                    <button
+                      type="button"
+                      className={`diff-view-mode-button ${diffViewMode === 'unified' ? 'active' : ''}`}
+                      data-testid="diff-layout-unified"
+                      aria-label="Use unified diff view"
+                      aria-pressed={diffViewMode === 'unified'}
+                      onClick={() => setDiffViewMode('unified')}
+                    >
+                      Unified
+                    </button>
+                    <button
+                      type="button"
+                      className={`diff-view-mode-button ${diffViewMode === 'split' ? 'active' : ''}`}
+                      data-testid="diff-layout-split"
+                      aria-label="Use split diff view"
+                      aria-pressed={diffViewMode === 'split'}
+                      onClick={() => setDiffViewMode('split')}
+                    >
+                      Split
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
-          {Object.keys(frontmatter).length > 0 && (
-            <dl className="frontmatter-block">
-              {Object.entries(frontmatter).map(([key, value]) => (
-                <div key={key} className="frontmatter-row">
-                  <dt>{key}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
         </header>
-        {showDiff && canCompare ? (
-          <div className="markdown-diff-view">
-            <div className="diff-view-toolbar" aria-label="Diff view mode">
-              <button
-                type="button"
-                className={`diff-view-mode-button ${diffViewMode === 'split' ? 'active' : ''}`}
-                aria-label="Use split diff view"
-                aria-pressed={diffViewMode === 'split'}
-                onClick={() => setDiffViewMode('split')}
-              >
-                Split
-              </button>
-              <button
-                type="button"
-                className={`diff-view-mode-button ${diffViewMode === 'unified' ? 'active' : ''}`}
-                aria-label="Use unified diff view"
-                aria-pressed={diffViewMode === 'unified'}
-                onClick={() => setDiffViewMode('unified')}
-              >
-                Unified
-              </button>
-            </div>
-            <ReactDiffViewer
-              oldValue={compareContent || ''}
-              newValue={content}
-              splitView={diffViewMode === 'split'}
-              hideSummary
-              showDiffOnly={false}
-              useDarkTheme={isDark}
-              leftTitle={compareFilename}
-              rightTitle={filename}
-            />
-          </div>
-        ) : (
-          <div className="markdown-content" ref={contentRef}>
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkBreaks]}
-              rehypePlugins={[rehypeHighlight]}
-              components={componentsWithLinePosition}
-            >
-              {body}
-            </ReactMarkdown>
-          </div>
-        )}
-        {!showDiff && !readonly && (
-          <SelectionPopover containerRef={contentRef} onSubmitComment={handleSubmitComment} />
-        )}
+        <div className="markdown-reader-scroll">
+          <section className="markdown-reader">
+            {showDiff && canCompare ? (
+              <div className="markdown-diff-view">
+                <ReactDiffViewer
+                  oldValue={compareContent || ''}
+                  newValue={content}
+                  splitView={diffViewMode === 'split'}
+                  hideSummary
+                  showDiffOnly={false}
+                  useDarkTheme={isDark}
+                  leftTitle={compareFilename}
+                  rightTitle={filename}
+                />
+              </div>
+            ) : (
+              <div className="markdown-content" ref={contentRef}>
+                <div className="document-meta">
+                  <span>{documentMeta}</span>
+                  {frontmatterEntries.map(([key, value]) => (
+                    <span key={key} className="document-meta-item">
+                      {key}: {value}
+                    </span>
+                  ))}
+                </div>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkBreaks]}
+                  rehypePlugins={[rehypeHighlight]}
+                  components={componentsWithLinePosition}
+                >
+                  {body}
+                </ReactMarkdown>
+              </div>
+            )}
+            {!showDiff && !readonly && (
+              <SelectionPopover containerRef={contentRef} onSubmitComment={handleSubmitComment} />
+            )}
+          </section>
+        </div>
       </div>
       {isCollapsed && (
-        <button
-          className="comments-toggle-button"
-          onClick={toggleCollapse}
-          title="Show comments"
-          aria-label="Show comments"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H6l-4 3V5z"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          {comments.length > 0 && <span className="comments-badge">{comments.length}</span>}
-        </button>
+        <aside className="comments-sidebar comments-sidebar-collapsed">
+          <button
+            className="comments-toggle-button"
+            onClick={toggleCollapse}
+            title="Show comments"
+            aria-label="Show comments"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H6l-4 3V5z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            {comments.length > 0 && <span className="comments-badge">{comments.length}</span>}
+          </button>
+        </aside>
       )}
       {!isCollapsed && (
         <aside className="comments-sidebar" style={{ width: `${commentsSidebarWidth}px` }}>

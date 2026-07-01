@@ -28,6 +28,8 @@ interface CommentListProps {
   onEditComment?: (id: string, newText: string) => void;
 }
 
+type CommentFilter = 'open' | 'done' | 'all';
+
 export const CommentList = ({
   comments,
   filename,
@@ -41,6 +43,14 @@ export const CommentList = ({
   const [copiedAll, setCopiedAll] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const [commentFilter, setCommentFilter] = useState<CommentFilter>('all');
+  const openCount = comments.filter((comment) => (comment.status || 'open') === 'open').length;
+  const doneCount = comments.length - openCount;
+  const visibleComments = comments.filter((comment) => {
+    if (commentFilter === 'all') return true;
+    const status = comment.status || 'open';
+    return commentFilter === 'open' ? status === 'open' : status !== 'open';
+  });
 
   const getCommentText = (comment: Comment) => comment.comment || comment.text || '';
 
@@ -115,8 +125,11 @@ export const CommentList = ({
 
   return (
     <div className="comment-list">
-      <div className="comment-list-header">
-        <div className="comment-list-title-wrapper">
+      <div className="comments-top">
+        <div className="comment-list-header">
+          <h3 className="comment-list-title" aria-label={`${comments.length} comments`}>
+            Comments
+          </h3>
           {onClose && (
             <button
               className="comment-list-collapse-btn"
@@ -125,41 +138,46 @@ export const CommentList = ({
               aria-label="Hide comments"
             >
               <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="8 4 14 10 8 16" />
-              </svg>
-            </button>
-          )}
-          <h3 className="comment-list-title" aria-label={`${comments.length} comments`}>
-            <span className="comment-icon-wrapper">
-              <svg
-                width="18"
-                height="18"
+                width="15"
+                height="15"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                aria-hidden="true"
               >
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                <path d="m9 18 6-6-6-6" />
               </svg>
-              {comments.length > 0 && (
-                <span className="comment-count-badge" aria-hidden="true">
-                  {comments.length}
-                </span>
-              )}
-            </span>
-          </h3>
+            </button>
+          )}
+        </div>
+        <div className="comments-subtitle">Current file · anchored to selection</div>
+        <div className="comment-tabs" aria-label="Comment status summary">
+          <button
+            type="button"
+            className={commentFilter === 'open' ? 'active' : ''}
+            aria-pressed={commentFilter === 'open'}
+            onClick={() => setCommentFilter('open')}
+          >
+            Open {openCount}
+          </button>
+          <button
+            type="button"
+            className={commentFilter === 'done' ? 'active' : ''}
+            aria-pressed={commentFilter === 'done'}
+            onClick={() => setCommentFilter('done')}
+          >
+            Done {doneCount}
+          </button>
+          <button
+            type="button"
+            className={commentFilter === 'all' ? 'active' : ''}
+            aria-pressed={commentFilter === 'all'}
+            onClick={() => setCommentFilter('all')}
+          >
+            All {comments.length}
+          </button>
         </div>
         {comments.length > 0 && (
           <div className="comment-list-actions">
@@ -222,10 +240,15 @@ export const CommentList = ({
           <p>No comments yet</p>
           <p className="comment-list-hint">Select text to add a comment</p>
         </div>
+      ) : visibleComments.length === 0 ? (
+        <div className="comment-list-empty">
+          <p>No comments in this view</p>
+          <p className="comment-list-hint">Switch filters to review other statuses</p>
+        </div>
       ) : (
         <div className="comment-list-items">
-          {comments.map((comment) => (
-            <div key={comment.id} className="comment-item">
+          {visibleComments.map((comment, index) => (
+            <div key={comment.id} className={`comment-item ${index === 0 ? 'active' : ''}`}>
               <div className="comment-item-header">
                 <div className="comment-item-meta">
                   <button
@@ -340,6 +363,9 @@ export const CommentList = ({
           ))}
         </div>
       )}
+      <div className="comment-list-footer-hint">
+        页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。
+      </div>
     </div>
   );
 };

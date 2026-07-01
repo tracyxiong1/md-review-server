@@ -123,6 +123,18 @@ describe('CommentList', () => {
     expect(screen.getByText('Resolved')).toBeInTheDocument();
   });
 
+  it('should filter comments by status tab', async () => {
+    render(<CommentList comments={mockComments} filename="test.md" />);
+
+    await user.click(screen.getByRole('button', { name: 'Open 1' }));
+    expect(screen.getByText('First comment')).toBeInTheDocument();
+    expect(screen.queryByText('Second comment')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Done 1' }));
+    expect(screen.queryByText('First comment')).not.toBeInTheDocument();
+    expect(screen.getByText('Second comment')).toBeInTheDocument();
+  });
+
   it('should enter edit mode when edit button is clicked', async () => {
     const onEditComment = vi.fn();
 

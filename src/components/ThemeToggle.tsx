@@ -2,6 +2,7 @@ import { useDarkMode } from '../hooks/useDarkMode';
 
 export const ThemeToggle = () => {
   const { isDark, toggleTheme } = useDarkMode();
+  const label = isDark ? 'Light' : 'Dark';
 
   return (
     <button
@@ -31,6 +32,7 @@ export const ThemeToggle = () => {
           />
         </svg>
       )}
+      <span className="theme-toggle-label">{label}</span>
     </button>
   );
 };
