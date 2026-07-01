@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.4.0](https://github.com/tracyxiong1/md-review-server/compare/v0.3.2...v0.4.0) (2026-07-01)
+
+
+### Features
+
+* add anonymous analytics tracking ([1b177dc](https://github.com/tracyxiong1/md-review-server/commit/1b177dc706a762f776f7d5e06e9c7a5683912707))
+
 ## [0.3.2](https://github.com/tracyxiong1/md-review-server/compare/v0.3.1...v0.3.2) (2026-07-02)
 
 
