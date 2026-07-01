@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/tracyxiong1/md-review-server/compare/v0.2.0...v0.3.0) (2026-07-01)
+
+
+### Features
+
+* **review:** refine compact workbench controls ([2e16be2](https://github.com/tracyxiong1/md-review-server/commit/2e16be2128e9bed6dbd07013fab3fc6f82e2d05b))
+
 ## [1.4.0](https://github.com/ryo-manba/md-review/compare/v1.3.3...v1.4.0) (2026-06-26)
 
 
