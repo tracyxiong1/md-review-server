@@ -26,8 +26,8 @@
 }
 
 .file-tree-brand-icon {
-  width: 21px;
-  height: 21px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
@@ -143,22 +143,11 @@
 }
 
 .search-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin-right: 6px;
   color: var(--text-secondary);
   flex-shrink: 0;
-}
-
-.search-icon::before {
-  content: '';
-  display: block;
-  width: 12px;
-  height: 12px;
-  border: 1.5px solid currentcolor;
-  border-radius: 999px;
-  box-shadow: 6px 6px 0 -5px currentcolor;
-  transform: rotate(-12deg);
 }
 
 .search-input {
@@ -253,8 +242,8 @@
 
 .file-icon,
 .folder-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin-right: 0;
   flex-shrink: 0;
   color: var(--text-tertiary);
@@ -264,23 +253,8 @@
   margin-left: 20px;
 }
 
-.file-icon::before {
-  content: '';
-  display: block;
-  width: 10px;
-  height: 13px;
-  border: 1.4px solid currentcolor;
-  border-radius: 2px;
-}
-
-.folder-icon::before {
-  content: '';
-  display: block;
-  width: 13px;
-  height: 10px;
-  border: 1.4px solid currentcolor;
-  border-radius: 2px;
-  transform: translateY(1px);
+.tree-item.file.selected .file-icon {
+  color: var(--text-secondary);
 }
 
 .file-name,

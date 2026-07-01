@@ -92,9 +92,14 @@
   color: var(--text-primary);
 }
 
+.sidebar-icon-bar .icon-bar-item svg {
+  width: 16px;
+  height: 16px;
+}
+
 .sidebar-icon-bar .theme-toggle svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .sidebar-icon-bar .theme-toggle-label {

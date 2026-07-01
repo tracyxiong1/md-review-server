@@ -118,6 +118,11 @@
   transform: translateY(1px);
 }
 
+.comments-toggle-button svg {
+  width: 16px;
+  height: 16px;
+}
+
 .comments-badge {
   position: absolute;
   top: -6px;

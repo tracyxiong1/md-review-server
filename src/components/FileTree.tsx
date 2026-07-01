@@ -165,7 +165,27 @@ function TreeNodeComponent({
           }
         }}
       >
-        <span className="file-icon" aria-hidden="true" />
+        <svg
+          className="file-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 20 20"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M5 2.75h6.25L15 6.5v10.75H5V2.75Z"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M11.25 2.75V6.5H15"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+        </svg>
         <span className="file-name">{node.name}</span>
         {fileMeta && (
           <span className={openCount > 0 ? 'tree-count-badge' : 'tree-item-meta'}>{fileMeta}</span>
@@ -239,7 +259,21 @@ function TreeNodeComponent({
             strokeLinejoin="round"
           />
         </svg>
-        <span className="folder-icon" aria-hidden="true" />
+        <svg
+          className="folder-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 20 20"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M2.75 5.25A1.75 1.75 0 0 1 4.5 3.5h4.25l2 2H15.5a1.75 1.75 0 0 1 1.75 1.75v8A1.75 1.75 0 0 1 15.5 17H4.5a1.75 1.75 0 0 1-1.75-1.75v-10Z"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+        </svg>
         <span className="folder-name">{node.name}</span>
         {fileCount > 0 && <span className="tree-item-meta">{fileCount}</span>}
       </div>
@@ -319,7 +353,7 @@ export const FileTree = ({
         <div className="file-tree-brand-row">
           <div className="file-tree-brand">
             <span className="file-tree-brand-icon" aria-hidden="true">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
                   stroke="currentColor"
@@ -352,7 +386,22 @@ export const FileTree = ({
         </div>
         <div className="search-container">
           <div className="search-input-wrapper">
-            <span className="search-icon" aria-hidden="true" />
+            <svg
+              className="search-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 20 20"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.7" />
+              <path
+                d="M12.75 12.75L17 17"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+              />
+            </svg>
             <input
               ref={searchInputRef}
               type="text"
