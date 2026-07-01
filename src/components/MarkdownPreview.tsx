@@ -1,4 +1,12 @@
-import { useRef, useEffect, useMemo, useState, type CSSProperties, type ElementType } from 'react';
+import {
+  useRef,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentProps,
+  type CSSProperties,
+  type ElementType,
+} from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import remarkGfm from 'remark-gfm';
@@ -14,6 +22,8 @@ import { useDarkMode } from '../hooks/useDarkMode';
 import { useResizable } from '../hooks/useResizable';
 import { parseMdContent } from '../lib/parseMdContent';
 import { CreateCommentInput } from '../types/review';
+
+type DiffViewerStyles = NonNullable<ComponentProps<typeof ReactDiffViewer>['styles']>;
 
 interface MarkdownPreviewProps {
   content: string;
@@ -59,6 +69,56 @@ const getStatusIconKind = (status = 'resolved') => {
   }
 
   return 'alert';
+};
+
+const diffThemeVariables = {
+  diffViewerBackground: 'var(--bg-panel)',
+  diffViewerColor: 'var(--text-primary)',
+  addedBackground: 'var(--diff-added-bg)',
+  addedColor: 'var(--text-primary)',
+  removedBackground: 'var(--diff-removed-bg)',
+  removedColor: 'var(--text-primary)',
+  wordAddedBackground: 'var(--diff-word-added-bg)',
+  wordRemovedBackground: 'var(--diff-word-removed-bg)',
+  addedGutterBackground: 'var(--diff-added-gutter-bg)',
+  removedGutterBackground: 'var(--diff-removed-gutter-bg)',
+  gutterBackground: 'var(--bg-inset)',
+  gutterBackgroundDark: 'var(--bg-tertiary)',
+  highlightBackground: 'var(--bg-tertiary)',
+  highlightGutterBackground: 'var(--bg-tertiary)',
+  codeFoldGutterBackground: 'var(--bg-inset)',
+  codeFoldBackground: 'var(--bg-tertiary)',
+  emptyLineBackground: 'var(--bg-panel)',
+  gutterColor: 'var(--text-tertiary)',
+  addedGutterColor: 'var(--text-tertiary)',
+  removedGutterColor: 'var(--text-tertiary)',
+  codeFoldContentColor: 'var(--text-secondary)',
+  diffViewerTitleBackground: 'var(--bg-elevated)',
+  diffViewerTitleColor: 'var(--text-secondary)',
+  diffViewerTitleBorderColor: 'var(--border-secondary)',
+};
+
+const diffViewerStyles: DiffViewerStyles = {
+  variables: {
+    light: diffThemeVariables,
+    dark: diffThemeVariables,
+  },
+  diffContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  line: {
+    wordBreak: 'break-word',
+  },
+  contentText: {
+    color: 'var(--text-primary)',
+  },
+  marker: {
+    color: 'var(--text-primary)',
+  },
+  titleBlock: {
+    fontWeight: 500,
+  },
 };
 
 const dedupeMarkerComments = (comments: Comment[]): Comment[] => {
@@ -534,6 +594,7 @@ export const MarkdownPreview = ({
                   hideSummary
                   showDiffOnly={false}
                   useDarkTheme={isDark}
+                  styles={diffViewerStyles}
                   leftTitle={compareFilename}
                   rightTitle={filename}
                 />

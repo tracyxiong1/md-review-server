@@ -23,6 +23,7 @@ vi.mock('react-diff-viewer-continued', async () => {
     default: function MockReactDiffViewer(props: {
       oldValue: string;
       newValue: string;
+      styles?: unknown;
       useDarkTheme?: boolean;
     }) {
       const mountId = React.useRef(++diffViewerState.nextMountId);
@@ -466,5 +467,38 @@ describe('MarkdownPreview', () => {
 
     expect(screen.getByTestId('diff-viewer')).toHaveAttribute('data-theme', 'dark');
     expect(screen.getByTestId('diff-viewer')).toHaveAttribute('data-mount-id', '2');
+  });
+
+  it('passes app theme variables into the diff viewer dark theme', async () => {
+    const user = userEvent.setup();
+    darkModeMock.isDark = true;
+
+    render(
+      <MarkdownPreview
+        content="# Guide\n\nNew text"
+        filename="guide.v2.md"
+        comments={[]}
+        compareFilename="guide.v1.md"
+        compareContent="# Guide\n\nOld text"
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Show diff' }));
+
+    expect(diffViewerMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        useDarkTheme: true,
+        styles: expect.objectContaining({
+          variables: expect.objectContaining({
+            dark: expect.objectContaining({
+              diffViewerBackground: 'var(--bg-panel)',
+              addedBackground: 'var(--diff-added-bg)',
+              removedBackground: 'var(--diff-removed-bg)',
+              diffViewerTitleBackground: 'var(--bg-elevated)',
+            }),
+          }),
+        }),
+      }),
+    );
   });
 });
