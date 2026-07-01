@@ -44,6 +44,7 @@ jobs:
         with:
           node-version: '24'
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Ensure npm supports trusted publishing
         run: npm install -g npm@latest
@@ -79,7 +80,7 @@ jobs:
       - name: Publish to npm
         run: |
           unset NODE_AUTH_TOKEN
-          npm publish
+          npm publish --provenance
 
   publish-tag:
     if: ${{ github.ref_type == 'tag' }}
@@ -96,6 +97,7 @@ jobs:
         with:
           node-version: '24'
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Ensure npm supports trusted publishing
         run: npm install -g npm@latest
@@ -131,4 +133,4 @@ jobs:
       - name: Publish to npm
         run: |
           unset NODE_AUTH_TOKEN
-          npm publish
+          npm publish --provenance
