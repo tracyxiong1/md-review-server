@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  buildReviewSummary,
-  type FileInfo,
-  type ReviewSummary,
-} from '../lib/reviewSummary';
+import { buildReviewSummary, type FileInfo, type ReviewSummary } from '../lib/reviewSummary';
 import type { ReviewComment } from '../types/review';
 
 interface UseReviewSummaryData {

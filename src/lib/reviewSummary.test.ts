@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  buildReviewSummary,
-  buildVersionSummaries,
-  parseMarkdownVersion,
-} from './reviewSummary';
+import { buildReviewSummary, buildVersionSummaries, parseMarkdownVersion } from './reviewSummary';
 import type { ReviewComment } from '../types/review';
 
 const files = [

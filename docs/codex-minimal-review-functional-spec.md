@@ -20,12 +20,12 @@ flowchart LR
   E --> C
 ```
 
-| 区域 | 原型节点 | 功能职责 |
-| --- | --- | --- |
-| 左侧文件区 | `.sidebar`、`.tree`、`.versions`、`.theme-toggle` | 文件切换、版本切换、评论数量提示、主题切换 |
-| 中间工作区 | `.main`、`.topbar`、`.reader`、`.document` | Markdown 预览、Diff 切换、选区评论、历史评论角标 |
-| 右侧评论区 | `.comments`、`.comment-tabs`、`.comment-list`、`.comments-rail` | 评论状态总览、评论筛选、评论跳转、折叠入口 |
-| 浮层系统 | `.popover`、`.inline-editor`、`.history-card` | 选区评论入口、评论输入、历史处理结果查看 |
+| 区域       | 原型节点                                                        | 功能职责                                         |
+| ---------- | --------------------------------------------------------------- | ------------------------------------------------ |
+| 左侧文件区 | `.sidebar`、`.tree`、`.versions`、`.theme-toggle`               | 文件切换、版本切换、评论数量提示、主题切换       |
+| 中间工作区 | `.main`、`.topbar`、`.reader`、`.document`                      | Markdown 预览、Diff 切换、选区评论、历史评论角标 |
+| 右侧评论区 | `.comments`、`.comment-tabs`、`.comment-list`、`.comments-rail` | 评论状态总览、评论筛选、评论跳转、折叠入口       |
+| 浮层系统   | `.popover`、`.inline-editor`、`.history-card`                   | 选区评论入口、评论输入、历史处理结果查看         |
 
 ## 三、原型到功能的映射
 
@@ -33,12 +33,12 @@ flowchart LR
 
 原型中的文件树不只是文件列表。它包含当前文件、目录数量、文件评论数量和历史版本状态。
 
-| 原型展示 | 功能含义 | 数据来源 |
-| --- | --- | --- |
-| `docs 8` | 目录内 Markdown 文件数量 | `GET /api/files` 扫描结果 |
-| `browser-automation.v4.md 3` | 当前文件存在 3 条 open 评论 | review summary 中当前文件 `openCount` |
-| `browser-automation.v3.md old` | 历史版本文件 | 文件名版本解析结果 |
-| `outputs 12` | 目录内 Markdown 文件数量 | `GET /api/files` 扫描结果 |
+| 原型展示                       | 功能含义                    | 数据来源                              |
+| ------------------------------ | --------------------------- | ------------------------------------- |
+| `docs 8`                       | 目录内 Markdown 文件数量    | `GET /api/files` 扫描结果             |
+| `browser-automation.v4.md 3`   | 当前文件存在 3 条 open 评论 | review summary 中当前文件 `openCount` |
+| `browser-automation.v3.md old` | 历史版本文件                | 文件名版本解析结果                    |
+| `outputs 12`                   | 目录内 Markdown 文件数量    | `GET /api/files` 扫描结果             |
 
 实现要求：
 
@@ -52,11 +52,11 @@ flowchart LR
 
 原型中的 `Versions` 区域用于表达当前文档的版本链和每个版本的评审状态。
 
-| 原型展示 | 功能含义 | 计算规则 |
-| --- | --- | --- |
-| `v4 current 3` | 当前版本仍有 3 条 open 评论 | 当前选中文件版本最大，且 `openCount = 3` |
-| `v3 reviewed 4 done` | 上一版本评论已被 Codex 处理 | 该版本 open 为 0，done 为 4 |
-| `v2 draft archived` | 更早版本，不作为当前评审入口 | 低于上一轮版本，且无活跃评论 |
+| 原型展示             | 功能含义                     | 计算规则                                 |
+| -------------------- | ---------------------------- | ---------------------------------------- |
+| `v4 current 3`       | 当前版本仍有 3 条 open 评论  | 当前选中文件版本最大，且 `openCount = 3` |
+| `v3 reviewed 4 done` | 上一版本评论已被 Codex 处理  | 该版本 open 为 0，done 为 4              |
+| `v2 draft archived`  | 更早版本，不作为当前评审入口 | 低于上一轮版本，且无活跃评论             |
 
 建议新增 `ReviewSummary` 数据模型：
 
@@ -89,10 +89,10 @@ interface VersionReviewSummary extends FileReviewSummary {
 
 原型顶部只保留文档标题和紧凑视图切换。
 
-| 原型节点 | 功能规则 |
-| --- | --- |
-| `.file-title` | 展示当前文件名，不展示路径细节 |
-| `.view-toggle` | 单按钮在 Preview 和 Diff 之间切换 |
+| 原型节点       | 功能规则                                  |
+| -------------- | ----------------------------------------- |
+| `.file-title`  | 展示当前文件名，不展示路径细节            |
+| `.view-toggle` | 单按钮在 Preview 和 Diff 之间切换         |
 | `.diff-layout` | 仅在 Diff 视图显示，支持 Unified 和 Split |
 
 实现要求：
@@ -123,15 +123,15 @@ interface VersionReviewSummary extends FileReviewSummary {
 
 状态规则：
 
-| 事件 | 行为 |
-| --- | --- |
-| 用户选中文本 | 显示 `Comment` popover |
-| 点击 `Comment` | 打开 inline editor |
+| 事件                    | 行为                                |
+| ----------------------- | ----------------------------------- |
+| 用户选中文本            | 显示 `Comment` popover              |
+| 点击 `Comment`          | 打开 inline editor                  |
 | 输入评论并点击 `Submit` | 创建 comment，关闭 editor，清理选区 |
-| 点击 `Cancel` | 关闭 editor，清理选区 |
-| 点击空白区域 | 关闭当前浮层 |
-| 按 `Esc` | 关闭当前浮层 |
-| 滚动或 resize | 重新计算 editor 位置 |
+| 点击 `Cancel`           | 关闭 editor，清理选区               |
+| 点击空白区域            | 关闭当前浮层                        |
+| 按 `Esc`                | 关闭当前浮层                        |
+| 滚动或 resize           | 重新计算 editor 位置                |
 
 位置规则：
 
@@ -145,12 +145,12 @@ interface VersionReviewSummary extends FileReviewSummary {
 
 原型中行内角标用于表达评论在正文中的处理状态。
 
-| 状态 | 图标 | 行为 |
-| --- | --- | --- |
-| `open` | comment icon | 点击打开评论输入或当前 open 评论详情 |
-| `resolved` | check icon | 点击打开 history card |
-| `partially_resolved` | exclamation icon | 点击打开 history card |
-| `unresolved` | exclamation 或 warning icon | 点击打开 history card |
+| 状态                 | 图标                        | 行为                                 |
+| -------------------- | --------------------------- | ------------------------------------ |
+| `open`               | comment icon                | 点击打开评论输入或当前 open 评论详情 |
+| `resolved`           | check icon                  | 点击打开 history card                |
+| `partially_resolved` | exclamation icon            | 点击打开 history card                |
+| `unresolved`         | exclamation 或 warning icon | 点击打开 history card                |
 
 实现要求：
 
@@ -167,12 +167,12 @@ interface VersionReviewSummary extends FileReviewSummary {
 
 展示字段：
 
-| 字段 | 来源 |
-| --- | --- |
-| 状态标签 | `comment.status` |
+| 字段     | 来源                                   |
+| -------- | -------------------------------------- |
+| 状态标签 | `comment.status`                       |
 | 来源位置 | `${comment.file}:${comment.startLine}` |
-| 评论正文 | `comment.comment` |
-| 处理结果 | `comment.resolution` |
+| 评论正文 | `comment.comment`                      |
+| 处理结果 | `comment.resolution`                   |
 
 实现要求：
 
@@ -185,12 +185,12 @@ interface VersionReviewSummary extends FileReviewSummary {
 
 右侧评论区是当前文件评论状态总览，不是主要输入入口。
 
-| 原型节点 | 功能规则 |
-| --- | --- |
-| `.comment-tabs` | 支持 `Open`、`Done`、`All` 筛选 |
-| `.comment-item.active` | 表示当前聚焦或最近选中的评论 |
-| `.comments-rail` | 折叠状态下的评论入口 |
-| `.rail-count` | 当前文件 open 评论数量 |
+| 原型节点               | 功能规则                        |
+| ---------------------- | ------------------------------- |
+| `.comment-tabs`        | 支持 `Open`、`Done`、`All` 筛选 |
+| `.comment-item.active` | 表示当前聚焦或最近选中的评论    |
+| `.comments-rail`       | 折叠状态下的评论入口            |
+| `.rail-count`          | 当前文件 open 评论数量          |
 
 筛选规则：
 
@@ -290,7 +290,7 @@ interface DirectoryReviewSummary {
 版本文件名采用现有规则：
 
 ```ts
-/^(?<stem>.+?)(?:\.v(?<version>\d+))?(?<ext>\.md|\.markdown|\.mdx)$/
+/^(?<stem>.+?)(?:\.v(?<version>\d+))?(?<ext>\.md|\.markdown|\.mdx)$/;
 ```
 
 解析结果：
@@ -334,32 +334,32 @@ interface ReviewWorkbenchState {
 
 ### 5.2 状态转换
 
-| 事件 | 状态变化 |
-| --- | --- |
-| 选中文本 | `floatingLayer = selectionMenu` |
-| 点击 Comment | `floatingLayer = commentEditor` |
-| 提交评论 | `floatingLayer = none`，刷新 comments |
-| 点击 processed marker | `floatingLayer = commentHistory` |
-| 点击空白区域 | `floatingLayer = none` |
-| 按 `Esc` | `floatingLayer = none` |
-| 切换到 Diff | `viewMode = diff`，`floatingLayer = none` |
-| 切回 Preview | `viewMode = preview` |
-| 切换 Diff layout | `diffLayout = unified | split` |
-| 折叠右侧评论 | `rightPanel = collapsed` |
-| 展开右侧评论 | `rightPanel = expanded` |
+| 事件                  | 状态变化                                  |
+| --------------------- | ----------------------------------------- | ------ |
+| 选中文本              | `floatingLayer = selectionMenu`           |
+| 点击 Comment          | `floatingLayer = commentEditor`           |
+| 提交评论              | `floatingLayer = none`，刷新 comments     |
+| 点击 processed marker | `floatingLayer = commentHistory`          |
+| 点击空白区域          | `floatingLayer = none`                    |
+| 按 `Esc`              | `floatingLayer = none`                    |
+| 切换到 Diff           | `viewMode = diff`，`floatingLayer = none` |
+| 切回 Preview          | `viewMode = preview`                      |
+| 切换 Diff layout      | `diffLayout = unified                     | split` |
+| 折叠右侧评论          | `rightPanel = collapsed`                  |
+| 展开右侧评论          | `rightPanel = expanded`                   |
 
 ### 5.3 z-index 层级
 
 建议使用语义层级，避免任意 `999`。
 
-| 层级 | 用途 |
-| --- | --- |
-| `--z-sticky` | 顶部栏、侧栏 |
-| `--z-marker` | 行内评论角标 |
+| 层级          | 用途                         |
+| ------------- | ---------------------------- |
+| `--z-sticky`  | 顶部栏、侧栏                 |
+| `--z-marker`  | 行内评论角标                 |
 | `--z-popover` | selection menu、history card |
-| `--z-editor` | inline editor |
-| `--z-overlay` | 窄屏评论区 overlay |
-| `--z-tooltip` | 快捷键提示 |
+| `--z-editor`  | inline editor                |
+| `--z-overlay` | 窄屏评论区 overlay           |
+| `--z-tooltip` | 快捷键提示                   |
 
 ## 六、组件职责
 
@@ -611,15 +611,15 @@ interface ReviewSummaryResponse {
 
 基于当前 React 实现和原型对照，待补齐项如下：
 
-| 缺口 | 影响 | 建议阶段 |
-| --- | --- | --- |
-| 文件树缺少评论 summary | 文件角标和目录状态无法准确显示 | P0 |
-| 版本区只按文件名推断状态 | `current/reviewed/archived` 语义不完整 | P0 |
-| marker 图标未按状态区分 | open、resolved、partial 的正文反馈不清晰 | P0 |
-| 浮层状态分散 | editor、history card、popover 容易冲突 | P0 |
-| Diff 缺少原型中的统计头语义 | 用户难以快速判断改动规模 | P1 |
-| 窄屏 comments overlay 未完整实现 | Codex 内嵌浏览器中右侧区域占用过高 | P1 |
-| 主题状态文案和系统主题策略需统一 | 深浅主题体验不稳定 | P1 |
+| 缺口                             | 影响                                     | 建议阶段 |
+| -------------------------------- | ---------------------------------------- | -------- |
+| 文件树缺少评论 summary           | 文件角标和目录状态无法准确显示           | P0       |
+| 版本区只按文件名推断状态         | `current/reviewed/archived` 语义不完整   | P0       |
+| marker 图标未按状态区分          | open、resolved、partial 的正文反馈不清晰 | P0       |
+| 浮层状态分散                     | editor、history card、popover 容易冲突   | P0       |
+| Diff 缺少原型中的统计头语义      | 用户难以快速判断改动规模                 | P1       |
+| 窄屏 comments overlay 未完整实现 | Codex 内嵌浏览器中右侧区域占用过高       | P1       |
+| 主题状态文案和系统主题策略需统一 | 深浅主题体验不稳定                       | P1       |
 
 ## 十二、结论
 

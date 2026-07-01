@@ -75,7 +75,10 @@ function isDoneStatus(status: ReviewComment['status']) {
   return status !== 'open';
 }
 
-function incrementSummary(summary: FileReviewSummary | DirectoryReviewSummary, status: ReviewComment['status']) {
+function incrementSummary(
+  summary: FileReviewSummary | DirectoryReviewSummary,
+  status: ReviewComment['status'],
+) {
   if (isDoneStatus(status)) {
     summary.doneCount += 1;
   } else {

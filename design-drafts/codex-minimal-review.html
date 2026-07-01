@@ -40,7 +40,7 @@
         --code-bg: #222222;
       }
 
-      :root[data-theme="light"] {
+      :root[data-theme='light'] {
         color-scheme: light;
         --bg: #f4f4f3;
         --panel: #fbfbfa;
@@ -86,7 +86,12 @@
         color: var(--text);
         background: var(--bg);
         font-family:
-          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
       }
 
       button,
@@ -222,11 +227,11 @@
         display: none;
       }
 
-      :root[data-theme="light"] .theme-toggle .moon {
+      :root[data-theme='light'] .theme-toggle .moon {
         display: none;
       }
 
-      :root[data-theme="light"] .theme-toggle .sun {
+      :root[data-theme='light'] .theme-toggle .sun {
         display: block;
       }
 
@@ -399,7 +404,7 @@
       }
 
       .view-toggle::after {
-        content: "↔";
+        content: '↔';
         margin-left: 6px;
         color: var(--faint);
         font-size: 11px;
@@ -493,7 +498,12 @@
         color: var(--muted);
         border-bottom: 1px solid var(--line-soft);
         font-family:
-          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
         font-size: 12px;
       }
 
@@ -767,15 +777,15 @@
         z-index: 12;
       }
 
-      .marker[role="button"] {
+      .marker[role='button'] {
         cursor: pointer;
       }
 
-      .marker[role="button"]:hover {
+      .marker[role='button']:hover {
         filter: brightness(1.12);
       }
 
-      .marker[role="button"]:focus-visible {
+      .marker[role='button']:focus-visible {
         outline: 2px solid var(--blue);
         outline-offset: 2px;
       }
@@ -1171,14 +1181,25 @@
 
         <nav class="tree" aria-label="Files">
           <p class="section-label">Files</p>
-          <div class="tree-row folder"><span>▾</span><span class="name">docs</span><span>8</span></div>
-          <div class="tree-row child"><span></span><span class="name">api-overview.md</span><span></span></div>
-          <div class="tree-row child active">
-            <span></span><span class="name">browser-automation.v4.md</span><span class="count">3</span>
+          <div class="tree-row folder">
+            <span>▾</span><span class="name">docs</span><span>8</span>
           </div>
-          <div class="tree-row child"><span></span><span class="name">browser-automation.v3.md</span><span>old</span></div>
-          <div class="tree-row child"><span></span><span class="name">review-template.md</span><span></span></div>
-          <div class="tree-row folder"><span>▸</span><span class="name">outputs</span><span>12</span></div>
+          <div class="tree-row child">
+            <span></span><span class="name">api-overview.md</span><span></span>
+          </div>
+          <div class="tree-row child active">
+            <span></span><span class="name">browser-automation.v4.md</span
+            ><span class="count">3</span>
+          </div>
+          <div class="tree-row child">
+            <span></span><span class="name">browser-automation.v3.md</span><span>old</span>
+          </div>
+          <div class="tree-row child">
+            <span></span><span class="name">review-template.md</span><span></span>
+          </div>
+          <div class="tree-row folder">
+            <span>▸</span><span class="name">outputs</span><span>12</span>
+          </div>
         </nav>
 
         <div class="versions">
@@ -1218,14 +1239,28 @@
             <div class="file-title">browser-automation-and-agent-mechanisms.v4.md</div>
           </div>
           <div class="view-actions" aria-label="View controls">
-            <button class="view-toggle" type="button" data-view-toggle aria-label="Switch to Diff" title="Switch to Diff">
+            <button
+              class="view-toggle"
+              type="button"
+              data-view-toggle
+              aria-label="Switch to Diff"
+              title="Switch to Diff"
+            >
               Preview
             </button>
             <div class="diff-layout" role="tablist" aria-label="Diff layout">
-              <button class="active" type="button" data-diff-layout="unified" role="tab" aria-selected="true">
+              <button
+                class="active"
+                type="button"
+                data-diff-layout="unified"
+                role="tab"
+                aria-selected="true"
+              >
                 Unified
               </button>
-              <button type="button" data-diff-layout="split" role="tab" aria-selected="false">Split</button>
+              <button type="button" data-diff-layout="split" role="tab" aria-selected="false">
+                Split
+              </button>
             </div>
           </div>
         </header>
@@ -1236,15 +1271,18 @@
               <div class="doc-meta">Markdown preview · v4 current · local review</div>
               <h1>Browser Automation and Agent Mechanisms</h1>
               <p>
-                本文档说明浏览器自动化能力在 Agent 系统中的定位，并解释工具层、协议层和执行层之间的边界。
+                本文档说明浏览器自动化能力在 Agent
+                系统中的定位，并解释工具层、协议层和执行层之间的边界。
               </p>
 
               <h2>Agent 与工具层边界</h2>
               <p>
-                工具层负责封装浏览器控制协议与执行细节。Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。
+                工具层负责封装浏览器控制协议与执行细节。Agent
+                负责决策、规划和结果校验，避免把流程逻辑沉到工具层。
               </p>
               <p>
-                CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。
+                CDP、WebDriver 与 WebDriver BiDi
+                分别覆盖不同的接入边界。选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。
               </p>
 
               <h2>适用场景</h2>
@@ -1274,7 +1312,8 @@
 
               <h2>与 Codex Review Loop 的关系</h2>
               <p>
-                用户在预览区圈选内容并创建评论。Codex 读取 <code>open</code> comments 后生成下一版文档，再通过 API 回写处理状态。
+                用户在预览区圈选内容并创建评论。Codex 读取 <code>open</code> comments
+                后生成下一版文档，再通过 API 回写处理状态。
               </p>
               <ul>
                 <li>左侧文件树用于切换 Markdown 文件和历史版本。</li>
@@ -1289,30 +1328,86 @@
                 <span class="diff-stat">+4 -3</span>
               </div>
               <div class="diff-unified">
-                <div class="diff-row"><span class="diff-line">43</span><span class="diff-code">CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span></div>
-                <div class="diff-row del"><span class="diff-line">58</span><span class="diff-code">- Agent 负责决策、规划和结果校验。</span></div>
-                <div class="diff-row add"><span class="diff-line">58</span><span class="diff-code">+ Agent 负责决策、规划、结果校验和失败回退策略。</span></div>
-                <div class="diff-row"><span class="diff-line">72</span><span class="diff-code">适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span></div>
-                <div class="diff-row del"><span class="diff-line">91</span><span class="diff-code">- 在涉及登录态、敏感权限或本地文件访问时，需要谨慎处理。</span></div>
-                <div class="diff-row add"><span class="diff-line">91</span><span class="diff-code">+ 在涉及登录态、敏感权限或本地文件访问时，需要把授权边界写清楚。</span></div>
+                <div class="diff-row">
+                  <span class="diff-line">43</span
+                  ><span class="diff-code"
+                    >CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span
+                  >
+                </div>
+                <div class="diff-row del">
+                  <span class="diff-line">58</span
+                  ><span class="diff-code">- Agent 负责决策、规划和结果校验。</span>
+                </div>
+                <div class="diff-row add">
+                  <span class="diff-line">58</span
+                  ><span class="diff-code">+ Agent 负责决策、规划、结果校验和失败回退策略。</span>
+                </div>
+                <div class="diff-row">
+                  <span class="diff-line">72</span
+                  ><span class="diff-code"
+                    >适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span
+                  >
+                </div>
+                <div class="diff-row del">
+                  <span class="diff-line">91</span
+                  ><span class="diff-code"
+                    >- 在涉及登录态、敏感权限或本地文件访问时，需要谨慎处理。</span
+                  >
+                </div>
+                <div class="diff-row add">
+                  <span class="diff-line">91</span
+                  ><span class="diff-code"
+                    >+ 在涉及登录态、敏感权限或本地文件访问时，需要把授权边界写清楚。</span
+                  >
+                </div>
               </div>
               <div class="diff-split">
                 <div class="diff-pane">
-                  <div class="diff-row"><span class="diff-line">43</span><span class="diff-code">CDP、WebDriver 覆盖不同的接入边界。</span></div>
-                  <div class="diff-row del"><span class="diff-line">58</span><span class="diff-code">Agent 负责决策、规划和结果校验。</span></div>
-                  <div class="diff-row"><span class="diff-line">72</span><span class="diff-code">适合端到端验证、受控浏览器操作。</span></div>
-                  <div class="diff-row del"><span class="diff-line">91</span><span class="diff-code">需要谨慎处理登录态和本地文件访问。</span></div>
+                  <div class="diff-row">
+                    <span class="diff-line">43</span
+                    ><span class="diff-code">CDP、WebDriver 覆盖不同的接入边界。</span>
+                  </div>
+                  <div class="diff-row del">
+                    <span class="diff-line">58</span
+                    ><span class="diff-code">Agent 负责决策、规划和结果校验。</span>
+                  </div>
+                  <div class="diff-row">
+                    <span class="diff-line">72</span
+                    ><span class="diff-code">适合端到端验证、受控浏览器操作。</span>
+                  </div>
+                  <div class="diff-row del">
+                    <span class="diff-line">91</span
+                    ><span class="diff-code">需要谨慎处理登录态和本地文件访问。</span>
+                  </div>
                 </div>
                 <div class="diff-pane">
-                  <div class="diff-row"><span class="diff-line">43</span><span class="diff-code">CDP、WebDriver 与 WebDriver BiDi 覆盖不同边界。</span></div>
-                  <div class="diff-row add"><span class="diff-line">58</span><span class="diff-code">Agent 负责决策、规划、校验和失败回退策略。</span></div>
-                  <div class="diff-row"><span class="diff-line">72</span><span class="diff-code">适合端到端验证、受控浏览器操作和状态回读。</span></div>
-                  <div class="diff-row add"><span class="diff-line">91</span><span class="diff-code">需要把授权边界写清楚，尤其是登录态和本地文件。</span></div>
+                  <div class="diff-row">
+                    <span class="diff-line">43</span
+                    ><span class="diff-code">CDP、WebDriver 与 WebDriver BiDi 覆盖不同边界。</span>
+                  </div>
+                  <div class="diff-row add">
+                    <span class="diff-line">58</span
+                    ><span class="diff-code">Agent 负责决策、规划、校验和失败回退策略。</span>
+                  </div>
+                  <div class="diff-row">
+                    <span class="diff-line">72</span
+                    ><span class="diff-code">适合端到端验证、受控浏览器操作和状态回读。</span>
+                  </div>
+                  <div class="diff-row add">
+                    <span class="diff-line">91</span
+                    ><span class="diff-code">需要把授权边界写清楚，尤其是登录态和本地文件。</span>
+                  </div>
                 </div>
               </div>
             </article>
 
-            <span class="marker done" role="button" tabindex="0" aria-label="Open resolved comment" data-history-open>
+            <span
+              class="marker done"
+              role="button"
+              tabindex="0"
+              aria-label="Open resolved comment"
+              data-history-open
+            >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M20 6 9 17l-5-5"
@@ -1340,7 +1435,13 @@
                 />
               </svg>
             </span>
-            <span class="marker open" role="button" tabindex="0" aria-label="Open comment editor" data-editor-open>
+            <span
+              class="marker open"
+              role="button"
+              tabindex="0"
+              aria-label="Open comment editor"
+              data-editor-open
+            >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
@@ -1356,7 +1457,9 @@
               <div class="editor-head">
                 <span>Line 91 · selected text</span>
               </div>
-              <textarea placeholder="Add a comment for this selection...">建议补充权限边界，尤其是登录态和本地文件。</textarea>
+              <textarea placeholder="Add a comment for this selection...">
+建议补充权限边界，尤其是登录态和本地文件。</textarea
+              >
               <div class="editor-actions">
                 <button class="text-button" type="button" data-editor-close>Cancel</button>
                 <button class="save-button" type="button" data-editor-close>Submit</button>
@@ -1376,7 +1479,12 @@
       </main>
 
       <aside class="comments">
-        <button class="comments-rail" type="button" data-comments-toggle aria-label="Expand comments">
+        <button
+          class="comments-rail"
+          type="button"
+          data-comments-toggle
+          aria-label="Expand comments"
+        >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
             <path
               d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
@@ -1391,7 +1499,12 @@
         <div class="comments-top">
           <div class="comments-title">
             <h2>Comments</h2>
-            <button class="icon-button" type="button" data-comments-toggle aria-label="Collapse comments">
+            <button
+              class="icon-button"
+              type="button"
+              data-comments-toggle
+              aria-label="Collapse comments"
+            >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                 <path
                   d="m9 18 6-6-6-6"
@@ -1459,40 +1572,40 @@
     <script>
       (() => {
         const root = document.documentElement;
-        const app = document.querySelector(".app");
-        const button = document.querySelector("[data-theme-toggle]");
-        const label = document.querySelector("[data-theme-label]");
-        const commentButtons = document.querySelectorAll("[data-comments-toggle]");
-        const editor = document.querySelector(".inline-editor");
-        const historyCard = document.querySelector(".history-card");
-        const selectedText = document.querySelector(".selected");
-        const readerScroll = document.querySelector(".reader-scroll");
-        const editorOpenButtons = document.querySelectorAll("[data-editor-open]");
-        const editorCloseButtons = document.querySelectorAll("[data-editor-close]");
-        const historyOpenButtons = document.querySelectorAll("[data-history-open]");
-        const viewToggle = document.querySelector("[data-view-toggle]");
-        const diffLayoutButtons = document.querySelectorAll("[data-diff-layout]");
-        const key = "md-review-theme";
-        const systemTheme = window.matchMedia("(prefers-color-scheme: light)").matches
-          ? "light"
-          : "dark";
+        const app = document.querySelector('.app');
+        const button = document.querySelector('[data-theme-toggle]');
+        const label = document.querySelector('[data-theme-label]');
+        const commentButtons = document.querySelectorAll('[data-comments-toggle]');
+        const editor = document.querySelector('.inline-editor');
+        const historyCard = document.querySelector('.history-card');
+        const selectedText = document.querySelector('.selected');
+        const readerScroll = document.querySelector('.reader-scroll');
+        const editorOpenButtons = document.querySelectorAll('[data-editor-open]');
+        const editorCloseButtons = document.querySelectorAll('[data-editor-close]');
+        const historyOpenButtons = document.querySelectorAll('[data-history-open]');
+        const viewToggle = document.querySelector('[data-view-toggle]');
+        const diffLayoutButtons = document.querySelectorAll('[data-diff-layout]');
+        const key = 'md-review-theme';
+        const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches
+          ? 'light'
+          : 'dark';
         const viewportPadding = 12;
 
         const applyTheme = (theme) => {
           root.dataset.theme = theme;
           button?.setAttribute(
-            "aria-label",
-            theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
+            'aria-label',
+            theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
           );
           if (label) {
-            label.textContent = theme === "dark" ? "Dark theme" : "Light theme";
+            label.textContent = theme === 'dark' ? 'Dark theme' : 'Light theme';
           }
         };
 
         applyTheme(localStorage.getItem(key) || systemTheme);
 
-        button?.addEventListener("click", () => {
-          const next = root.dataset.theme === "dark" ? "light" : "dark";
+        button?.addEventListener('click', () => {
+          const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
           localStorage.setItem(key, next);
           applyTheme(next);
         });
@@ -1514,11 +1627,11 @@
           }
 
           editor.style.setProperty(
-            "--editor-left",
+            '--editor-left',
             `${Math.round(clamp(left, viewportPadding, Math.max(viewportPadding, maxLeft)))}px`,
           );
           editor.style.setProperty(
-            "--editor-top",
+            '--editor-top',
             `${Math.round(clamp(top, viewportPadding, Math.max(viewportPadding, maxTop)))}px`,
           );
         };
@@ -1527,27 +1640,27 @@
           if (!editor) return;
           closeHistoryCard();
           editor.hidden = false;
-          app?.classList.add("comment-editor-open");
+          app?.classList.add('comment-editor-open');
           requestAnimationFrame(positionEditor);
         };
 
         const closeEditor = () => {
           if (!editor) return;
           editor.hidden = true;
-          app?.classList.remove("comment-editor-open");
+          app?.classList.remove('comment-editor-open');
         };
 
         const openHistoryCard = () => {
           if (!historyCard) return;
           closeEditor();
           historyCard.hidden = false;
-          app?.classList.add("history-card-open");
+          app?.classList.add('history-card-open');
         };
 
         const closeHistoryCard = () => {
           if (!historyCard) return;
           historyCard.hidden = true;
-          app?.classList.remove("history-card-open");
+          app?.classList.remove('history-card-open');
         };
 
         const closeFloatingLayers = () => {
@@ -1556,12 +1669,12 @@
         };
 
         const setView = (view) => {
-          const isDiff = view === "diff";
-          app?.classList.toggle("view-diff", isDiff);
+          const isDiff = view === 'diff';
+          app?.classList.toggle('view-diff', isDiff);
           if (viewToggle) {
-            viewToggle.textContent = isDiff ? "Diff" : "Preview";
-            viewToggle.setAttribute("aria-label", isDiff ? "Switch to Preview" : "Switch to Diff");
-            viewToggle.setAttribute("title", isDiff ? "Switch to Preview" : "Switch to Diff");
+            viewToggle.textContent = isDiff ? 'Diff' : 'Preview';
+            viewToggle.setAttribute('aria-label', isDiff ? 'Switch to Preview' : 'Switch to Diff');
+            viewToggle.setAttribute('title', isDiff ? 'Switch to Preview' : 'Switch to Diff');
           }
           if (isDiff) {
             closeFloatingLayers();
@@ -1569,42 +1682,44 @@
         };
 
         const setDiffLayout = (layout) => {
-          const split = layout === "split";
-          app?.classList.toggle("diff-split", split);
+          const split = layout === 'split';
+          app?.classList.toggle('diff-split', split);
           diffLayoutButtons.forEach((button) => {
             const active = button.dataset.diffLayout === layout;
-            button.classList.toggle("active", active);
-            button.setAttribute("aria-selected", String(active));
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-selected', String(active));
           });
         };
 
-        editorOpenButtons.forEach((button) => button.addEventListener("click", openEditor));
-        editorCloseButtons.forEach((button) => button.addEventListener("click", closeEditor));
-        historyOpenButtons.forEach((button) => button.addEventListener("click", openHistoryCard));
+        editorOpenButtons.forEach((button) => button.addEventListener('click', openEditor));
+        editorCloseButtons.forEach((button) => button.addEventListener('click', closeEditor));
+        historyOpenButtons.forEach((button) => button.addEventListener('click', openHistoryCard));
         [...editorOpenButtons, ...historyOpenButtons].forEach((button) => {
-          button.addEventListener("keydown", (event) => {
-            if (event.key !== "Enter" && event.key !== " ") return;
+          button.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();
             button.click();
           });
         });
-        viewToggle?.addEventListener("click", () => {
-          setView(app?.classList.contains("view-diff") ? "preview" : "diff");
+        viewToggle?.addEventListener('click', () => {
+          setView(app?.classList.contains('view-diff') ? 'preview' : 'diff');
         });
         diffLayoutButtons.forEach((button) => {
-          button.addEventListener("click", () => setDiffLayout(button.dataset.diffLayout || "unified"));
+          button.addEventListener('click', () =>
+            setDiffLayout(button.dataset.diffLayout || 'unified'),
+          );
         });
-        readerScroll?.addEventListener("scroll", positionEditor, { passive: true });
-        window.addEventListener("resize", positionEditor);
-        setDiffLayout("unified");
+        readerScroll?.addEventListener('scroll', positionEditor, { passive: true });
+        window.addEventListener('resize', positionEditor);
+        setDiffLayout('unified');
         requestAnimationFrame(positionEditor);
 
-        document.addEventListener("click", (event) => {
+        document.addEventListener('click', (event) => {
           const target = event.target;
           if (!(target instanceof Element)) return;
           if (
             target.closest(
-              ".inline-editor, .history-card, .popover, [data-editor-open], [data-history-open], [data-comments-toggle], [data-theme-toggle], [data-view-toggle], [data-diff-layout]",
+              '.inline-editor, .history-card, .popover, [data-editor-open], [data-history-open], [data-comments-toggle], [data-theme-toggle], [data-view-toggle], [data-diff-layout]',
             )
           ) {
             return;
@@ -1613,22 +1728,22 @@
           closeFloatingLayers();
         });
 
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape") {
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
             closeFloatingLayers();
           }
         });
 
         commentButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            const narrow = window.matchMedia("(max-width: 1180px)").matches;
+          button.addEventListener('click', () => {
+            const narrow = window.matchMedia('(max-width: 1180px)').matches;
             if (narrow) {
-              app?.classList.toggle("comments-expanded-narrow");
+              app?.classList.toggle('comments-expanded-narrow');
               requestAnimationFrame(positionEditor);
               return;
             }
 
-            app?.classList.toggle("comments-collapsed");
+            app?.classList.toggle('comments-collapsed');
             requestAnimationFrame(positionEditor);
           });
         });

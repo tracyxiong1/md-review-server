@@ -42,7 +42,13 @@
           linear-gradient(180deg, #111318 0%, var(--bg) 52%);
         color: var(--text);
         font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
       }
 
       button,
@@ -381,7 +387,7 @@
       }
 
       .state-chip::before {
-        content: "";
+        content: '';
         width: 6px;
         height: 6px;
         background: currentColor;
@@ -433,7 +439,7 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         font-family:
-          "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          'SFMono-Regular', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
           monospace;
         font-size: 13px;
         line-height: 1.55;
@@ -541,7 +547,12 @@
         border-radius: 9px;
         box-shadow: 0 16px 44px rgb(0 0 0 / 38%);
         font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
           sans-serif;
       }
 
@@ -941,28 +952,27 @@
                       ><span class="code">## Agent 与工具层边界</span>
                     </div>
                     <div class="line no">
-                      <span class="ln">39</span><span class="sign"></span
-                      ><span class="code"></span>
+                      <span class="ln">39</span><span class="sign"></span><span class="code"></span>
                     </div>
                     <div class="line del">
                       <span class="ln">40</span><span class="sign">-</span
-                      ><span class="code">工具层负责封装 <span class="word-del">自动化方案</span>。</span>
+                      ><span class="code"
+                        >工具层负责封装 <span class="word-del">自动化方案</span>。</span
+                      >
                     </div>
                     <div class="line del">
                       <span class="ln">41</span><span class="sign">-</span
                       ><span class="code">Agent 只需要调用工具。</span>
                     </div>
                     <div class="line no">
-                      <span class="ln">42</span><span class="sign"></span
-                      ><span class="code"></span>
+                      <span class="ln">42</span><span class="sign"></span><span class="code"></span>
                     </div>
                     <div class="line del">
                       <span class="ln">43</span><span class="sign">-</span
                       ><span class="code">CDP 是一种浏览器控制协议。</span>
                     </div>
                     <div class="line no">
-                      <span class="ln">44</span><span class="sign"></span
-                      ><span class="code"></span>
+                      <span class="ln">44</span><span class="sign"></span><span class="code"></span>
                     </div>
                     <div class="line no">
                       <span class="ln">45</span><span class="sign"></span
@@ -980,20 +990,23 @@
                       ><span class="code">## Agent 与工具层边界</span>
                     </div>
                     <div class="line no">
-                      <span class="ln">39</span><span class="sign"></span
-                      ><span class="code"></span>
+                      <span class="ln">39</span><span class="sign"></span><span class="code"></span>
                     </div>
                     <div class="line add">
                       <span class="ln">40</span><span class="sign">+</span
-                      ><span class="code">工具层负责封装 <span class="word-add">浏览器控制协议与执行细节</span>。</span>
+                      ><span class="code"
+                        >工具层负责封装
+                        <span class="word-add">浏览器控制协议与执行细节</span>。</span
+                      >
                     </div>
                     <div class="line add">
                       <span class="ln">41</span><span class="sign">+</span
-                      ><span class="code">Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。</span>
+                      ><span class="code"
+                        >Agent 负责决策、规划和结果校验，避免把流程逻辑沉到工具层。</span
+                      >
                     </div>
                     <div class="line no">
-                      <span class="ln">42</span><span class="sign"></span
-                      ><span class="code"></span>
+                      <span class="ln">42</span><span class="sign"></span><span class="code"></span>
                     </div>
                     <div class="line add focus">
                       <span class="marker" aria-hidden="true">
@@ -1015,19 +1028,25 @@
                         </svg>
                       </span>
                       <span class="ln">43</span><span class="sign">+</span
-                      ><span class="code">CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span>
+                      ><span class="code"
+                        >CDP、WebDriver 与 WebDriver BiDi 分别覆盖不同的接入边界。</span
+                      >
                       <div class="inline-tip">
                         <div class="tip-top">
                           <span class="tip-status">Resolved</span>
                           <span class="tip-source">v3:43</span>
                         </div>
                         <p class="tip-text">补充协议差异，不要只写 CDP。</p>
-                        <p class="tip-resolution">已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。</p>
+                        <p class="tip-resolution">
+                          已在 v4 拆成协议边界说明，并补充 WebDriver BiDi。
+                        </p>
                       </div>
                     </div>
                     <div class="line add">
                       <span class="ln">44</span><span class="sign">+</span
-                      ><span class="code">选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。</span>
+                      ><span class="code"
+                        >选择协议时，应优先考虑稳定性、权限边界和跨浏览器需求。</span
+                      >
                     </div>
                     <div class="line no">
                       <span class="ln">45</span><span class="sign"></span
@@ -1035,7 +1054,9 @@
                     </div>
                     <div class="line add">
                       <span class="ln">46</span><span class="sign">+</span
-                      ><span class="code">适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span>
+                      ><span class="code"
+                        >适合端到端验证、受控浏览器操作和需要页面状态回读的任务。</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -1044,7 +1065,9 @@
               <div class="preview-note">
                 <div class="note">
                   <strong>更像工作台</strong>
-                  <span>把文件、版本、diff 和评论放进同一条 review flow，不再只是 Markdown 预览。</span>
+                  <span
+                    >把文件、版本、diff 和评论放进同一条 review flow，不再只是 Markdown 预览。</span
+                  >
                 </div>
                 <div class="note">
                   <strong>更少干扰</strong>
@@ -1125,7 +1148,8 @@
           <div class="queue-footer">
             <div class="summary-box">
               <strong>Codex handoff</strong><br />
-              下轮只读取 open comments。resolved 与 partial 会保留在历史角标中，方便对照为什么改成现在这样。
+              下轮只读取 open comments。resolved 与 partial
+              会保留在历史角标中，方便对照为什么改成现在这样。
             </div>
           </div>
         </aside>

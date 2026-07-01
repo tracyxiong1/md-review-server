@@ -139,14 +139,21 @@ function TreeNodeComponent({
   if (node.isFile) {
     const fileSummary = node.path ? reviewSummary.byFile[node.path] : undefined;
     const openCount = fileSummary?.openCount || 0;
-    const fileMeta = openCount > 0 ? String(openCount) : node.path && isHistoricalVersion(node.path, latestBySeries) ? 'old' : null;
+    const fileMeta =
+      openCount > 0
+        ? String(openCount)
+        : node.path && isHistoricalVersion(node.path, latestBySeries)
+          ? 'old'
+          : null;
 
     return (
       <div
         role="button"
         tabIndex={0}
         aria-label={
-          node.path && openCount > 0 ? `Select ${node.path}, ${formatOpenCount(openCount)}` : `Select ${node.path || node.name}`
+          node.path && openCount > 0
+            ? `Select ${node.path}, ${formatOpenCount(openCount)}`
+            : `Select ${node.path || node.name}`
         }
         className={`tree-item file ${selectedFile === node.path ? 'selected' : ''}`}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
@@ -372,9 +379,7 @@ export const FileTree = ({
           reviewSummary={effectiveReviewSummary}
           latestBySeries={latestBySeries}
         />
-        {filteredFiles.length === 0 && (
-          <p className="file-tree-empty">No matching files</p>
-        )}
+        {filteredFiles.length === 0 && <p className="file-tree-empty">No matching files</p>}
         {filteredFiles.length > 0 && searchQuery && (
           <p className="file-tree-count">
             {filteredFiles.length} of {files.length} files

@@ -31,13 +31,13 @@
 
 ### 3.1 已有能力
 
-| 模块 | 当前能力 |
-| --- | --- |
-| CLI | 支持文件模式、目录模式、端口、host、review-dir、active-file、readonly、no-open |
-| Server | 基于 Hono 提供 session、files、markdown、comments API |
-| Store | 使用 `.reviews/*.review.json` 保存评论，支持创建、编辑、删除、批量状态回写 |
-| Frontend | 支持 Markdown 预览、文件树、评论列表、选区评论、深色模式 |
-| Skill | 支持安装、更新、启动 review server、读取 open comments、生成下一版、回写状态 |
+| 模块     | 当前能力                                                                       |
+| -------- | ------------------------------------------------------------------------------ |
+| CLI      | 支持文件模式、目录模式、端口、host、review-dir、active-file、readonly、no-open |
+| Server   | 基于 Hono 提供 session、files、markdown、comments API                          |
+| Store    | 使用 `.reviews/*.review.json` 保存评论，支持创建、编辑、删除、批量状态回写     |
+| Frontend | 支持 Markdown 预览、文件树、评论列表、选区评论、深色模式                       |
+| Skill    | 支持安装、更新、启动 review server、读取 open comments、生成下一版、回写状态   |
 
 ### 3.2 已有评论数据结构
 
@@ -78,13 +78,13 @@ interface ReviewComment {
 
 ### 3.3 当前体验缺口
 
-| 问题 | 影响 | 升级方向 |
-| --- | --- | --- |
-| 评论输入位于右侧区域 | Codex 内嵌浏览器中视线跳转明显 | 改为选区附近的行内输入框 |
-| 评论处理状态只在列表中展示 | 用户难以在正文中感知历史评论 | 在正文行旁展示状态角标 |
-| 缺少版本对比视图 | 用户难以确认 Codex 是否正确响应评论 | 增加 Preview / Diff 切换 |
-| 浮层状态分散 | 容易出现浮层重叠、无法关闭、位置越界 | 引入统一浮层状态 |
-| 主题和布局仍偏原型 | 深浅主题、折叠状态、窄屏体验需要统一 | 建立稳定 UI 状态模型 |
+| 问题                       | 影响                                 | 升级方向                 |
+| -------------------------- | ------------------------------------ | ------------------------ |
+| 评论输入位于右侧区域       | Codex 内嵌浏览器中视线跳转明显       | 改为选区附近的行内输入框 |
+| 评论处理状态只在列表中展示 | 用户难以在正文中感知历史评论         | 在正文行旁展示状态角标   |
+| 缺少版本对比视图           | 用户难以确认 Codex 是否正确响应评论  | 增加 Preview / Diff 切换 |
+| 浮层状态分散               | 容易出现浮层重叠、无法关闭、位置越界 | 引入统一浮层状态         |
+| 主题和布局仍偏原型         | 深浅主题、折叠状态、窄屏体验需要统一 | 建立稳定 UI 状态模型     |
 
 ## 四、目标信息架构
 
@@ -178,32 +178,32 @@ interface ReviewWorkbenchState {
 
 ### 5.2 浮层状态规则
 
-| 事件 | 状态变化 |
-| --- | --- |
-| 用户选区并点击 Comment | `floatingLayer = commentEditor` |
-| 用户点击 open 评论角标 | `floatingLayer = commentEditor` 或跳转到已有评论详情 |
-| 用户点击 resolved / partially_resolved 角标 | `floatingLayer = commentHistory` |
-| 用户点击空白区域 | `floatingLayer = none` |
-| 用户按 `Esc` | `floatingLayer = none` |
-| 用户切换到 Diff | `floatingLayer = none` |
-| 用户滚动或 resize | 重新计算当前浮层位置 |
-| 用户打开一个浮层 | 自动关闭其他浮层 |
+| 事件                                        | 状态变化                                             |
+| ------------------------------------------- | ---------------------------------------------------- |
+| 用户选区并点击 Comment                      | `floatingLayer = commentEditor`                      |
+| 用户点击 open 评论角标                      | `floatingLayer = commentEditor` 或跳转到已有评论详情 |
+| 用户点击 resolved / partially_resolved 角标 | `floatingLayer = commentHistory`                     |
+| 用户点击空白区域                            | `floatingLayer = none`                               |
+| 用户按 `Esc`                                | `floatingLayer = none`                               |
+| 用户切换到 Diff                             | `floatingLayer = none`                               |
+| 用户滚动或 resize                           | 重新计算当前浮层位置                                 |
+| 用户打开一个浮层                            | 自动关闭其他浮层                                     |
 
 ### 5.3 交互选择器
 
 为便于 E2E 测试和 AI 修改，关键节点应保留稳定 `data-testid`。
 
-| 元素 | 建议 test id |
-| --- | --- |
-| Preview / Diff 切换 | `view-toggle` |
-| Diff 单列按钮 | `diff-layout-unified` |
-| Diff 双列按钮 | `diff-layout-split` |
-| 左侧折叠按钮 | `left-panel-toggle` |
-| 右侧折叠按钮 | `right-panel-toggle` |
-| 行内评论输入框 | `inline-comment-editor` |
-| 评论历史浮层 | `comment-history-popover` |
-| 评论角标 | `review-marker-${comment.id}` |
-| 评论列表项 | `comment-item-${comment.id}` |
+| 元素                | 建议 test id                  |
+| ------------------- | ----------------------------- |
+| Preview / Diff 切换 | `view-toggle`                 |
+| Diff 单列按钮       | `diff-layout-unified`         |
+| Diff 双列按钮       | `diff-layout-split`           |
+| 左侧折叠按钮        | `left-panel-toggle`           |
+| 右侧折叠按钮        | `right-panel-toggle`          |
+| 行内评论输入框      | `inline-comment-editor`       |
+| 评论历史浮层        | `comment-history-popover`     |
+| 评论角标            | `review-marker-${comment.id}` |
+| 评论列表项          | `comment-item-${comment.id}`  |
 
 ## 六、评论定位模型
 
@@ -313,11 +313,11 @@ interface DiffHunk {
 
 ### 7.3 视图模式
 
-| 模式 | 使用场景 | 行为 |
-| --- | --- | --- |
-| Unified | 默认模式，小屏和快速浏览 | 删除、插入、上下文行在同一列展示 |
-| Split | 宽屏对比 | 左侧旧版本，右侧新版本 |
-| Stacked Split | 窄屏降级 | 旧版本和新版本上下堆叠 |
+| 模式          | 使用场景                 | 行为                             |
+| ------------- | ------------------------ | -------------------------------- |
+| Unified       | 默认模式，小屏和快速浏览 | 删除、插入、上下文行在同一列展示 |
+| Split         | 宽屏对比                 | 左侧旧版本，右侧新版本           |
+| Stacked Split | 窄屏降级                 | 旧版本和新版本上下堆叠           |
 
 ### 7.4 文件选择策略
 
@@ -387,12 +387,12 @@ interface DiffResponse {
 
 错误处理：
 
-| 场景 | 状态码 | 返回 |
-| --- | --- | --- |
-| base 不存在 | 404 | `{ "error": "Base file not found" }` |
-| target 不存在 | 404 | `{ "error": "Target file not found" }` |
-| 路径越界 | 403 | `{ "error": "Invalid file path" }` |
-| 非 Markdown 文件 | 400 | `{ "error": "Unsupported file type" }` |
+| 场景             | 状态码 | 返回                                   |
+| ---------------- | ------ | -------------------------------------- |
+| base 不存在      | 404    | `{ "error": "Base file not found" }`   |
+| target 不存在    | 404    | `{ "error": "Target file not found" }` |
+| 路径越界         | 403    | `{ "error": "Invalid file path" }`     |
+| 非 Markdown 文件 | 400    | `{ "error": "Unsupported file type" }` |
 
 ## 九、文件与模块规划
 
@@ -431,24 +431,24 @@ src/
 
 ### 9.1 服务端模块
 
-| 文件 | 职责 |
-| --- | --- |
-| `server/comment-store.js` | 保持评论 sidecar 读写职责 |
+| 文件                       | 职责                                              |
+| -------------------------- | ------------------------------------------------- |
+| `server/comment-store.js`  | 保持评论 sidecar 读写职责                         |
 | `server/anchor-service.js` | 根据评论和当前 Markdown 内容生成 `ResolvedAnchor` |
-| `server/diff-service.js` | 读取文件、计算 diff、返回内部 diff 结构 |
-| `server/app.js` | 组合 API，不承载复杂定位或 diff 逻辑 |
+| `server/diff-service.js`   | 读取文件、计算 diff、返回内部 diff 结构           |
+| `server/app.js`            | 组合 API，不承载复杂定位或 diff 逻辑              |
 
 ### 9.2 前端模块
 
-| 文件 | 职责 |
-| --- | --- |
-| `ReviewWorkbench.tsx` | 组合三栏布局和全局 UI 状态 |
-| `InlineCommentEditor.tsx` | 行内评论创建和编辑 |
-| `ReviewMarkerLayer.tsx` | 根据 `ReviewMarker` 渲染正文左侧角标 |
-| `CommentHistoryPopover.tsx` | 展示历史评论处理结果 |
-| `DiffViewer.tsx` | 渲染 unified / split diff |
-| `useFloatingLayer.ts` | 统一管理浮层打开、关闭、定位和键盘行为 |
-| `useCommentAnchors.ts` | 加载和缓存当前文件评论锚点 |
+| 文件                        | 职责                                   |
+| --------------------------- | -------------------------------------- |
+| `ReviewWorkbench.tsx`       | 组合三栏布局和全局 UI 状态             |
+| `InlineCommentEditor.tsx`   | 行内评论创建和编辑                     |
+| `ReviewMarkerLayer.tsx`     | 根据 `ReviewMarker` 渲染正文左侧角标   |
+| `CommentHistoryPopover.tsx` | 展示历史评论处理结果                   |
+| `DiffViewer.tsx`            | 渲染 unified / split diff              |
+| `useFloatingLayer.ts`       | 统一管理浮层打开、关闭、定位和键盘行为 |
+| `useCommentAnchors.ts`      | 加载和缓存当前文件评论锚点             |
 
 ## 十、实现阶段
 
@@ -520,32 +520,32 @@ src/
 
 ### 11.1 单元测试
 
-| 模块 | 测试点 |
-| --- | --- |
+| 模块                   | 测试点                                   |
+| ---------------------- | ---------------------------------------- |
 | `resolveCommentAnchor` | exact、context、line、fallback、定位失败 |
-| `inferVersionPair` | v1/v2/v10、无版本文件、跨目录同名文件 |
-| `buildDiffHunks` | 插入、删除、替换、多 hunk、空文件 |
-| `clampFloatingRect` | 顶部、底部、左右边界、窄屏 |
-| `useFloatingLayer` | 互斥打开、空白关闭、Esc 关闭 |
+| `inferVersionPair`     | v1/v2/v10、无版本文件、跨目录同名文件    |
+| `buildDiffHunks`       | 插入、删除、替换、多 hunk、空文件        |
+| `clampFloatingRect`    | 顶部、底部、左右边界、窄屏               |
+| `useFloatingLayer`     | 互斥打开、空白关闭、Esc 关闭             |
 
 ### 11.2 API 测试
 
-| 接口 | 测试点 |
-| --- | --- |
-| `GET /api/comments?includeAnchors=1` | 返回 `resolvedAnchor`，定位失败时不抛错 |
-| `GET /api/comment-markers` | marker 聚合、状态过滤、路径校验 |
-| `GET /api/diff` | base/target 存在、路径越界、非 Markdown 文件 |
-| `PATCH /api/comments` | 批量回写后 marker 状态同步 |
+| 接口                                 | 测试点                                       |
+| ------------------------------------ | -------------------------------------------- |
+| `GET /api/comments?includeAnchors=1` | 返回 `resolvedAnchor`，定位失败时不抛错      |
+| `GET /api/comment-markers`           | marker 聚合、状态过滤、路径校验              |
+| `GET /api/diff`                      | base/target 存在、路径越界、非 Markdown 文件 |
+| `PATCH /api/comments`                | 批量回写后 marker 状态同步                   |
 
 ### 11.3 组件测试
 
-| 组件 | 测试点 |
-| --- | --- |
-| `InlineCommentEditor` | submit、cancel、readonly、定位 |
-| `ReviewMarkerLayer` | 单条、多条、不同状态、点击打开 |
+| 组件                    | 测试点                                 |
+| ----------------------- | -------------------------------------- |
+| `InlineCommentEditor`   | submit、cancel、readonly、定位         |
+| `ReviewMarkerLayer`     | 单条、多条、不同状态、点击打开         |
 | `CommentHistoryPopover` | resolved、partial、unresolved 内容展示 |
-| `DiffViewer` | unified、split、窄屏降级 |
-| `ReviewWorkbench` | 左右折叠、视图切换、浮层互斥 |
+| `DiffViewer`            | unified、split、窄屏降级               |
+| `ReviewWorkbench`       | 左右折叠、视图切换、浮层互斥           |
 
 ### 11.4 浏览器流程测试
 
@@ -595,14 +595,14 @@ src/
 
 ## 十三、风险与处理方式
 
-| 风险 | 表现 | 处理方式 |
-| --- | --- | --- |
-| 评论跨版本定位不准 | 角标出现在错误行 | 使用 confidence 字段，并在低置信度时弱化展示 |
-| 浮层与滚动容器冲突 | 输入框位置漂移或被裁切 | 使用 fixed 定位和统一 clamp 逻辑 |
-| Diff 结构和 UI 耦合 | 更换 diff 库成本高 | 引入内部 `DiffHunk` 结构 |
-| 右侧评论区过重 | Codex 内嵌窗口空间不足 | 默认折叠、保留角标和计数入口 |
-| 状态来源分裂 | 角标、列表、API 返回不一致 | 所有状态来自 `ReviewComment` 和派生 marker |
-| AI 后续修改偏离目标 | 新增交互破坏主链路 | 以本文档和 fixtures 作为实现前置上下文 |
+| 风险                | 表现                       | 处理方式                                     |
+| ------------------- | -------------------------- | -------------------------------------------- |
+| 评论跨版本定位不准  | 角标出现在错误行           | 使用 confidence 字段，并在低置信度时弱化展示 |
+| 浮层与滚动容器冲突  | 输入框位置漂移或被裁切     | 使用 fixed 定位和统一 clamp 逻辑             |
+| Diff 结构和 UI 耦合 | 更换 diff 库成本高         | 引入内部 `DiffHunk` 结构                     |
+| 右侧评论区过重      | Codex 内嵌窗口空间不足     | 默认折叠、保留角标和计数入口                 |
+| 状态来源分裂        | 角标、列表、API 返回不一致 | 所有状态来自 `ReviewComment` 和派生 marker   |
+| AI 后续修改偏离目标 | 新增交互破坏主链路         | 以本文档和 fixtures 作为实现前置上下文       |
 
 ## 十四、最小可交付范围
 
