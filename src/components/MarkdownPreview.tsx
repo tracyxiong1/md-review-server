@@ -61,6 +61,18 @@ const getStatusIconKind = (status = 'resolved') => {
   return 'alert';
 };
 
+const dedupeMarkerComments = (comments: Comment[]): Comment[] => {
+  const seen = new Set<string>();
+  return comments.filter((comment) => {
+    const key = `${comment.file || ''}:${comment.id}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+
 const StatusMarkerIcon = ({ kind }: { kind: string }) => {
   if (kind === 'check') {
     return (
@@ -201,7 +213,7 @@ const createComponentsWithLinePosition = (
 
     const sourceComments = sourceCommentsByLine.get(line) || [];
     const targetComments = targetCommentsByLine.get(line) || [];
-    const comments = [...sourceComments, ...targetComments];
+    const comments = dedupeMarkerComments([...sourceComments, ...targetComments]);
     if (!comments?.length) {
       return null;
     }
@@ -450,36 +462,46 @@ export const MarkdownPreview = ({
             <h1>{filename}</h1>
             {canCompare && (
               <div className="markdown-view-actions">
-                <button
-                  type="button"
-                  className="diff-toggle-button"
-                  data-testid="view-toggle"
-                  aria-label={showDiff ? 'Switch to Preview' : 'Switch to Diff'}
-                  title={showDiff ? 'Switch to Preview' : `Switch to Diff from ${compareFilename}`}
-                  onClick={() => setActiveDiffKey(showDiff ? null : diffKey)}
-                >
-                  <span>{showDiff ? 'Diff' : 'Preview'}</span>
-                  <span className="view-toggle-icon" aria-hidden="true">
-                    ↔
-                  </span>
-                </button>
+                <div className="markdown-view-switch" role="group" aria-label="View mode">
+                  <button
+                    type="button"
+                    className={`view-mode-button ${!showDiff ? 'active' : ''}`}
+                    data-testid="view-mode-preview"
+                    aria-label="Show preview"
+                    aria-pressed={!showDiff}
+                    onClick={() => setActiveDiffKey(null)}
+                  >
+                    Preview
+                  </button>
+                  <button
+                    type="button"
+                    className={`view-mode-button ${showDiff ? 'active' : ''}`}
+                    data-testid="view-mode-diff"
+                    aria-label="Show diff"
+                    aria-pressed={showDiff}
+                    title={`Show diff from ${compareFilename}`}
+                    onClick={() => setActiveDiffKey(diffKey)}
+                  >
+                    Diff
+                  </button>
+                </div>
                 {showDiff && (
                   <div className="diff-view-toolbar" aria-label="Diff view mode">
                     <button
                       type="button"
                       className={`diff-view-mode-button ${diffViewMode === 'unified' ? 'active' : ''}`}
                       data-testid="diff-layout-unified"
-                      aria-label="Use unified diff view"
+                      aria-label="Use single-column diff view"
                       aria-pressed={diffViewMode === 'unified'}
                       onClick={() => setDiffViewMode('unified')}
                     >
-                      Unified
+                      Single
                     </button>
                     <button
                       type="button"
                       className={`diff-view-mode-button ${diffViewMode === 'split' ? 'active' : ''}`}
                       data-testid="diff-layout-split"
-                      aria-label="Use split diff view"
+                      aria-label="Use two-column diff view"
                       aria-pressed={diffViewMode === 'split'}
                       onClick={() => setDiffViewMode('split')}
                     >

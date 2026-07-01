@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { MarkdownPreview } from './MarkdownPreview';
@@ -131,6 +131,35 @@ describe('MarkdownPreview', () => {
     expect(screen.getByText('Please clarify the setup steps')).toBeInTheDocument();
     expect(screen.getByText('Added the missing setup details.')).toBeInTheDocument();
     expect(screen.getByText('guide.v3.md:2')).toBeInTheDocument();
+  });
+
+  it('does not double count the same comment when it is both source and target anchored', () => {
+    const comment: Comment = {
+      id: 'c001',
+      file: 'guide.v4.md',
+      text: 'Clarify the permission boundary',
+      selectedText: 'Permission boundary',
+      startLine: 3,
+      endLine: 3,
+      status: 'resolved',
+      targetFile: 'guide.v4.md',
+      targetStartLine: 3,
+      targetEndLine: 3,
+      resolution: 'Done.',
+      createdAt: new Date('2026-06-30T00:00:00Z'),
+    };
+
+    render(
+      <MarkdownPreview
+        content={'# Guide\n\nPermission boundary'}
+        filename="guide.v4.md"
+        comments={[comment]}
+        targetComments={[comment]}
+      />,
+    );
+
+    const marker = screen.getByTestId('review-marker-c001');
+    expect(within(marker).queryByText('2')).not.toBeInTheDocument();
   });
 
   it('shows open comment markers on source lines', async () => {
@@ -307,13 +336,28 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Switch to Diff' })).toHaveTextContent('Preview');
+    expect(screen.getByRole('button', { name: 'Show preview' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Show diff' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
     expect(screen.queryByTestId('diff-viewer')).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Switch to Diff' }));
+    await user.click(screen.getByRole('button', { name: 'Show diff' }));
 
     const diffViewer = screen.getByTestId('diff-viewer');
     expect(diffViewer).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show preview' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    expect(screen.getByRole('button', { name: 'Show diff' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(diffViewer).toHaveTextContent('old:# Guide Old text');
     expect(diffViewer).toHaveTextContent('new:# Guide New text');
     expect(diffViewerMock).toHaveBeenLastCalledWith(
@@ -324,7 +368,11 @@ describe('MarkdownPreview', () => {
       }),
     );
 
-    await user.click(screen.getByRole('button', { name: 'Use split diff view' }));
+    expect(screen.getByRole('button', { name: 'Use single-column diff view' })).toHaveTextContent(
+      'Single',
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Use two-column diff view' }));
 
     expect(diffViewerMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -334,9 +382,7 @@ describe('MarkdownPreview', () => {
       }),
     );
 
-    expect(screen.getByRole('button', { name: 'Switch to Preview' })).toHaveTextContent('Diff');
-
-    await user.click(screen.getByRole('button', { name: 'Switch to Preview' }));
+    await user.click(screen.getByRole('button', { name: 'Show preview' }));
 
     expect(screen.queryByTestId('diff-viewer')).not.toBeInTheDocument();
   });

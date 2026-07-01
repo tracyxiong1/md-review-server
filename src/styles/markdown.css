@@ -8,7 +8,7 @@
 }
 
 .markdown-with-comments.comments-collapsed {
-  grid-template-columns: minmax(0, 1fr) 46px;
+  grid-template-columns: minmax(0, 1fr) 42px;
 }
 
 .markdown-container {
@@ -44,7 +44,7 @@
 }
 
 .comments-sidebar-collapsed {
-  width: 46px;
+  width: 42px;
   align-items: center;
   padding: 0;
 }
@@ -93,15 +93,15 @@
 
 .comments-toggle-button {
   position: relative;
-  margin-top: 12px;
-  width: 30px;
-  height: 30px;
+  margin-top: 13px;
+  width: 27px;
+  height: 27px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 0;
-  border-radius: 7px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
   cursor: pointer;
   box-shadow: none;
   transition: all 0.2s ease;
@@ -111,6 +111,7 @@
 .comments-toggle-button:hover {
   color: var(--text-primary);
   background: var(--bg-tertiary);
+  border-color: var(--border-primary);
 }
 
 .comments-toggle-button:active {
@@ -119,17 +120,17 @@
 
 .comments-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  min-width: 17px;
-  height: 17px;
+  top: -6px;
+  right: -7px;
+  min-width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--status-blue-bg);
   color: var(--status-blue);
   font-size: 10px;
-  font-weight: 650;
+  font-weight: 600;
   border-radius: 10px;
   padding: 0 5px;
   border: 1px solid var(--status-blue-border);
@@ -137,26 +138,26 @@
 
 .markdown-header {
   flex: 0 0 auto;
-  min-height: 54px;
+  min-height: 52px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--border-secondary);
-  padding: 0 18px;
+  padding: 0 16px;
   margin-bottom: 0;
 }
 
 .markdown-header h1 {
-  font-size: 17px;
+  font-size: 16px;
   color: var(--text-primary);
   margin: 0;
-  font-weight: 570;
+  font-weight: 540;
   line-height: 1.25;
 }
 
 .markdown-title-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   width: 100%;
   min-width: 0;
@@ -172,36 +173,55 @@
 .markdown-view-actions {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
+  justify-self: end;
+  max-width: 100%;
+  overflow: visible;
+  white-space: nowrap;
 }
 
-.diff-toggle-button {
+.markdown-view-switch {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-control);
+  border: 1px solid var(--border-secondary);
+  border-radius: 9px;
+}
+
+.view-mode-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 30px;
+  flex: 0 0 auto;
+  min-height: 26px;
   min-width: 58px;
   padding: 0 9px;
   color: var(--text-secondary);
   background: transparent;
-  border: 1px solid var(--border-secondary);
-  border-radius: 8px;
-  font-size: 12.5px;
+  border: 0;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
 }
 
-.view-toggle-icon {
-  margin-left: 6px;
+.view-mode-button:not(.active) {
   color: var(--text-tertiary);
-  font-size: 11px;
-  line-height: 1;
 }
 
-.diff-toggle-button:hover {
+.view-mode-button:hover {
+  color: var(--text-secondary);
   background: var(--bg-tertiary);
+}
+
+.view-mode-button.active {
+  color: var(--text-primary);
+  background: var(--bg-control-active);
 }
 
 .frontmatter-block {
@@ -270,7 +290,7 @@
   min-height: 0;
   flex: 1;
   overflow: auto;
-  padding: 26px 36px 72px;
+  padding: 24px 30px 72px;
 }
 
 .markdown-reader {
@@ -295,22 +315,26 @@
 .diff-view-toolbar {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   justify-content: flex-end;
   gap: 2px;
-  padding: 0;
-  background: transparent;
-  border-bottom: 0;
+  padding: 2px;
+  background: var(--bg-control);
+  border: 1px solid var(--border-secondary);
+  border-radius: 9px;
 }
 
 .diff-view-mode-button {
-  min-height: 28px;
-  padding: 0 7px;
+  flex: 0 0 auto;
+  min-height: 26px;
+  min-width: 52px;
+  padding: 0 8px;
   color: var(--text-secondary);
   background: transparent;
   border: 0;
   border-radius: 7px;
-  font-size: 12px;
-  font-weight: 540;
+  font-size: 11.5px;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -320,8 +344,8 @@
 }
 
 .diff-view-mode-button.active {
-  color: var(--text-secondary);
-  background: var(--bg-control);
+  color: var(--text-primary);
+  background: var(--bg-control-active);
 }
 
 .markdown-diff-view pre {
@@ -356,7 +380,7 @@
 
 .processed-comment-marker {
   position: absolute;
-  left: -34px;
+  left: -50px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 20;
@@ -367,8 +391,8 @@
 .processed-comment-marker-button {
   position: relative;
   display: inline-flex;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -384,7 +408,12 @@
 
 .processed-comment-marker-button:hover {
   background: var(--bg-secondary);
-  transform: translateY(-1px);
+  transform: none;
+}
+
+.processed-comment-marker-button svg {
+  width: 11px;
+  height: 11px;
 }
 
 .processed-comment-marker-button.status-open {
@@ -415,8 +444,8 @@
   position: absolute;
   right: -0.35rem;
   bottom: -0.35rem;
-  min-width: 0.9rem;
-  height: 0.9rem;
+  min-width: 0.85rem;
+  height: 0.85rem;
   padding: 0 0.2rem;
   color: var(--status-red);
   background: var(--status-red-bg);
@@ -424,27 +453,27 @@
   border-style: solid;
   border-color: var(--status-red-border);
   border-radius: 999px;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
   line-height: 0.8rem;
 }
 
 .processed-comment-popover {
   position: absolute;
-  left: 28px;
-  top: -4px;
+  left: 25px;
+  top: -8px;
   z-index: 30;
   display: flex;
-  width: min(292px, calc(100vw - 88px));
+  width: min(292px, calc(100vw - 72px));
   flex-direction: column;
   gap: 0.75rem;
-  padding: 11px;
+  padding: 10px;
   color: var(--text-primary);
   background: var(--bg-elevated);
   border-width: 1px;
   border-style: solid;
   border-color: var(--border-primary);
-  border-radius: 11px;
+  border-radius: 10px;
   box-shadow: var(--shadow-floating);
   font-size: 12.5px;
   line-height: 1.45;
@@ -693,6 +722,9 @@
 }
 
 .popover-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
   border: none;
   color: var(--text-secondary);
@@ -719,7 +751,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  width: min(340px, calc(100vw - 24px));
+  width: min(320px, calc(100vw - 24px));
   max-height: calc(100vh - 24px);
   overflow: auto;
   padding: 4px 6px 5px;
@@ -929,7 +961,6 @@
   display: flex;
   gap: 6px;
   flex-shrink: 0;
-  margin-left: auto;
   margin-top: 8px;
 }
 
@@ -941,7 +972,7 @@
   background: none;
   border: 1px solid var(--border-secondary);
   border-radius: 7px;
-  padding: 0.25rem 0.45rem;
+  padding: 0.2rem 0.42rem;
   font-size: 0.75rem;
   color: var(--text-tertiary);
   cursor: pointer;
@@ -1011,7 +1042,7 @@
   background: none;
   border: 1px solid var(--border-secondary);
   border-radius: 7px;
-  padding: 0.25rem 0.45rem;
+  padding: 0.2rem 0.42rem;
   font-size: 0.75rem;
   color: var(--text-tertiary);
   cursor: pointer;
@@ -1054,7 +1085,7 @@
 .comment-item.active {
   padding: 11px;
   margin: 0 -4px 4px;
-  background: var(--bg-tertiary);
+  background: var(--bg-elevated);
   border: 1px solid var(--status-blue-border);
   border-radius: 10px;
 }
@@ -1268,9 +1299,9 @@
 }
 
 .comment-edit-save {
-  background: var(--link-color);
-  color: white;
-  border-color: var(--link-color);
+  background: var(--bg-control-active);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
 }
 
 .comment-edit-save:disabled {
@@ -1279,8 +1310,8 @@
 }
 
 .comment-edit-save:hover:not(:disabled) {
-  background: #0056b3;
-  border-color: #0056b3;
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
 }
 
 /* Mermaid diagram styles */
@@ -1380,4 +1411,117 @@
   border-radius: 6px;
   min-width: 28px;
   border: 1px solid #4b5563;
+}
+
+@media (width <= 1180px) {
+  .markdown-with-comments {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, var(--comments-sidebar-width, 304px));
+  }
+
+  .markdown-with-comments.comments-collapsed {
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  .markdown-reader-scroll {
+    padding: 22px 24px 64px;
+  }
+
+  .markdown-content {
+    padding: 30px 34px 42px;
+  }
+
+  .processed-comment-marker {
+    left: -42px;
+  }
+}
+
+@media (width <= 860px) {
+  .markdown-with-comments:not(.comments-collapsed) {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .markdown-title-row {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 8px;
+  }
+
+  .markdown-header {
+    padding: 0 12px;
+  }
+
+  .markdown-view-actions {
+    gap: 4px;
+  }
+
+  .markdown-reader-scroll {
+    padding: 18px 16px 56px;
+  }
+
+  .markdown-content {
+    padding: 26px 24px 36px;
+  }
+
+  .processed-comment-marker {
+    left: -34px;
+  }
+}
+
+@media (width <= 720px) {
+  .markdown-title-row {
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-title-row h1 {
+    display: none;
+  }
+
+  .markdown-view-actions {
+    justify-self: end;
+  }
+}
+
+@media (width <= 640px) {
+  .markdown-with-comments,
+  .markdown-with-comments.comments-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .markdown-with-comments.comments-collapsed {
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  .comments-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 60;
+    width: min(304px, calc(100vw - 46px)) !important;
+    box-shadow: var(--shadow-floating);
+  }
+
+  .comments-sidebar-collapsed {
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    width: 42px !important;
+    box-shadow: none;
+  }
+}
+
+@media (width <= 420px) {
+  .markdown-header {
+    padding: 0 8px;
+  }
+
+  .markdown-view-actions {
+    gap: 4px;
+  }
+
+  .view-mode-button,
+  .diff-view-mode-button {
+    min-width: auto;
+    padding: 0 7px;
+    font-size: 11.5px;
+  }
 }

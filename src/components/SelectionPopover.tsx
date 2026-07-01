@@ -423,6 +423,21 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleCommentClick}
         >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M7 8h10" />
+            <path d="M7 12h6" />
+            <path d="M5 4h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V7a3 3 0 0 1 3-3Z" />
+          </svg>
           Comment
         </button>
       ) : (
