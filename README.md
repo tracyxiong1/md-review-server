@@ -118,6 +118,20 @@ md-review-server docs --port 3030
 
 默认只监听 `127.0.0.1`。如果使用 `--host 0.0.0.0`，服务会在启动时输出安全提示。
 
+## 发版和 CHANGELOG
+
+版本变更记录在 [CHANGELOG.md](./CHANGELOG.md)。
+
+项目通过 GitHub Actions 中的 Release Please 管理发版：合入到 `main` 的 Conventional Commit 会被收集到 release PR 中，release PR 会自动更新 `package.json`、`.release-please-manifest.json` 和 `CHANGELOG.md`。合并 release PR 后，CI 会创建 GitHub Release 和版本 tag，并发布到 npm。
+
+常用提交前缀：
+
+- `feat:` 进入 minor release。
+- `fix:` 进入 patch release。
+- `feat!:`、`fix!:` 或带 `BREAKING CHANGE:` footer 的提交进入 major release。
+
+手动推送 `v*.*.*` tag 仍会触发 npm 发布，但不会自动补写 CHANGELOG；正常发版优先走 Release Please 生成的 release PR。
+
 ## 主要能力
 
 - 内置 `markdown-review-loop` Codex skill，支持 npm 安装和更新。
