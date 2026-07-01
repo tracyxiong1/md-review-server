@@ -68,6 +68,27 @@ describe('FileTree', () => {
     expect(screen.getByLabelText('Select docs/guide.v2.md, 1 open comment')).toBeInTheDocument();
   });
 
+  it('keeps historical versions out of the file list until searching', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FileTree
+        files={files}
+        selectedFile="docs/guide.v2.md"
+        onFileSelect={vi.fn()}
+        reviewSummary={buildReviewSummary(files, comments)}
+      />,
+    );
+
+    expect(screen.getByLabelText('Select docs/guide.v2.md, 1 open comment')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Select docs/guide.v1.md')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Select docs/guide.md')).not.toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText('Jump to file'), 'guide.v1');
+
+    expect(screen.getByLabelText('Select docs/guide.v1.md')).toBeInTheDocument();
+  });
+
   it('renders version review state and switches files from version rows', async () => {
     const user = userEvent.setup();
     const onFileSelect = vi.fn();

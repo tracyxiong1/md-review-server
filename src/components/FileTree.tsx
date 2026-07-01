@@ -272,22 +272,25 @@ export const FileTree = ({
 }: FileTreeProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const latestBySeries = useMemo(() => buildHistoricalVersionMap(files), [files]);
 
   // Filter files based on search query
+  const visibleFiles = searchQuery
+    ? files
+    : files.filter((file) => !isHistoricalVersion(file.path, latestBySeries));
   const filteredFiles = searchQuery
-    ? files.filter(
+    ? visibleFiles.filter(
         (file) =>
           file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           file.path.toLowerCase().includes(searchQuery.toLowerCase()),
       )
-    : files;
+    : visibleFiles;
 
   const tree = buildTree(filteredFiles);
   const effectiveReviewSummary = useMemo(
     () => reviewSummary || buildReviewSummary(files, []),
     [files, reviewSummary],
   );
-  const latestBySeries = useMemo(() => buildHistoricalVersionMap(files), [files]);
   const versionRows = buildVersionSummaries(files, selectedFile, effectiveReviewSummary);
 
   // Auto focus search input when requested
