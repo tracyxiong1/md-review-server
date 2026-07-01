@@ -61,6 +61,20 @@ example.v1.md -> example.v2.md
 我已经在新版上补充了评论，继续处理。
 ```
 
+## 界面示例
+
+目录模式可以同时浏览 Markdown 文件、历史版本、评论数量和主题入口：
+
+![目录模式工作台](./assets/readme-showcase/workbench-preview.png)
+
+评论会锚定到具体选区，并在右侧集中管理：
+
+![选区评论侧栏](./assets/readme-showcase/comment-review.png)
+
+切换到 Diff 后，可以对比当前版本和上一版；深色模式会同步到 diff viewer：
+
+![深色模式 Diff](./assets/readme-showcase/diff-dark.png)
+
 ## 示意流程
 
 ### 1. 进入评审流程
