@@ -180,22 +180,31 @@ const ProcessedCommentMarker = ({ line, comments, label }: ProcessedCommentMarke
       </button>
       {open && (
         <span className="processed-comment-popover" role="dialog">
-          {comments.map((comment) => (
-            <span key={`${comment.file || 'comment'}:${comment.id}`} className="processed-comment">
-              <span className="processed-comment-meta">
-                <span className={`processed-comment-status ${getStatusClassName(comment.status)}`}>
-                  {getStatusLabel(comment.status)}
+          {comments.map((comment) => {
+            const sourceLabel = `${comment.file || 'source'}:${comment.startLine}`;
+
+            return (
+              <span
+                key={`${comment.file || 'comment'}:${comment.id}`}
+                className="processed-comment"
+              >
+                <span className="processed-comment-meta">
+                  <span
+                    className={`processed-comment-status ${getStatusClassName(comment.status)}`}
+                  >
+                    {getStatusLabel(comment.status)}
+                  </span>
+                  <span className="processed-comment-source" title={sourceLabel}>
+                    {sourceLabel}
+                  </span>
                 </span>
-                <span className="processed-comment-source">
-                  {comment.file || 'source'}:{comment.startLine}
-                </span>
+                <span className="processed-comment-text">{getCommentText(comment)}</span>
+                {comment.resolution && (
+                  <span className="processed-comment-resolution">{comment.resolution}</span>
+                )}
               </span>
-              <span className="processed-comment-text">{getCommentText(comment)}</span>
-              {comment.resolution && (
-                <span className="processed-comment-resolution">{comment.resolution}</span>
-              )}
-            </span>
-          ))}
+            );
+          })}
         </span>
       )}
     </span>

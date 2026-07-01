@@ -263,6 +263,7 @@
   background: var(--bg-panel);
   border: 1px solid var(--border-secondary);
   border-radius: 12px;
+  overflow-wrap: break-word;
 }
 
 .document-meta {
@@ -464,7 +465,8 @@
   top: -8px;
   z-index: 30;
   display: flex;
-  width: min(292px, calc(100vw - 72px));
+  width: min(320px, calc(100vw - 72px));
+  max-height: min(420px, calc(100vh - 80px));
   flex-direction: column;
   gap: 0.75rem;
   padding: 10px;
@@ -478,12 +480,15 @@
   font-size: 12.5px;
   line-height: 1.45;
   white-space: normal;
+  overflow: auto;
+  overflow-wrap: anywhere;
 }
 
 .processed-comment {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  min-width: 0;
 }
 
 .processed-comment + .processed-comment {
@@ -496,11 +501,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .processed-comment-status {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
   font-size: 0.72rem;
@@ -529,13 +536,18 @@
 }
 
 .processed-comment-source {
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-tertiary);
   font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .processed-comment-text {
   color: var(--text-primary);
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 .processed-comment-resolution {
@@ -543,6 +555,7 @@
   color: var(--text-secondary);
   background: var(--bg-inset);
   border-radius: 8px;
+  overflow-wrap: anywhere;
 }
 
 @keyframes highlight-fade {
@@ -564,6 +577,7 @@
   color: var(--text-primary);
   font-weight: 520;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .markdown-content h2 {
@@ -576,6 +590,7 @@
   color: var(--text-secondary);
   font-weight: 520;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .markdown-content h3 {
@@ -584,6 +599,7 @@
   margin-bottom: 10px;
   color: var(--text-secondary);
   font-weight: 540;
+  overflow-wrap: anywhere;
 }
 
 .markdown-content h4 {
@@ -591,6 +607,7 @@
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   color: var(--text-primary);
+  overflow-wrap: anywhere;
 }
 
 .markdown-content pre {
@@ -610,6 +627,7 @@
   font-size: 85%;
   font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
   color: var(--text-primary);
+  overflow-wrap: anywhere;
 }
 
 .markdown-content pre code {
@@ -650,6 +668,9 @@
 .markdown-content table {
   border-collapse: collapse;
   width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
   margin-bottom: 16px;
 }
 
@@ -657,6 +678,7 @@
 .markdown-content table td {
   padding: 6px 13px;
   border: 1px solid var(--border-secondary);
+  overflow-wrap: break-word;
 }
 
 .markdown-content table th {
@@ -943,6 +965,7 @@
 }
 
 .comment-tabs button {
+  min-width: 0;
   height: 27px;
   color: var(--text-tertiary);
   background: transparent;
@@ -959,6 +982,7 @@
 
 .comment-list-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   flex-shrink: 0;
   margin-top: 8px;
@@ -1096,6 +1120,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 8px;
+  min-width: 0;
 }
 
 .comment-item-meta {
@@ -1106,6 +1131,8 @@
 }
 
 .comment-item-lines {
+  min-width: 0;
+  overflow: hidden;
   font-size: 12px;
   color: var(--text-tertiary);
   font-weight: 520;
@@ -1114,6 +1141,8 @@
   cursor: pointer;
   padding: 0;
   text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transition: color 0.15s;
 }
 
@@ -1157,6 +1186,7 @@
 
 .comment-item-actions {
   display: flex;
+  flex: 0 0 auto;
   gap: 0.25rem;
   align-items: center;
 }
@@ -1207,6 +1237,7 @@
   border-radius: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   line-height: 1.45;
 }
 
@@ -1482,6 +1513,7 @@
 
 @media (width <= 640px) {
   .markdown-with-comments,
+  .markdown-with-comments:not(.comments-collapsed),
   .markdown-with-comments.comments-collapsed {
     grid-template-columns: minmax(0, 1fr);
   }

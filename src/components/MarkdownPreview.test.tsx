@@ -154,6 +154,43 @@ describe('MarkdownPreview', () => {
     expect(screen.getByText('guide.v3.md:2')).toBeInTheDocument();
   });
 
+  it('preserves full processed comment source text for long filenames', async () => {
+    const user = userEvent.setup();
+    const longFilename =
+      'seedance25_generator_onboarding_with_a_very_long_versioned_review_filename.v123.md';
+    const targetComments: Comment[] = [
+      {
+        id: 'c001',
+        file: longFilename,
+        text: 'Check the onboarding handoff.',
+        selectedText: 'handoff',
+        startLine: 12,
+        endLine: 12,
+        status: 'resolved',
+        targetFile: 'guide.v4.md',
+        targetStartLine: 3,
+        resolution: 'Done.',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    render(
+      <MarkdownPreview
+        content={'# Guide\n\nClear setup steps'}
+        filename="guide.v4.md"
+        comments={[]}
+        targetComments={targetComments}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Processed comments on line 3' }));
+
+    expect(screen.getByText(`${longFilename}:12`)).toHaveAttribute(
+      'title',
+      `${longFilename}:12`,
+    );
+  });
+
   it('does not double count the same comment when it is both source and target anchored', () => {
     const comment: Comment = {
       id: 'c001',
