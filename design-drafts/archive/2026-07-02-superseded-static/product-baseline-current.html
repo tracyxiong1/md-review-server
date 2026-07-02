@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>md-review-server Product Baseline</title>
+    <link rel="stylesheet" href="../src/index.css" />
+    <link rel="stylesheet" href="../src/styles/devmode.css" />
+    <link rel="stylesheet" href="../src/styles/filetree.css" />
+    <link rel="stylesheet" href="../src/styles/markdown.css" />
+  </head>
+  <body>
+    <div class="dev-container">
+      <div class="dev-sidebar" style="width: 240px">
+        <div class="sidebar-content">
+          <div class="file-tree">
+            <div class="file-tree-header">
+              <div class="file-tree-brand-row">
+                <div class="file-tree-brand">
+                  <span class="file-tree-brand-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 7h10M7 12h6M6 3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-6 3V6a3 3 0 0 1 3-3Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <h3>md-review-server</h3>
+                </div>
+                <button class="sidebar-collapse-button" aria-label="Collapse sidebar" title="Collapse sidebar">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <div class="search-container">
+                <div class="search-input-wrapper">
+                  <svg class="search-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.7" />
+                    <path d="M12.75 12.75L17 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                  </svg>
+                  <input type="text" class="search-input" placeholder="Jump to file" />
+                </div>
+              </div>
+            </div>
+
+            <div class="file-tree-content">
+              <div class="section-label">Files</div>
+              <div>
+                <div role="button" tabindex="0" aria-expanded="true" class="tree-item directory" style="padding-left: 8px">
+                  <svg class="chevron-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="transform: rotate(90deg)">
+                    <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <svg class="folder-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path
+                      d="M2.75 5.25A1.75 1.75 0 0 1 4.5 3.5h4.25l2 2H15.5a1.75 1.75 0 0 1 1.75 1.75v8A1.75 1.75 0 0 1 15.5 17H4.5a1.75 1.75 0 0 1-1.75-1.75v-10Z"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span class="folder-name">docs</span>
+                  <span class="tree-item-meta">8</span>
+                </div>
+                <div class="tree-children">
+                  <div role="button" tabindex="0" class="tree-item file selected" style="padding-left: 20px">
+                    <svg class="file-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path d="M5 2.75h6.25L15 6.5v10.75H5V2.75Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                      <path d="M11.25 2.75V6.5H15" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                    </svg>
+                    <span class="file-name">guide.v1.md</span>
+                    <span class="tree-count-badge">3</span>
+                  </div>
+                  <div role="button" tabindex="0" class="tree-item file" style="padding-left: 20px">
+                    <svg class="file-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path d="M5 2.75h6.25L15 6.5v10.75H5V2.75Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                      <path d="M11.25 2.75V6.5H15" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                    </svg>
+                    <span class="file-name">guide.v0.md</span>
+                    <span class="tree-item-meta">old</span>
+                  </div>
+                  <div role="button" tabindex="0" class="tree-item file" style="padding-left: 20px">
+                    <svg class="file-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path d="M5 2.75h6.25L15 6.5v10.75H5V2.75Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                      <path d="M11.25 2.75V6.5H15" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                    </svg>
+                    <span class="file-name">api-notes.md</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="file-tree-versions">
+              <div class="section-label">Versions</div>
+              <button class="version-row current" type="button" aria-label="v1 current 3 open comments">
+                <span class="version-row-label">
+                  <span>v1</span>
+                  <span class="version-row-state">current</span>
+                </span>
+                <span class="tree-count-badge">3</span>
+              </button>
+              <button class="version-row" type="button" aria-label="v0 archived">
+                <span class="version-row-label"><span>v0</span></span>
+                <span class="version-row-meta">archived</span>
+              </button>
+            </div>
+
+            <div class="file-tree-footer">
+              <button class="theme-toggle" type="button" aria-label="Toggle theme">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3v2M12 19v2M5.64 5.64l1.42 1.42M16.94 16.94l1.42 1.42M3 12h2M19 12h2M5.64 18.36l1.42-1.42M16.94 7.06l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+                </svg>
+                <span class="theme-toggle-label">Light theme</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-resizer"></div>
+      </div>
+
+      <div class="dev-main">
+        <div class="markdown-with-comments" style="--comments-sidebar-width: 300px">
+          <div class="markdown-container">
+            <header class="markdown-header">
+              <div class="markdown-title-row">
+                <h1>guide.v1.md</h1>
+                <div class="markdown-view-actions">
+                  <div class="markdown-view-switch" role="group" aria-label="View mode">
+                    <button type="button" class="view-mode-button active" aria-label="Show preview" aria-pressed="true">Preview</button>
+                    <button type="button" class="view-mode-button" aria-label="Show diff" aria-pressed="false">Diff</button>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <div class="markdown-reader-scroll">
+              <section class="markdown-reader">
+                <div class="markdown-content">
+                  <div class="document-meta">
+                    <span>Markdown preview · local review</span>
+                  </div>
+                  <h1 data-line-start="1">Codex review handoff</h1>
+                  <p data-line-start="3">
+                    The review page collects precise comments on selected Markdown text. Codex reads the open comments, writes the next version, and records the result back into the review sidecar.
+                  </p>
+                  <h2 data-line-start="7">Current friction</h2>
+                  <p data-line-start="9" class="markdown-line-with-processed-comment">
+                    <span class="processed-comment-marker">
+                      <button type="button" class="processed-comment-marker-button status-open" data-status-icon="comment" aria-label="Review comments on line 9" title="Review comments on line 9">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M7 8h10" />
+                          <path d="M7 12h6" />
+                          <path d="M5 4h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V7a3 3 0 0 1 3-3Z" />
+                        </svg>
+                        <span class="processed-comment-count">3</span>
+                      </button>
+                    </span>
+                    After commenting in the browser, the user still has to return to the conversation and type a prompt.
+                    <span class="selection-highlight">That prompt is only a trigger signal</span>, so the interface can make the handoff explicit without hiding what will happen.
+                  </p>
+                  <h2 data-line-start="13">Proposed behavior</h2>
+                  <p data-line-start="15">
+                    The comments panel owns the handoff state because it already contains the open comment count, file name, and review history. The document remains the primary surface.
+                  </p>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <aside class="comments-sidebar" style="width: 300px">
+            <div class="comments-sidebar-resizer"></div>
+            <div class="comment-list">
+              <div class="comments-top">
+                <div class="comment-list-header">
+                  <h3 class="comment-list-title" aria-label="3 comments">Comments</h3>
+                  <button class="comment-list-collapse-btn" type="button" title="Hide comments" aria-label="Hide comments">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="comments-subtitle">Current file · anchored to selection</div>
+                <div class="comment-tabs" aria-label="Comment status summary">
+                  <button type="button">Open 3</button>
+                  <button type="button">Done 0</button>
+                  <button type="button" class="active">All 3</button>
+                </div>
+                <div class="comment-list-actions">
+                  <button class="comment-list-copy-all" type="button" title="Copy all comments">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                    </svg>
+                    <span>Copy All</span>
+                  </button>
+                  <button class="comment-list-delete-all" type="button" title="Delete all comments">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                    </svg>
+                    <span>Clear</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="comment-list-items">
+                <div class="comment-item active">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <button class="comment-item-lines" type="button" title="Jump to line">Line 9</button>
+                      <span class="comment-item-status status-open">Open</span>
+                    </div>
+                    <div class="comment-item-actions">
+                      <button class="comment-item-edit" type="button" title="Edit comment">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                      </button>
+                      <button class="comment-item-copy" type="button" title="Copy comment">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg>
+                      </button>
+                      <button class="comment-item-delete" type="button" title="Delete comment">×</button>
+                    </div>
+                  </div>
+                  <div class="comment-item-selection">"That prompt is only a trigger signal"</div>
+                  <div class="comment-item-text">把这里改成用户视角，解释为什么按钮不会让流程变黑盒。</div>
+                </div>
+
+                <div class="comment-item">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <button class="comment-item-lines" type="button" title="Jump to line">Line 15</button>
+                      <span class="comment-item-status status-open">Open</span>
+                    </div>
+                    <div class="comment-item-actions">
+                      <button class="comment-item-edit" type="button" title="Edit comment">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                      </button>
+                      <button class="comment-item-copy" type="button" title="Copy comment">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg>
+                      </button>
+                      <button class="comment-item-delete" type="button" title="Delete comment">×</button>
+                    </div>
+                  </div>
+                  <div class="comment-item-selection">"comments panel owns the handoff state"</div>
+                  <div class="comment-item-text">补充 run 状态和失败恢复，避免只描述 happy path。</div>
+                </div>
+
+                <div class="comment-item">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <button class="comment-item-lines" type="button" title="Jump to line">Line 16</button>
+                      <span class="comment-item-status status-open">Open</span>
+                    </div>
+                    <div class="comment-item-actions">
+                      <button class="comment-item-edit" type="button" title="Edit comment">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                      </button>
+                      <button class="comment-item-copy" type="button" title="Copy comment">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg>
+                      </button>
+                      <button class="comment-item-delete" type="button" title="Delete comment">×</button>
+                    </div>
+                  </div>
+                  <div class="comment-item-selection">"The document remains the primary surface"</div>
+                  <div class="comment-item-text">强调不要把按钮做成顶部大 CTA，保持文档阅读优先级。</div>
+                </div>
+              </div>
+
+              <div class="comment-list-footer-hint">
+                页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

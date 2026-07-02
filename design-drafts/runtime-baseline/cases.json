@@ -1,0 +1,446 @@
+[
+  {
+    "id": "01-dark-collapsed-comments-closed-empty",
+    "file": "docs/no-comments.md",
+    "theme": "dark",
+    "sidebar": false,
+    "comments": false,
+    "label": "Dark, sidebar collapsed, comments closed, empty file",
+    "screenshot": "01-dark-collapsed-comments-closed-empty.png",
+    "html": "html/01-dark-collapsed-comments-closed-empty.html",
+    "fragment": "fragments/01-dark-collapsed-comments-closed-empty.root.html",
+    "metrics": {
+      "app": "dev-container sidebar-closed ",
+      "commentItems": [],
+      "comments": null,
+      "commentsTop": null,
+      "main": {
+        "h": 994,
+        "text": "no-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current fl",
+        "w": 739,
+        "x": 46,
+        "y": 0
+      },
+      "markers": [],
+      "sidebar": {
+        "h": 994,
+        "text": "Light",
+        "w": 46,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": null,
+      "theme": "dark",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fno-comments.md",
+      "viewport": {
+        "h": 994,
+        "w": 785
+      }
+    }
+  },
+  {
+    "id": "02-dark-collapsed-comments-open-empty",
+    "file": "docs/no-comments.md",
+    "theme": "dark",
+    "sidebar": false,
+    "comments": true,
+    "label": "Dark, sidebar collapsed, comments open, empty state",
+    "screenshot": "02-dark-collapsed-comments-open-empty.png",
+    "html": "html/02-dark-collapsed-comments-open-empty.html",
+    "fragment": "fragments/02-dark-collapsed-comments-open-empty.root.html",
+    "metrics": {
+      "app": "dev-container sidebar-closed ",
+      "commentItems": [],
+      "comments": {
+        "h": 994,
+        "text": "CommentsCurrent file · anchored to selectionOpen 0Done 0All 0No comments yetSelect text to add a comment页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "commentsTop": {
+        "h": 113,
+        "text": "CommentsCurrent file · anchored to selectionOpen 0Done 0All 0",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "main": {
+        "h": 994,
+        "text": "no-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current fl",
+        "w": 739,
+        "x": 46,
+        "y": 0
+      },
+      "markers": [],
+      "sidebar": {
+        "h": 994,
+        "text": "Light",
+        "w": 46,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": null,
+      "theme": "dark",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fno-comments.md",
+      "viewport": {
+        "h": 994,
+        "w": 785
+      }
+    }
+  },
+  {
+    "id": "03-dark-collapsed-comments-open-with-comments",
+    "file": "docs/with-comments.md",
+    "theme": "dark",
+    "sidebar": false,
+    "comments": true,
+    "label": "Dark, sidebar collapsed, comments open, with comments",
+    "screenshot": "03-dark-collapsed-comments-open-with-comments.png",
+    "html": "html/03-dark-collapsed-comments-open-with-comments.html",
+    "fragment": "fragments/03-dark-collapsed-comments-open-with-comments.root.html",
+    "metrics": {
+      "app": "dev-container sidebar-closed ",
+      "commentItems": [
+        {
+          "cls": "comment-item active",
+          "h": 117,
+          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+          "w": 291,
+          "x": 510,
+          "y": 153
+        },
+        {
+          "cls": "comment-item ",
+          "h": 118,
+          "text": "Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+          "w": 283,
+          "x": 514,
+          "y": 274
+        },
+        {
+          "cls": "comment-item ",
+          "h": 98,
+          "text": "Line 13Resolved×\"clear retry path\"已补充失败恢复说明。",
+          "w": 283,
+          "x": 514,
+          "y": 392
+        }
+      ],
+      "comments": {
+        "h": 994,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comment",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "commentsTop": {
+        "h": 143,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClear",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "main": {
+        "h": 994,
+        "text": "with-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current ",
+        "w": 739,
+        "x": 46,
+        "y": 0
+      },
+      "markers": [
+        {
+          "cls": "processed-comment-marker-button status-open",
+          "h": 16,
+          "title": "Review comments on line 3",
+          "w": 16,
+          "x": 53,
+          "y": 228
+        },
+        {
+          "cls": "processed-comment-marker-button status-open",
+          "h": 16,
+          "title": "Review comments on line 9",
+          "w": 16,
+          "x": 53,
+          "y": 428
+        },
+        {
+          "cls": "processed-comment-marker-button status-resolved",
+          "h": 16,
+          "title": "Review comments on line 13",
+          "w": 16,
+          "x": 53,
+          "y": 570
+        }
+      ],
+      "sidebar": {
+        "h": 994,
+        "text": "Light",
+        "w": 46,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": null,
+      "theme": "dark",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fwith-comments.md",
+      "viewport": {
+        "h": 994,
+        "w": 785
+      }
+    }
+  },
+  {
+    "id": "04-dark-expanded-comments-open-with-comments",
+    "file": "docs/with-comments.md",
+    "theme": "dark",
+    "sidebar": true,
+    "comments": true,
+    "label": "Dark, sidebar expanded, comments open, with comments",
+    "screenshot": "04-dark-expanded-comments-open-with-comments.png",
+    "html": "html/04-dark-expanded-comments-open-with-comments.html",
+    "fragment": "fragments/04-dark-expanded-comments-open-with-comments.root.html",
+    "metrics": {
+      "app": "dev-container  ",
+      "commentItems": [
+        {
+          "cls": "comment-item active",
+          "h": 117,
+          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+          "w": 291,
+          "x": 510,
+          "y": 153
+        },
+        {
+          "cls": "comment-item ",
+          "h": 118,
+          "text": "Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+          "w": 283,
+          "x": 514,
+          "y": 274
+        },
+        {
+          "cls": "comment-item ",
+          "h": 98,
+          "text": "Line 13Resolved×\"clear retry path\"已补充失败恢复说明。",
+          "w": 283,
+          "x": 514,
+          "y": 392
+        }
+      ],
+      "comments": {
+        "h": 994,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comment",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "commentsTop": {
+        "h": 143,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClear",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "main": {
+        "h": 994,
+        "text": "with-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current ",
+        "w": 545,
+        "x": 240,
+        "y": 0
+      },
+      "markers": [
+        {
+          "cls": "processed-comment-marker-button status-open",
+          "h": 16,
+          "title": "Review comments on line 3",
+          "w": 16,
+          "x": 247,
+          "y": 310
+        },
+        {
+          "cls": "processed-comment-marker-button status-open",
+          "h": 16,
+          "title": "Review comments on line 9",
+          "w": 16,
+          "x": 247,
+          "y": 614
+        },
+        {
+          "cls": "processed-comment-marker-button status-resolved",
+          "h": 16,
+          "title": "Review comments on line 13",
+          "w": 16,
+          "x": 247,
+          "y": 807
+        }
+      ],
+      "sidebar": {
+        "h": 994,
+        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Light",
+        "w": 240,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": {
+        "h": 994,
+        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Light",
+        "w": 239,
+        "x": 0,
+        "y": 0
+      },
+      "theme": "dark",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fwith-comments.md",
+      "viewport": {
+        "h": 994,
+        "w": 785
+      }
+    }
+  },
+  {
+    "id": "05-light-expanded-comments-open-with-comments",
+    "file": "docs/with-comments.md",
+    "theme": "light",
+    "sidebar": true,
+    "comments": true,
+    "label": "Light, sidebar expanded, comments open, with comments",
+    "screenshot": "05-light-expanded-comments-open-with-comments.png",
+    "html": "html/05-light-expanded-comments-open-with-comments.html",
+    "fragment": "fragments/05-light-expanded-comments-open-with-comments.root.html",
+    "metrics": {
+      "app": "dev-container  ",
+      "commentItems": [
+        {
+          "cls": "comment-item active",
+          "h": 117,
+          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+          "w": 291,
+          "x": 510,
+          "y": 153
+        },
+        {
+          "cls": "comment-item ",
+          "h": 118,
+          "text": "Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+          "w": 283,
+          "x": 514,
+          "y": 274
+        },
+        {
+          "cls": "comment-item ",
+          "h": 98,
+          "text": "Line 13Resolved×\"clear retry path\"已补充失败恢复说明。",
+          "w": 283,
+          "x": 514,
+          "y": 392
+        }
+      ],
+      "comments": {
+        "h": 994,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comment",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "commentsTop": {
+        "h": 143,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClear",
+        "w": 299,
+        "x": 506,
+        "y": 0
+      },
+      "main": {
+        "h": 994,
+        "text": "with-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current ",
+        "w": 545,
+        "x": 240,
+        "y": 0
+      },
+      "markers": [
+        {
+          "cls": "processed-comment-marker-button status-open",
+          "h": 16,
+          "title": "Review comments on line 3",
+          "w": 16,
+          "x": 247,
+          "y": 310
+        },
+        {
+          "cls": "processed-comment-marker-button status-open",
+          "h": 16,
+          "title": "Review comments on line 9",
+          "w": 16,
+          "x": 247,
+          "y": 614
+        },
+        {
+          "cls": "processed-comment-marker-button status-resolved",
+          "h": 16,
+          "title": "Review comments on line 13",
+          "w": 16,
+          "x": 247,
+          "y": 807
+        }
+      ],
+      "sidebar": {
+        "h": 994,
+        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Dark",
+        "w": 240,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": {
+        "h": 994,
+        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Dark",
+        "w": 239,
+        "x": 0,
+        "y": 0
+      },
+      "theme": "light",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fwith-comments.md",
+      "viewport": {
+        "h": 994,
+        "w": 785
+      }
+    }
+  },
+  {
+    "id": "06-light-collapsed-comments-closed-empty",
+    "file": "docs/no-comments.md",
+    "theme": "light",
+    "sidebar": false,
+    "comments": false,
+    "label": "Light, sidebar collapsed, comments closed, empty file",
+    "screenshot": "06-light-collapsed-comments-closed-empty.png",
+    "html": "html/06-light-collapsed-comments-closed-empty.html",
+    "fragment": "fragments/06-light-collapsed-comments-closed-empty.root.html",
+    "metrics": {
+      "app": "dev-container sidebar-closed ",
+      "commentItems": [],
+      "comments": null,
+      "commentsTop": null,
+      "main": {
+        "h": 994,
+        "text": "no-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current fl",
+        "w": 739,
+        "x": 46,
+        "y": 0
+      },
+      "markers": [],
+      "sidebar": {
+        "h": 994,
+        "text": "Dark",
+        "w": 46,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": null,
+      "theme": "light",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fno-comments.md",
+      "viewport": {
+        "h": 994,
+        "w": 785
+      }
+    }
+  }
+]

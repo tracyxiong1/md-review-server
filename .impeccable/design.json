@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-02T00:00:00+08:00",
+  "title": "Design System: md-review-server",
+  "extensions": {
+    "sourceOfTruth": {
+      "runtimeBaseline": {
+        "readme": "design-drafts/runtime-baseline/README.md",
+        "cases": "design-drafts/runtime-baseline/cases.json",
+        "htmlDir": "design-drafts/runtime-baseline/html",
+        "fragmentsDir": "design-drafts/runtime-baseline/fragments",
+        "screenshotsDir": "design-drafts/runtime-baseline",
+        "purpose": "Primary visual and DOM baseline for review UI changes. Use before hand-written static drafts."
+      }
+    },
+    "colorMeta": {
+      "bg-primary": {
+        "role": "neutral",
+        "displayName": "Workspace Gray",
+        "canonical": "#f4f4f3",
+        "tonalRamp": ["#ffffff", "#fbfbfa", "#f4f4f3", "#eeeeec", "#d8d8d5"]
+      },
+      "bg-secondary": {
+        "role": "neutral",
+        "displayName": "Sidebar Near-White",
+        "canonical": "#fbfbfa",
+        "tonalRamp": ["#ffffff", "#fbfbfa", "#f7f7f6", "#eeeeec", "#e5e5e2"]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Primary Ink",
+        "canonical": "#222326",
+        "tonalRamp": ["#222326", "#4d4f54", "#73757b", "#9a9ca1"]
+      },
+      "link-blue": {
+        "role": "primary",
+        "displayName": "Review Blue",
+        "canonical": "#2f6fd6",
+        "tonalRamp": ["#e8f0ff", "#8ab4ff", "#2f6fd6", "#1f55ad"]
+      },
+      "status-green": {
+        "role": "success",
+        "displayName": "Resolved Green",
+        "canonical": "#2f7d45",
+        "tonalRamp": ["#e7f4eb", "#95cc9a", "#2f7d45"]
+      },
+      "status-amber": {
+        "role": "warning",
+        "displayName": "Partial Amber",
+        "canonical": "#936200",
+        "tonalRamp": ["#fff3d0", "#e3bc72", "#936200"]
+      },
+      "status-red": {
+        "role": "danger",
+        "displayName": "Unresolved Red",
+        "canonical": "#b4232b",
+        "tonalRamp": ["#ffe9ea", "#ff9aa2", "#b4232b"]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Markdown Headline",
+        "purpose": "Document h1 only, calm reading hierarchy."
+      },
+      "title": {
+        "displayName": "Panel Title",
+        "purpose": "File name, top bar, comments title, compact headings."
+      },
+      "body": {
+        "displayName": "Markdown Body",
+        "purpose": "Long-form Markdown reading text, 65 to 75 character measure."
+      },
+      "label": {
+        "displayName": "Control Label",
+        "purpose": "Tabs, compact buttons, pills, file tree metadata."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-soft",
+        "value": "0 10px 24px rgb(26 28 32 / 10%)",
+        "purpose": "Small floating UI in light mode, such as selection popovers."
+      },
+      {
+        "name": "shadow-floating",
+        "value": "0 14px 32px rgb(26 28 32 / 12%)",
+        "purpose": "Larger floating panels in light mode, such as processed comment history."
+      },
+      {
+        "name": "dark-shadow-soft",
+        "value": "0 10px 28px rgb(0 0 0 / 24%)",
+        "purpose": "Small floating UI in dark mode."
+      },
+      {
+        "name": "dark-shadow-floating",
+        "value": "0 14px 36px rgb(0 0 0 / 28%)",
+        "purpose": "Larger floating panels in dark mode."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-fast",
+        "value": "150ms ease-out",
+        "purpose": "Small hover, copied, and button feedback."
+      },
+      {
+        "name": "panel-standard",
+        "value": "180ms ease-out",
+        "purpose": "Sidebar collapse and compact layout changes."
+      },
+      {
+        "name": "state-standard",
+        "value": "200ms ease-out",
+        "purpose": "Theme, border, and color transitions."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "768px"
+      },
+      {
+        "name": "phone",
+        "value": "480px"
+      }
+    ],
+    "rules": [
+      "Start review UI changes from runtime baseline HTML, screenshots, fragments, and DOM measurements.",
+      "Blue is scarce: use it only for selected, active, linked, or review-ready state.",
+      "Resting panels are flat: use tonal layers and 1px dividers before shadows.",
+      "Codex handoff is comments workflow state, not a separate action center.",
+      "Automation state must show target file, comment count, completion, failure, and retry path.",
+      "Do not widen the 300px comments panel or add a tall handoff block above the first comment."
+    ]
+  },
+  "components": [
+    {
+      "name": "Compact Button",
+      "kind": "button",
+      "refersTo": "button-compact",
+      "description": "Default app action button. Small, familiar, and neutral unless it represents active review state.",
+      "html": "<button class=\"ds-compact-button\">Send to Codex</button>",
+      "css": ".ds-compact-button { min-height: 26px; padding: 0 9px; color: #4d4f54; background: transparent; border: 1px solid #d8d8d5; border-radius: 7px; font-size: 12px; font-weight: 500; } .ds-compact-button:hover { color: #222326; background: #eeeeec; }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "segmented-control",
+      "description": "Used for view modes and comment filters.",
+      "html": "<div class=\"ds-segment\"><button class=\"active\">Open 3</button><button>Done 0</button><button>All 3</button></div>",
+      "css": ".ds-segment { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; background: #eeeeec; border: 1px solid #e5e5e2; border-radius: 9px; } .ds-segment button { height: 27px; color: #73757b; background: transparent; border: 0; border-radius: 7px; font-size: 12px; font-weight: 500; } .ds-segment .active { color: #4d4f54; background: #ffffff; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "Small textual state indicator for review and automation status.",
+      "html": "<span class=\"ds-status-pill\">ready</span>",
+      "css": ".ds-status-pill { display: inline-flex; align-items: center; min-height: 20px; padding: 0 7px; color: #2f6fd6; background: #e8f0ff; border-radius: 999px; font-size: 11px; font-weight: 500; line-height: 1; }"
+    },
+    {
+      "name": "Document Panel",
+      "kind": "card",
+      "refersTo": "document-panel",
+      "description": "Primary reading surface. It is bordered and tonal, not shadowed.",
+      "html": "<article class=\"ds-document\"><h1>Document title</h1><p>Markdown body text.</p></article>",
+      "css": ".ds-document { width: min(820px, 100%); margin: 0 auto; padding: 34px 42px 48px; color: #4d4f54; background: #ffffff; border: 1px solid #e5e5e2; border-radius: 12px; font-size: 14.5px; line-height: 1.78; } .ds-document h1 { margin: 0 0 22px; color: #222326; font-size: 26px; font-weight: 520; line-height: 1.2; }"
+    },
+    {
+      "name": "Codex Handoff Row",
+      "kind": "custom",
+      "refersTo": "button-compact",
+      "description": "Compact comments-panel state row for ready, queued, running, completed, and failed Codex handoff. Must be validated against runtime baseline cases.",
+      "html": "<section class=\"ds-handoff\"><div class=\"title\">Ready for Codex</div><div class=\"copy\">3 open comments in guide.v1.md.</div><span class=\"ds-status-pill\">ready</span><button class=\"ds-compact-button\">Send to Codex</button></section>",
+      "css": ".ds-handoff { padding-top: 10px; border-top: 1px solid #e5e5e2; background: transparent; } .ds-handoff .title { color: #222326; font-size: 12.5px; font-weight: 620; line-height: 1.25; } .ds-handoff .copy { margin-top: 2px; color: #73757b; font-size: 11.5px; line-height: 1.35; }"
+    }
+  ]
+}

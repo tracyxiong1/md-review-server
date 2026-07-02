@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "document": "docs/with-comments.md",
+  "createdAt": "2026-07-02T12:00:00.000Z",
+  "updatedAt": "2026-07-02T12:00:00.000Z",
+  "comments": [
+    {
+      "id": "c001",
+      "file": "docs/with-comments.md",
+      "startLine": 3,
+      "endLine": 3,
+      "selectedText": "continue analysis without making the user return to chat manually",
+      "comment": "这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+      "status": "open",
+      "createdAt": "2026-07-02T12:00:00.000Z",
+      "updatedAt": "2026-07-02T12:00:00.000Z"
+    },
+    {
+      "id": "c002",
+      "file": "docs/with-comments.md",
+      "startLine": 9,
+      "endLine": 9,
+      "selectedText": "submits open comments to Codex",
+      "comment": "按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+      "status": "open",
+      "createdAt": "2026-07-02T12:00:00.000Z",
+      "updatedAt": "2026-07-02T12:00:00.000Z"
+    },
+    {
+      "id": "c003",
+      "file": "docs/with-comments.md",
+      "startLine": 13,
+      "endLine": 13,
+      "selectedText": "clear retry path",
+      "comment": "已补充失败恢复说明。",
+      "status": "resolved",
+      "targetFile": "docs/with-comments.md",
+      "targetStartLine": 13,
+      "targetEndLine": 13,
+      "targetSelectedText": "clear retry path",
+      "resolution": "Resolved in the next draft state copy.",
+      "createdAt": "2026-07-02T12:00:00.000Z",
+      "updatedAt": "2026-07-02T12:00:00.000Z",
+      "consumedAt": "2026-07-02T12:00:00.000Z"
+    }
+  ]
+}
