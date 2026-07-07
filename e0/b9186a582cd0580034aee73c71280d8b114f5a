@@ -1,0 +1,33 @@
+DESIGN.md
+  s_93cc561b24cfef::t_1eaf5a398cd3db 246,248,254
+design-drafts/active/2026-07-06-comment-replies/BRIEF.md
+  s_93cc561b24cfef::t_6fda51dc8e0b39 1-36
+design-drafts/active/2026-07-06-comment-replies/DECISION.md
+  s_93cc561b24cfef::t_26c172d8269c18 1-64
+design-drafts/active/2026-07-06-comment-replies/README.md
+  s_93cc561b24cfef::t_deadb15ef5288f 1-14
+design-drafts/active/2026-07-06-comment-replies/v4-open-order-no-extra-status.html
+  s_93cc561b24cfef::t_fae60b6419f4cb 1-139
+design-drafts/active/2026-07-06-comment-replies/v8-current-implementation-preview.html
+  s_93cc561b24cfef::t_e6604ef33a3d82 1-899
+skills/markdown-review-loop/SKILL.md
+  s_93cc561b24cfef::t_476f38c603cf40 67,73-83,96,102-107,125-129,137-140,143-148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "e0b9186a582cd0580034aee73c71280d8b114f5a",
+  "prompts": {},
+  "sessions": {
+    "s_93cc561b24cfef": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f21b1-4e4f-7b11-8301-799ec9951bba",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
