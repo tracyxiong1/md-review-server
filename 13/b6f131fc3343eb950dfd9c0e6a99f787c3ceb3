@@ -1,0 +1,33 @@
+src/components/CliModeApp.tsx
+  s_93cc561b24cfef::t_b1d6a918702a8d 61
+src/components/CommentList.test.tsx
+  s_93cc561b24cfef::t_997284487d6cc5 3,38-42,46,48-51,121,124-125,129,133-135,151-225
+src/components/CommentList.tsx
+  s_93cc561b24cfef::t_8da5c6de5f4248 1-2,18,30,35-62,71,76,78-80,89-93,107-109,115-120,173-208,328-329,333-343,345-347,349-352,354-363,365-383,385-399,402-404,406-429,431-439,442-532
+src/components/DevModeApp.tsx
+  s_93cc561b24cfef::t_61b4194600528a 294
+src/components/MarkdownPreview.test.tsx
+  s_93cc561b24cfef::t_d244bba59b16ea 83-101,123-171,216,255,260,285,289-362,386,396,448-459,489,524
+src/components/MarkdownPreview.tsx
+  s_93cc561b24cfef::t_588b3347045d59 4,42,49,52-53,141-154,212,244,293,300-301,365,371,376,413-434,436-441,443-444,461,481-482,484,486-487,489-543,585-589,703-722,748,756,758,764
+src/styles/markdown.css
+  s_93cc561b24cfef::t_c7f30d97346722 387-393,396,401,497,1207,1230,1267-1397,1611,1642
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "13b6f131fc3343eb950dfd9c0e6a99f787c3ceb3",
+  "prompts": {},
+  "sessions": {
+    "s_93cc561b24cfef": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f21b1-4e4f-7b11-8301-799ec9951bba",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
