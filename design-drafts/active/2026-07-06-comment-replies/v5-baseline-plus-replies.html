@@ -1,0 +1,2661 @@
+<!doctype html>
+<!--
+status: active
+basedOn:
+  - ../../runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+purpose: Baseline-aligned comment replies. Preserve the current comments panel and add only inline reply affordances.
+-->
+<!-- Runtime baseline case: 03-dark-collapsed-comments-open-with-comments | Dark, sidebar collapsed, comments open, with comments -->
+<html class="dark-mode"><head>
+<meta name="runtime-baseline-case" content="{&quot;id&quot;:&quot;03-dark-collapsed-comments-open-with-comments&quot;,&quot;label&quot;:&quot;Dark, sidebar collapsed, comments open, with comments&quot;}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment replies v5 baseline plus replies</title>
+  <style type="text/css" data-vite-dev-id="src/index.css">* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #f4f4f3;
+  --bg-secondary: #fbfbfa;
+  --bg-tertiary: #eeeeec;
+  --bg-panel: #fff;
+  --bg-elevated: #fff;
+  --bg-control: #eeeeec;
+  --bg-control-active: #fff;
+  --bg-inset: #f5f5f4;
+  --text-primary: #222326;
+  --text-secondary: #4d4f54;
+  --text-tertiary: #73757b;
+  --border-primary: #d8d8d5;
+  --border-secondary: #e5e5e2;
+  --link-color: #2f6fd6;
+  --selection-bg: rgb(47 111 214 / 14%);
+  --status-blue: #2f6fd6;
+  --status-blue-bg: #e8f0ff;
+  --status-blue-border: rgb(47 111 214 / 20%);
+  --status-green: #2f7d45;
+  --status-green-bg: #e7f4eb;
+  --status-green-border: rgb(47 125 69 / 18%);
+  --status-amber: #936200;
+  --status-amber-bg: #fff3d0;
+  --status-amber-border: rgb(147 98 0 / 20%);
+  --status-red: #b4232b;
+  --status-red-bg: #ffe9ea;
+  --status-red-border: rgb(180 35 43 / 20%);
+  --diff-added-bg: #e3f7e8;
+  --diff-added-gutter-bg: #d4efd9;
+  --diff-word-added-bg: #bfecca;
+  --diff-removed-bg: #fde5e7;
+  --diff-removed-gutter-bg: #f5d6d9;
+  --diff-word-removed-bg: #f4bdc3;
+  --shadow-floating: 0 14px 32px rgb(26 28 32 / 12%);
+  --shadow-soft: 0 10px 24px rgb(26 28 32 / 10%);
+  --code-bg: #eeeeec;
+  --table-bg-alt: #f7f7f6;
+}
+
+.dark-mode {
+  --bg-primary: #151515;
+  --bg-secondary: #181818;
+  --bg-tertiary: #202020;
+  --bg-panel: #181818;
+  --bg-elevated: #202020;
+  --bg-control: #1b1b1b;
+  --bg-control-active: #252525;
+  --bg-inset: #1a1a1a;
+  --text-primary: #eee;
+  --text-secondary: #c9c9c9;
+  --text-tertiary: #8d8d8d;
+  --border-primary: #2a2a2a;
+  --border-secondary: #232323;
+  --link-color: #8ab4ff;
+  --selection-bg: rgb(138 180 255 / 18%);
+  --status-blue: #8ab4ff;
+  --status-blue-bg: #1a2330;
+  --status-blue-border: rgb(138 180 255 / 18%);
+  --status-green: #95cc9a;
+  --status-green-bg: #1b291f;
+  --status-green-border: rgb(149 204 154 / 16%);
+  --status-amber: #e3bc72;
+  --status-amber-bg: #2c2418;
+  --status-amber-border: rgb(227 188 114 / 16%);
+  --status-red: #ff9aa2;
+  --status-red-bg: #301b1e;
+  --status-red-border: rgb(255 154 162 / 18%);
+  --diff-added-bg: #173b22;
+  --diff-added-gutter-bg: #132f1c;
+  --diff-word-added-bg: #246638;
+  --diff-removed-bg: #451d24;
+  --diff-removed-gutter-bg: #37181e;
+  --diff-word-removed-bg: #74313b;
+  --shadow-floating: 0 14px 36px rgb(0 0 0 / 28%);
+  --shadow-soft: 0 10px 28px rgb(0 0 0 / 24%);
+  --code-bg: #222;
+  --table-bg-alt: #1f1f1f;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition:
+    background-color 0.18s,
+    color 0.18s;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  border-radius: 6px;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+</style><style type="text/css" data-vite-dev-id="src/styles/filetree.css">.file-tree {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+}
+
+.file-tree-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-secondary);
+  background-color: var(--bg-secondary);
+}
+
+.file-tree-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.file-tree-brand {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-tree-brand-icon {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+}
+
+.file-tree-header h3 {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 520;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-tree-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 8px 12px;
+  border-top: 0;
+  background-color: var(--bg-secondary);
+}
+
+.file-tree-footer .theme-toggle {
+  width: 100%;
+  height: 30px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.github-link {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: 7px;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.github-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.sidebar-collapse-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sidebar-collapse-button:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.sidebar-collapse-button:active {
+  background-color: var(--bg-tertiary);
+}
+
+/* Search container */
+.search-container {
+  margin-top: 10px;
+  padding: 0;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
+  height: 32px;
+  padding: 0 9px;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-primary);
+  box-shadow: none;
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  padding: 0;
+  min-width: 0;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.search-clear:hover {
+  color: var(--text-primary);
+}
+
+.file-tree-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 8px;
+}
+
+.section-label {
+  margin: 10px 8px 7px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.file-tree-empty,
+.file-tree-count {
+  margin: 8px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+  gap: 7px;
+  padding-top: 0;
+  padding-bottom: 0;
+  cursor: pointer;
+  border-radius: 7px;
+  font-size: 12.5px;
+  transition: background-color 0.1s;
+}
+
+.tree-item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.tree-item.file {
+  color: var(--text-tertiary);
+}
+
+.tree-item.file.selected {
+  background-color: var(--selection-bg);
+  color: var(--text-primary);
+}
+
+.tree-item.directory {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.chevron-icon {
+  margin-right: 4px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: transform 0.2s ease-in-out;
+}
+
+.file-icon,
+.folder-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.tree-item.file .file-icon {
+  margin-left: 20px;
+}
+
+.tree-item.file.selected .file-icon {
+  color: var(--text-secondary);
+}
+
+.file-name,
+.folder-name {
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-item-meta {
+  margin-left: auto;
+  flex: 0 0 auto;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.tree-count-badge {
+  min-width: 20px;
+  height: 20px;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0 7px;
+  color: var(--status-blue);
+  background: var(--status-blue-bg);
+  border: 1px solid var(--status-blue-border);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.file-tree-versions {
+  flex: 0 0 auto;
+  padding: 10px 8px 12px;
+  border-top: 1px solid var(--border-secondary);
+}
+
+.version-row {
+  width: 100%;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 12.5px;
+  text-align: left;
+}
+
+.version-row-label {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.version-row-state,
+.version-row-meta {
+  color: var(--text-tertiary);
+}
+
+.version-row-meta {
+  flex: 0 0 auto;
+}
+
+.version-row.current {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+
+.version-row:not(.muted) {
+  cursor: pointer;
+}
+
+.version-row:not(.muted):hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.tree-children {
+  /* No extra styling needed, handled by padding in tree-item */
+}
+
+/* Scrollbar styling */
+.file-tree-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-tree-content::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.file-tree-content::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 4px;
+}
+
+.file-tree-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+</style><style type="text/css" data-vite-dev-id="node_modules/.pnpm/highlight.js@11.11.1/node_modules/highlight.js/styles/github.css">pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+code.hljs {
+  padding: 3px 5px
+}
+/*!
+  Theme: GitHub
+  Description: Light theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-light
+  Current colors taken from GitHub's CSS
+*/
+.hljs {
+  color: #24292e;
+  background: #ffffff
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #d73a49
+}
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #6f42c1
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #005cc5
+}
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #032f62
+}
+.hljs-built_in,
+.hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #e36209
+}
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #6a737d
+}
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #22863a
+}
+.hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #24292e
+}
+.hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #005cc5;
+  font-weight: bold
+}
+.hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #735c0f
+}
+.hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #24292e;
+  font-style: italic
+}
+.hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #24292e;
+  font-weight: bold
+}
+.hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #22863a;
+  background-color: #f0fff4
+}
+.hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #b31d28;
+  background-color: #ffeef0
+}
+.hljs-char.escape_,
+.hljs-link,
+.hljs-params,
+.hljs-property,
+.hljs-punctuation,
+.hljs-tag {
+  /* purposely ignored */
+
+}</style><style type="text/css" data-vite-dev-id="node_modules/.pnpm/highlight.js@11.11.1/node_modules/highlight.js/styles/github-dark.css">pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+code.hljs {
+  padding: 3px 5px
+}
+/*!
+  Theme: GitHub Dark
+  Description: Dark theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-dark
+  Current colors taken from GitHub's CSS
+*/
+.hljs {
+  color: #c9d1d9;
+  background: #0d1117
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #ff7b72
+}
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #d2a8ff
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #79c0ff
+}
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #a5d6ff
+}
+.hljs-built_in,
+.hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #ffa657
+}
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #8b949e
+}
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #7ee787
+}
+.hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #c9d1d9
+}
+.hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #1f6feb;
+  font-weight: bold
+}
+.hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #f2cc60
+}
+.hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #c9d1d9;
+  font-style: italic
+}
+.hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #c9d1d9;
+  font-weight: bold
+}
+.hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #aff5b4;
+  background-color: #033a16
+}
+.hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #ffdcd7;
+  background-color: #67060c
+}
+.hljs-char.escape_,
+.hljs-link,
+.hljs-params,
+.hljs-property,
+.hljs-punctuation,
+.hljs-tag {
+  /* purposely ignored */
+
+}</style><style type="text/css" data-vite-dev-id="src/styles/markdown.css">.markdown-with-comments {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--comments-sidebar-width, 304px);
+  gap: 0;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg-primary);
+}
+
+.markdown-with-comments.comments-collapsed {
+  grid-template-columns: minmax(0, 1fr) 42px;
+}
+
+.markdown-container {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  padding: 0;
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+.markdown-container.diff-active {
+  max-width: none;
+}
+
+.comments-sidebar {
+  width: var(--comments-sidebar-width, 304px);
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border-secondary);
+  background: var(--bg-secondary);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.comments-sidebar-collapsed {
+  width: 42px;
+  align-items: center;
+  padding: 0;
+}
+
+.comments-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  left: -2px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.comments-sidebar-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background-color: transparent;
+  transition: background-color 0.2s;
+}
+
+.comments-sidebar-resizer:hover::before {
+  background-color: var(--link-color);
+  width: 2px;
+}
+
+.markdown-with-comments.resizing .comments-sidebar-resizer::before {
+  background-color: var(--link-color);
+  width: 2px;
+}
+
+.markdown-with-comments.resizing {
+  cursor: col-resize;
+}
+
+.markdown-with-comments.resizing * {
+  cursor: col-resize !important;
+}
+
+.comments-toggle-button {
+  position: relative;
+  margin-top: 13px;
+  width: 27px;
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.comments-toggle-button:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+}
+
+.comments-toggle-button:active {
+  transform: translateY(1px);
+}
+
+.comments-toggle-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.comments-badge {
+  position: absolute;
+  top: -6px;
+  right: -7px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--status-blue-bg);
+  color: var(--status-blue);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0 5px;
+  border: 1px solid var(--status-blue-border);
+}
+
+.markdown-header {
+  flex: 0 0 auto;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-secondary);
+  padding: 0 16px;
+  margin-bottom: 0;
+}
+
+.markdown-header h1 {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 540;
+  line-height: 1.25;
+}
+
+.markdown-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.markdown-title-row h1 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.markdown-view-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  justify-self: end;
+  max-width: 100%;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.markdown-view-switch {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-control);
+  border: 1px solid var(--border-secondary);
+  border-radius: 9px;
+}
+
+.view-mode-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 26px;
+  min-width: 58px;
+  padding: 0 9px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.view-mode-button:not(.active) {
+  color: var(--text-tertiary);
+}
+
+.view-mode-button:hover {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+
+.view-mode-button.active {
+  color: var(--text-primary);
+  background: var(--bg-control-active);
+}
+
+.frontmatter-block {
+  margin: 10px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--border-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+}
+
+.frontmatter-row {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 12px;
+}
+
+.frontmatter-row dt {
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+.frontmatter-row dt::after {
+  content: ':';
+}
+
+.frontmatter-row dd {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.markdown-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.76;
+  color: var(--text-secondary);
+  position: relative;
+  padding: 34px 42px 48px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-secondary);
+  border-radius: 12px;
+  overflow-wrap: break-word;
+}
+
+.document-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  margin-bottom: 17px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.document-meta-item {
+  color: var(--text-secondary);
+}
+
+.document-meta-item::before {
+  margin-right: 10px;
+  color: var(--border-primary);
+  content: '·';
+}
+
+.markdown-reader-scroll {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 24px 30px 72px;
+}
+
+.markdown-reader {
+  position: relative;
+  width: min(820px, 100%);
+  margin: 0 auto;
+}
+
+.markdown-container.diff-active .markdown-reader {
+  width: min(1160px, 100%);
+}
+
+.markdown-diff-view {
+  overflow: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-secondary);
+  border-radius: 12px;
+  background: var(--bg-panel);
+}
+
+.diff-view-toolbar {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-control);
+  border: 1px solid var(--border-secondary);
+  border-radius: 9px;
+}
+
+.diff-view-mode-button {
+  flex: 0 0 auto;
+  min-height: 26px;
+  min-width: 52px;
+  padding: 0 8px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.diff-view-mode-button:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.diff-view-mode-button.active {
+  color: var(--text-primary);
+  background: var(--bg-control-active);
+}
+
+.markdown-diff-view pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.markdown-diff-view table {
+  width: 100% !important;
+  max-width: 100%;
+  table-layout: fixed;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.markdown-diff-view td {
+  min-width: 0;
+}
+
+.markdown-content .highlight-line {
+  animation: highlight-fade 2s ease-out;
+  background-color: rgb(88 166 255 / 20%);
+  border-radius: 3px;
+  padding: 0.25rem;
+  margin: -0.25rem;
+}
+
+.markdown-line-with-processed-comment {
+  position: relative;
+}
+
+.processed-comment-marker {
+  position: absolute;
+  left: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: inline-flex;
+  line-height: 1;
+}
+
+.processed-comment-marker-button {
+  position: relative;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-primary);
+  border-radius: 999px;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.processed-comment-marker-button:hover {
+  background: var(--bg-secondary);
+  transform: none;
+}
+
+.processed-comment-marker-button svg {
+  width: 11px;
+  height: 11px;
+}
+
+.processed-comment-marker-button.status-open {
+  color: var(--status-blue);
+  background: var(--status-blue-bg);
+  border-color: var(--status-blue-border);
+}
+
+.processed-comment-marker-button.status-resolved {
+  color: var(--status-green);
+  background: var(--status-green-bg);
+  border-color: var(--status-green-border);
+}
+
+.processed-comment-marker-button.status-partially-resolved {
+  color: var(--status-amber);
+  background: var(--status-amber-bg);
+  border-color: var(--status-amber-border);
+}
+
+.processed-comment-marker-button.status-unresolved {
+  color: var(--status-red);
+  background: var(--status-red-bg);
+  border-color: var(--status-red-border);
+}
+
+.processed-comment-count {
+  position: absolute;
+  right: -0.35rem;
+  bottom: -0.35rem;
+  min-width: 0.85rem;
+  height: 0.85rem;
+  padding: 0 0.2rem;
+  color: var(--status-red);
+  background: var(--status-red-bg);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--status-red-border);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 0.8rem;
+}
+
+.processed-comment-popover {
+  position: absolute;
+  left: 25px;
+  top: -8px;
+  z-index: 30;
+  display: flex;
+  width: min(320px, calc(100vw - 72px));
+  max-height: min(420px, calc(100vh - 80px));
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 10px;
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-primary);
+  border-radius: 10px;
+  box-shadow: var(--shadow-floating);
+  font-size: 12.5px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+
+.processed-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.processed-comment + .processed-comment {
+  padding-top: 0.75rem;
+  box-shadow: inset 0 1px 0 var(--border-secondary);
+}
+
+.processed-comment-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.processed-comment-status {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.processed-comment-status.status-open {
+  color: var(--status-blue);
+  background: var(--status-blue-bg);
+}
+
+.processed-comment-status.status-resolved {
+  color: var(--status-green);
+  background: var(--status-green-bg);
+}
+
+.processed-comment-status.status-partially-resolved {
+  color: var(--status-amber);
+  background: var(--status-amber-bg);
+}
+
+.processed-comment-status.status-unresolved {
+  color: var(--status-red);
+  background: var(--status-red-bg);
+}
+
+.processed-comment-source {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.processed-comment-text {
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.processed-comment-resolution {
+  padding: 0.55rem 0.65rem;
+  color: var(--text-secondary);
+  background: var(--bg-inset);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+@keyframes highlight-fade {
+  0% {
+    background-color: rgb(88 166 255 / 30%);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+.markdown-content h1 {
+  font-size: 26px;
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 22px;
+  color: var(--text-primary);
+  font-weight: 520;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.markdown-content h2 {
+  font-size: 17px;
+  border-bottom: 0;
+  padding-top: 18px;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+  font-weight: 520;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.markdown-content h3 {
+  font-size: 15.5px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+  font-weight: 540;
+  overflow-wrap: anywhere;
+}
+
+.markdown-content h4 {
+  font-size: 15px;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.markdown-content pre {
+  background-color: var(--code-bg);
+  border-radius: 8px;
+  padding: 16px;
+  overflow: auto;
+  font-size: 14px;
+  line-height: 1.45;
+  border: 1px solid var(--border-secondary);
+}
+
+.markdown-content code {
+  background-color: var(--code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 85%;
+  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 100%;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 20px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-content li {
+  margin: 4px 0;
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  line-height: 1.78;
+}
+
+.markdown-content p {
+  margin-top: 0;
+  margin-bottom: 13px;
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  line-height: 1.78;
+}
+
+.markdown-content blockquote {
+  padding: 0 1em;
+  color: var(--text-tertiary);
+  border-left: 4px solid var(--border-secondary);
+  margin: 0 0 16px;
+}
+
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.markdown-content table th,
+.markdown-content table td {
+  padding: 6px 13px;
+  border: 1px solid var(--border-secondary);
+  overflow-wrap: break-word;
+}
+
+.markdown-content table th {
+  font-weight: 600;
+  background-color: var(--table-bg-alt);
+  color: var(--text-primary);
+}
+
+.markdown-content table tr {
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-primary);
+}
+
+.markdown-content table tr:nth-child(2n) {
+  background-color: var(--table-bg-alt);
+}
+
+.markdown-content a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+.markdown-content hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: var(--border-secondary);
+  border: 0;
+}
+
+.markdown-content input[type='checkbox'] {
+  margin-right: 0.5em;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1em 0;
+}
+
+.line-range {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: var(--text-tertiary);
+  margin-left: 0.5rem;
+}
+
+.selection-popover {
+  display: flex;
+  gap: 4px;
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 9px;
+  padding: 4px;
+  box-shadow: var(--shadow-soft);
+  z-index: 1000;
+}
+
+.popover-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  min-height: 27px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.popover-button:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.popover-button:active {
+  background: var(--bg-tertiary);
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(320px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  padding: 4px 6px 5px;
+}
+
+.comment-input {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-secondary);
+  border-radius: 0;
+  color: var(--text-secondary);
+  font-size: 12.8px;
+  line-height: 1.45;
+  padding: 7px 0;
+  width: 100%;
+  min-height: 54px;
+  max-height: 50vh;
+  overflow-y: auto;
+  font-family: inherit;
+}
+
+@supports (resize: none) {
+  .comment-input {
+    resize: none;
+  }
+}
+
+@supports (field-sizing: content) {
+  .comment-input {
+    field-sizing: content;
+  }
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: var(--border-secondary);
+  background: transparent;
+}
+
+.comment-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.comment-cancel,
+.comment-submit {
+  min-height: 26px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s;
+}
+
+.comment-cancel {
+  background: transparent;
+  color: var(--text-tertiary);
+}
+
+.comment-cancel:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.comment-submit {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-primary);
+}
+
+.comment-submit:hover {
+  background: var(--bg-tertiary);
+}
+
+.comment-submit:disabled {
+  background: transparent;
+  color: var(--text-tertiary);
+  border-color: var(--border-secondary);
+  cursor: not-allowed;
+}
+
+.selection-highlight {
+  background-color: var(--selection-bg);
+  border-radius: 2px;
+}
+
+.comment-list-empty {
+  flex: 1;
+  text-align: center;
+  color: var(--text-tertiary);
+  padding: 62px 12px 24px;
+}
+
+.comment-list-empty p {
+  margin: 0.5rem 0;
+  font-size: 13px;
+}
+
+.comment-list-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.comments-top {
+  flex: 0 0 auto;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.comment-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.comments-subtitle {
+  margin: 3px 0 10px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.comment-list-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: transparent;
+  border: 0;
+  border-radius: 7px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.comment-list-collapse-btn svg {
+  display: block;
+  margin: auto;
+}
+
+.comment-list-collapse-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+
+:root:not(.dark-mode) .comment-list-collapse-btn {
+  background-color: var(--bg-primary);
+  border-color: var(--border-secondary);
+}
+
+:root:not(.dark-mode) .comment-list-collapse-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-primary);
+}
+
+.comment-list-title {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 0;
+}
+
+.comment-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-control);
+  border: 1px solid var(--border-secondary);
+  border-radius: 9px;
+}
+
+.comment-tabs button {
+  min-width: 0;
+  height: 27px;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.comment-tabs .active {
+  color: var(--text-secondary);
+  background: var(--bg-control-active);
+}
+
+.comment-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.comment-list-copy-all {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: 1px solid var(--border-secondary);
+  border-radius: 7px;
+  padding: 0.2rem 0.42rem;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.comment-list-copy-all:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.comment-list-copy-all.copied {
+  color: var(--status-green);
+  border-color: var(--status-green-border);
+}
+
+.comment-list-copy-all.copied::after,
+.comment-item-copy.copied::after {
+  content: 'Copied!';
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: tooltip-fade-in 0.15s ease-out;
+}
+
+.comment-list-copy-all.copied::before,
+.comment-item-copy.copied::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-bottom-color: #1f2937;
+  z-index: 1000;
+  animation: tooltip-fade-in 0.15s ease-out;
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.comment-list-delete-all {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: 1px solid var(--border-secondary);
+  border-radius: 7px;
+  padding: 0.2rem 0.42rem;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.comment-list-delete-all:hover {
+  background: var(--status-red-bg);
+  color: var(--status-red);
+  border-color: var(--status-red-border);
+}
+
+.comment-list-items {
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 10px 8px;
+}
+
+.comment-list {
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-item {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border-secondary);
+  border-radius: 0;
+  padding: 12px 0;
+  font-size: 12.8px;
+}
+
+.comment-item.active {
+  padding: 11px;
+  margin: 0 -4px 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--status-blue-border);
+  border-radius: 10px;
+}
+
+.comment-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 8px;
+  min-width: 0;
+}
+
+.comment-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.comment-item-lines {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 520;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.comment-item-lines:hover {
+  color: var(--link-color);
+}
+
+.comment-item-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.comment-item-status.status-resolved {
+  color: var(--status-green);
+  background: var(--status-green-bg);
+}
+
+.comment-item-status.status-partially-resolved {
+  color: var(--status-amber);
+  background: var(--status-amber-bg);
+}
+
+.comment-item-status.status-unresolved {
+  color: var(--status-red);
+  background: var(--status-red-bg);
+}
+
+.comment-item-status.status-ignored {
+  color: var(--text-tertiary);
+}
+
+.comment-item-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.comment-item-copy,
+.comment-item-delete {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.15rem 0.25rem;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-item-copy {
+  position: relative;
+}
+
+.comment-item-delete {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.comment-item-copy:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.comment-item-copy.copied {
+  color: var(--status-green);
+}
+
+.comment-item-delete:hover {
+  color: var(--status-red);
+  background: var(--status-red-bg);
+}
+
+.comment-item-selection {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin-bottom: 8px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.45;
+}
+
+.comment-item-text {
+  color: var(--text-secondary);
+  font-size: 12.8px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.comment-list-footer-hint {
+  flex: 0 0 auto;
+  margin: 0 12px 12px;
+  padding-top: 10px;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.comment-item-edit {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.125rem 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-item-edit:hover {
+  color: var(--link-color);
+}
+
+.comment-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comment-edit-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-family: inherit;
+  min-height: 60px;
+}
+
+@supports (field-sizing: content) {
+  .comment-edit-input {
+    field-sizing: content;
+  }
+}
+
+.comment-edit-input:focus {
+  outline: none;
+  border-color: var(--link-color);
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.comment-edit-cancel,
+.comment-edit-save {
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border-secondary);
+}
+
+.comment-edit-cancel {
+  background: none;
+  color: var(--text-secondary);
+}
+
+.comment-edit-cancel:hover {
+  background: var(--bg-secondary);
+  border-color: var(--text-tertiary);
+}
+
+.comment-edit-save {
+  background: var(--bg-control-active);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.comment-edit-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comment-edit-save:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+}
+
+/* Mermaid diagram styles */
+.mermaid-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-secondary);
+  overflow-x: auto;
+}
+
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-error {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--status-red-border);
+  border-radius: 8px;
+}
+
+.mermaid-error pre {
+  margin: 0 0 0.5rem;
+  padding: 0.5rem;
+  background: var(--code-bg);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  overflow-x: auto;
+}
+
+.mermaid-error-message {
+  margin: 0;
+  color: var(--status-red);
+  font-size: 0.85rem;
+}
+
+/* Submit button shortcut tooltip */
+.comment-submit-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.shortcut-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  background: #1f2937;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 30%);
+  white-space: nowrap;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.comment-submit:hover:not(:disabled) + .shortcut-tooltip {
+  visibility: visible;
+  animation: tooltip-fade-in 0.15s ease-out 0.5s both;
+}
+
+.comment-submit:focus-visible:not(:disabled) + .shortcut-tooltip {
+  visibility: visible;
+  animation: tooltip-fade-in 0.15s ease-out both;
+}
+
+.shortcut-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1f2937;
+}
+
+.shortcut-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #374151;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  min-width: 28px;
+  border: 1px solid #4b5563;
+}
+
+@media (width <= 1180px) {
+  .markdown-with-comments {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, var(--comments-sidebar-width, 304px));
+  }
+
+  .markdown-with-comments.comments-collapsed {
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  .markdown-reader-scroll {
+    padding: 22px 24px 64px;
+  }
+
+  .markdown-content {
+    padding: 30px 34px 42px;
+  }
+
+  .processed-comment-marker {
+    left: -42px;
+  }
+}
+
+@media (width <= 860px) {
+  .markdown-with-comments:not(.comments-collapsed) {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .markdown-title-row {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 8px;
+  }
+
+  .markdown-header {
+    padding: 0 12px;
+  }
+
+  .markdown-view-actions {
+    gap: 4px;
+  }
+
+  .markdown-reader-scroll {
+    padding: 18px 16px 56px;
+  }
+
+  .markdown-content {
+    padding: 26px 24px 36px;
+  }
+
+  .processed-comment-marker {
+    left: -34px;
+  }
+}
+
+@media (width <= 720px) {
+  .markdown-title-row {
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-title-row h1 {
+    display: none;
+  }
+
+  .markdown-view-actions {
+    justify-self: end;
+  }
+}
+
+@media (width <= 640px) {
+  .markdown-with-comments,
+  .markdown-with-comments:not(.comments-collapsed),
+  .markdown-with-comments.comments-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .markdown-with-comments.comments-collapsed {
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  .comments-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 60;
+    width: min(304px, calc(100vw - 46px)) !important;
+    box-shadow: var(--shadow-floating);
+  }
+
+  .comments-sidebar-collapsed {
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    width: 42px !important;
+    box-shadow: none;
+  }
+}
+
+@media (width <= 420px) {
+  .markdown-header {
+    padding: 0 8px;
+  }
+
+  .markdown-view-actions {
+    gap: 4px;
+  }
+
+  .view-mode-button,
+  .diff-view-mode-button {
+    min-width: auto;
+    padding: 0 7px;
+    font-size: 11.5px;
+  }
+}
+</style><style type="text/css" data-vite-dev-id="src/styles/devmode.css">.dev-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-primary);
+}
+
+.dev-sidebar {
+  flex-shrink: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-secondary);
+}
+
+.dev-sidebar:not(.closed) {
+  position: relative;
+}
+
+.dev-sidebar.closed {
+  width: 46px;
+  transition: width 0.18s ease-out;
+}
+
+/* Sidebar Resizer */
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.sidebar-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background-color: transparent;
+  transition: background-color 0.2s;
+}
+
+.sidebar-resizer:hover::before {
+  background-color: var(--link-color);
+  width: 2px;
+}
+
+.dev-container.resizing .sidebar-resizer::before {
+  background-color: var(--link-color);
+  width: 2px;
+}
+
+.dev-container.resizing {
+  cursor: col-resize;
+}
+
+.dev-container.resizing * {
+  cursor: col-resize !important;
+}
+
+/* Icon Bar */
+.sidebar-icon-bar {
+  width: 46px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 11px 0;
+  gap: 6px;
+  background-color: var(--bg-secondary);
+}
+
+.sidebar-icon-bar .theme-toggle {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  color: var(--text-secondary);
+}
+
+.sidebar-icon-bar .theme-toggle:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.sidebar-icon-bar .icon-bar-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-icon-bar .theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-icon-bar .theme-toggle-label {
+  display: none;
+}
+
+.icon-bar-spacer {
+  flex: 1;
+}
+
+.icon-bar-item {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  padding: 0;
+}
+
+.icon-bar-item:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.icon-bar-item:active {
+  background-color: var(--bg-tertiary);
+}
+
+/* Sidebar Content */
+.sidebar-content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dev-main {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+}
+
+.dev-loading,
+.dev-placeholder,
+.dev-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-secondary);
+}
+
+.dev-placeholder h2,
+.dev-empty h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: var(--text-primary);
+}
+
+.dev-placeholder p,
+.dev-empty p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.dev-placeholder .file-count {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Responsive adjustments */
+@media (width <= 768px) {
+  .dev-sidebar:not(.closed) {
+    width: 240px;
+  }
+
+  .dev-sidebar.closed {
+    width: 46px;
+  }
+}
+
+@media (width <= 480px) {
+  .dev-container {
+    flex-direction: column;
+  }
+
+  .dev-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 40%;
+    border-right: none;
+    border-bottom: 1px solid #d0d7de;
+    flex-direction: row;
+  }
+
+  .dev-sidebar.closed {
+    width: 100%;
+    height: 46px;
+  }
+
+  .sidebar-icon-bar {
+    width: 100%;
+    height: 46px;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--border-primary);
+    padding: 0 12px;
+  }
+
+  .sidebar-content {
+    display: none;
+  }
+
+  .dev-sidebar:not(.closed) .sidebar-content {
+    display: flex;
+  }
+
+  .dev-main {
+    flex: 1;
+  }
+}
+</style>
+  <style data-design-draft="comment-replies-v5">
+.comment-replies-v5 {
+  display: grid;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.comment-reply-v5 {
+  padding: 8px 9px;
+  color: var(--text-secondary);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-secondary);
+  border-radius: 7px;
+}
+
+.comment-reply-v5-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.comment-reply-v5 p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 12.4px;
+  line-height: 1.48;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.comment-reply-editor-v5 {
+  display: grid;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.comment-reply-editor-v5 textarea {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 9px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.comment-reply-editor-v5 textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.comment-reply-editor-v5 textarea:focus {
+  outline: none;
+  border-color: var(--link-color);
+}
+
+.comment-reply-editor-actions-v5 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.comment-reply-action-v5,
+.comment-reply-ghost-v5 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.comment-reply-action-v5 {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+}
+
+.comment-reply-action-v5:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+}
+
+.comment-reply-ghost-v5 {
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 0;
+}
+
+.comment-reply-ghost-v5:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+</style></head>
+  <body>
+    <div id="root"><div class="dev-container sidebar-closed "><div class="dev-sidebar closed"><div class="sidebar-icon-bar"><button class="icon-bar-item" title="Open sidebar"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 3h6l2 2h4a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h2z" stroke="currentColor" stroke-width="1.5"></path></svg></button><button class="icon-bar-item" title="Search"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"></circle><path d="M13.5 13.5l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button><div class="icon-bar-spacer"></div><button class="theme-toggle" title="Switch to light mode" aria-label="Switch to light mode"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"></circle><path d="M10 2v2M10 16v2M18 10h-2M4 10H2M15.657 4.343l-1.414 1.414M5.757 14.243l-1.414 1.414M15.657 15.657l-1.414-1.414M5.757 5.757L4.343 4.343" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg><span class="theme-toggle-label">Light</span></button><a href="https://github.com/tracyxiong1/md-review-server" target="_blank" rel="noopener noreferrer" class="icon-bar-item" title="View on GitHub" aria-label="View on GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"></path></svg></a></div></div><div class="dev-main"><div class="markdown-with-comments  " style="--comments-sidebar-width: 300px;"><div class="markdown-container "><header class="markdown-header"><div class="markdown-title-row"><h1>with-comments.md</h1></div></header><div class="markdown-reader-scroll"><section class="markdown-reader"><div class="markdown-content"><div class="document-meta"><span>Markdown preview · local review</span></div><h1 data-line-start="1">Codex handoff review</h1>
+<p data-line-start="3" class="markdown-line-with-processed-comment"><span class="processed-comment-marker"><button type="button" class="processed-comment-marker-button status-open" data-testid="review-marker-c001" data-status-icon="comment" aria-label="Review comments on line 3" title="Review comments on line 3"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8h10"></path><path d="M7 12h6"></path><path d="M5 4h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V7a3 3 0 0 1 3-3Z"></path></svg></button></span>The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually.</p>
+<h2 data-line-start="5">Current flow</h2>
+<p data-line-start="7">Users select exact text, add comments, then copy or describe those comments back to Codex.</p>
+<h2 data-line-start="9" class="markdown-line-with-processed-comment"><span class="processed-comment-marker"><button type="button" class="processed-comment-marker-button status-open" data-testid="review-marker-c002" data-status-icon="comment" aria-label="Review comments on line 9" title="Review comments on line 9"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8h10"></path><path d="M7 12h6"></path><path d="M5 4h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V7a3 3 0 0 1 3-3Z"></path></svg></button></span>Proposed flow</h2>
+<p data-line-start="11">A compact handoff control in the comments panel submits open comments to Codex and keeps the result visible in the review state.</p>
+<h2 data-line-start="13" class="markdown-line-with-processed-comment"><span class="processed-comment-marker"><button type="button" class="processed-comment-marker-button status-resolved" data-testid="review-marker-c003" data-status-icon="check" aria-label="Review comments on line 13" title="Review comments on line 13"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4 10-10"></path></svg></button></span>Failure state</h2>
+<p data-line-start="15">If the handoff cannot start, the user should see a clear retry path and a copyable fallback prompt.</p></div></section></div></div><aside class="comments-sidebar" style="width: 300px;"><div class="comments-sidebar-resizer"></div><div class="comment-list"><div class="comments-top"><div class="comment-list-header"><h3 class="comment-list-title" aria-label="3 comments">Comments</h3><button class="comment-list-collapse-btn" title="Hide comments" aria-label="Hide comments"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button></div><div class="comments-subtitle">Current file · anchored to selection</div><div class="comment-tabs" aria-label="Comment status summary"><button type="button" class="" aria-pressed="false">Open 2</button><button type="button" class="" aria-pressed="false">Done 1</button><button type="button" class="active" aria-pressed="true">All 3</button></div><div class="comment-list-actions"><button class="comment-list-copy-all " title="Copy all comments"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg><span>Copy All</span></button><button class="comment-list-delete-all" title="Delete all comments"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg><span>Clear</span></button></div></div><div class="comment-list-items"><div class="comment-item active"><div class="comment-item-header"><div class="comment-item-meta"><button class="comment-item-lines" title="Jump to line">Line 3</button><span class="comment-item-status status-open">Open</span></div><div class="comment-item-actions"><button class="comment-item-edit" title="Edit comment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button><button class="comment-item-copy " title="Copy comment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg></button><button class="comment-item-delete" title="Delete comment">×</button></div></div><div class="comment-item-selection">"continue analysis without making the user return t..."</div><div class="comment-item-text">这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。</div><div class="comment-replies-v5"><div class="comment-reply-v5"><div class="comment-reply-v5-header"><span>Codex</span><span>Reply</span></div><p>我不确定你是希望我解释这段流程，还是希望我调整文档表述。请确认你希望我怎么处理。</p></div></div><div class="comment-reply-editor-v5"><textarea placeholder="Reply to Codex..."></textarea><div class="comment-reply-editor-actions-v5"><button class="comment-reply-ghost-v5" type="button">Cancel</button><button class="comment-reply-action-v5" type="button">Reply</button></div></div></div><div class="comment-item "><div class="comment-item-header"><div class="comment-item-meta"><button class="comment-item-lines" title="Jump to line">Line 9</button><span class="comment-item-status status-open">Open</span></div><div class="comment-item-actions"><button class="comment-item-edit" title="Edit comment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button><button class="comment-item-copy " title="Copy comment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg></button><button class="comment-item-delete" title="Delete comment">×</button></div></div><div class="comment-item-selection">"submits open comments to Codex"</div><div class="comment-item-text">按钮文案要说明是提交 open comments，而不是上传整篇文档。</div></div><div class="comment-item "><div class="comment-item-header"><div class="comment-item-meta"><button class="comment-item-lines" title="Jump to line">Line 13</button><span class="comment-item-status status-resolved">Resolved</span></div><div class="comment-item-actions"><button class="comment-item-edit" title="Edit comment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button><button class="comment-item-copy " title="Copy comment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg></button><button class="comment-item-delete" title="Delete comment">×</button></div></div><div class="comment-item-selection">"clear retry path"</div><div class="comment-item-text">已补充失败恢复说明。</div><div class="comment-replies-v5"><div class="comment-reply-v5"><div class="comment-reply-v5-header"><span>Codex</span><span>Reply</span></div><p>已补充失败恢复说明，并将这条评论标记为 resolved。</p></div></div></div></div><div class="comment-list-footer-hint">页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。</div></div></aside></div></div></div></div>
+    </body><div id="codex-browser-sidebar-comments-root" style="position: fixed; inset: 0px; pointer-events: none; z-index: 2147483647;"></div></html>

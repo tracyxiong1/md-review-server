@@ -1,0 +1,124 @@
+<!doctype html>
+<!--
+status: active
+basedOn:
+  - ../../runtime-baseline/html/05-light-expanded-comments-open-with-comments.html
+purpose: Latest-version carryover model in light mode with expanded sidebar
+-->
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment replies v3</title>
+    <link rel="stylesheet" href="./draft-shared.css">
+  </head>
+  <body>
+    <div class="dev-container">
+      <aside class="dev-sidebar expanded">
+        <div class="sidebar-content">
+          <div class="file-tree-brand">▣ md-review-server</div>
+          <div class="tree-section">Files</div>
+          <div class="tree-item">docs/no-comments.md</div>
+          <div class="tree-item current">docs/with-comments.md <span class="tree-count-badge">1</span></div>
+          <div class="tree-section">Versions</div>
+          <div class="tree-item">v1 · previous <span class="tree-count-badge">3</span></div>
+          <div class="tree-item current">v2 · latest <span class="tree-count-badge">1</span></div>
+          <div class="tree-section">Review state</div>
+          <div class="tree-item current">Needs confirmation <span class="tree-count-badge">1</span></div>
+        </div>
+      </aside>
+      <main class="dev-main">
+        <div class="markdown-with-comments">
+          <div class="markdown-container">
+            <header class="markdown-header"><h1>with-comments.v2.md</h1></header>
+            <div class="markdown-reader-scroll">
+              <section class="markdown-reader">
+                <div class="markdown-content">
+                  <div class="document-meta">Markdown preview · v2 latest · 1 open carryover</div>
+                  <h1>Review workflow</h1>
+                  <p>Codex resolves comments only when it can clearly satisfy the user request.</p>
+                  <h2 class="line-with-marker"><span class="marker">?</span>Confirmation comments</h2>
+                  <p>If a user comment is ambiguous, Codex replies in place and carries the comment forward as open in the latest version.</p>
+                  <h2 class="line-with-marker"><span class="marker resolved">✓</span>Completed comments</h2>
+                  <p>Completed questions and edits are available under Done with Codex's reply attached to the original comment.</p>
+                </div>
+              </section>
+            </div>
+          </div>
+          <aside class="comments-sidebar">
+            <div class="comment-list">
+              <div class="comments-top">
+                <div class="comment-list-header">
+                  <h3 class="comment-list-title">Comments</h3>
+                  <button class="icon-button" title="Hide comments">›</button>
+                </div>
+                <div class="comments-subtitle">Latest file · unresolved items carried forward</div>
+                <div class="comment-tabs">
+                  <button class="active">Open 1</button>
+                  <button>Done 2</button>
+                  <button>All 3</button>
+                </div>
+                <div class="comment-list-actions">
+                  <button class="comment-button">▣ Copy All</button>
+                  <button class="comment-button">⌫ Clear</button>
+                </div>
+              </div>
+              <div class="comment-list-items">
+                <article class="comment-item active">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 5</span>
+                      <span class="status-pill status-open">Open</span>
+                    </div>
+                    <div class="comment-item-actions">✎ ⧉ ×</div>
+                  </div>
+                  <div class="carryover-row">
+                    <span>Carried from with-comments.v1.md</span>
+                    <span>c018</span>
+                  </div>
+                  <div class="comment-item-selection">"Codex replies in place and carries the comment forward"</div>
+                  <div class="comment-item-text">这里是不是应该让用户确认？</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-confirmation">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Needs confirmation</span>
+                      </div>
+                      <p>是的，我已按这个方向保留为 open。请确认是否采用规则：凡是不能明确完成的评论都不 resolve，只写 reply 请求确认。</p>
+                    </div>
+                  </div>
+                  <div class="reply-editor">
+                    <textarea placeholder="Reply to Codex..."></textarea>
+                    <div class="reply-editor-actions">
+                      <button class="primary-compact">Reply</button>
+                    </div>
+                  </div>
+                </article>
+                <article class="comment-item resolved">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 9</span>
+                      <span class="status-pill status-resolved">Resolved</span>
+                    </div>
+                    <div class="comment-item-actions">⧉</div>
+                  </div>
+                  <div class="comment-item-text">补上 clear comments 的处理规则。</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-done">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Done</span>
+                      </div>
+                      <p>已补充：清晰 question 只回复并 resolve，清晰 change request 修改文档并 resolve。</p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div class="comment-list-footer-hint">Resolved comments stay in Done. Confirmation comments stay open in the latest version.</div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

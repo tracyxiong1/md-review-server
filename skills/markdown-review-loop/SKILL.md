@@ -64,10 +64,22 @@ curl 'http://127.0.0.1:<port>/api/comments?file=<document>&status=open'
    - `startLine` / `endLine` 对应源行范围
    - `startOffset` / `endOffset` 与 `beforeText` / `afterText` 用作长行局部定位
    - `comment` 对应评审指令
+   - `replies` 对应该评论下的历史回复；如果有最新的 `user` 回复，应将其视为用户确认或补充说明。
 4. HTTP API 不可用时，要求用户粘贴复制出的评论或 review queue。
 5. 粘贴评论缺少选区文本时，仍可按行号处理；如果评论只要求修改长行中的局部内容且定位有歧义，应要求用户提供精确 quote。
 
 读取评论不会消费评论。只有在下一版 Markdown 已生成并形成处理结论后，才回写评论状态。
+
+## 多轮评审
+
+评审循环必须支持连续多轮，不把一次处理视为流程终点：
+
+- 每一轮都只读取当前目标文档的 `open` 评论作为待处理输入；`resolved`、`ignored` 和历史 `targetFile` 评论只作为上下文或可视化痕迹，不再当作待办。
+- 用户可以在 `v2`、`v3` 等任意最新版上继续新增评论。后续轮次继续从该文件读取 `open` 评论，并生成下一版或在原评论下回复。
+- 问答型评论如果不需要修改文档，可以在当前文件内追加 Codex 回复并标记 `resolved`，`targetFile` 可以等于当前文件。这类 Done 评论不阻塞用户继续添加新评论。
+- 用户在评论区对已 `resolved` 评论追加回复时，该评论会重新变为 `open`。下一轮应把最新的 `user` 回复视为新的有效输入，并结合原评论与历史 Codex 回复理解上下文。
+- 同一行可能同时有上一轮处理痕迹和本轮新 open 评论。页面会把这些 marker 堆叠为同一个行标记和数量徽标；Codex 仍只处理 open 评论。
+- 如果某条评论需要用户确认，保持 `status: "open"` 并追加 Codex 回复。用户补充后，同一条评论继续进入下一轮处理，不要创建替代状态。
 
 ## 应用评论
 
@@ -81,11 +93,17 @@ curl 'http://127.0.0.1:<port>/api/comments?file=<document>&status=open'
 4. 将改动限制在评论指向的范围：
    - 有 `quote` 时，只修改目标行范围内匹配的选区文本。
    - `quote` 出现多次时，用行范围和上下文作为定位依据。
-   - 仍存在歧义时，将该评论标记为 `unresolved` 并说明原因。
+   - 仍存在歧义时，不修改文档，不消耗评论，追加 Codex 回复请用户确认，并保持 `status: "open"`。
    - 无 `quote` 时，按行范围处理。
 5. 除非评论明确要求调整结构，否则保持原文档结构。
 6. 除非评论明确指向事实、引用或代码块，否则保留这些内容。
 7. 不静默丢弃评论。每条评论都必须出现在处理结果中。
+
+评论意图按以下规则判断，不要求用户手动选择类型：
+
+- 清晰的问题：直接在评论下追加 Codex 回复回答问题，通常不修改文档；如果已完整回答，标记为 `resolved`。
+- 清晰的优化项：修改下一版 Markdown，追加 Codex 回复说明已处理，并标记为 `resolved`。
+- 信息不足或意图不清：追加 Codex 回复询问用户希望如何处理，保持 `open`，不要生成无把握的文档修改。
 
 ## 回写评论状态
 
@@ -104,7 +122,11 @@ curl -X PATCH 'http://127.0.0.1:<port>/api/comments' \
         "targetStartLine": 42,
         "targetEndLine": 44,
         "targetSelectedText": "一致性边界说明",
-        "resolution": "已补充一致性边界说明。"
+        "resolution": "已补充一致性边界说明。",
+        "reply": {
+          "author": "codex",
+          "body": "已补充一致性边界说明。"
+        }
       }
     ]
   }'
@@ -112,10 +134,17 @@ curl -X PATCH 'http://127.0.0.1:<port>/api/comments' \
 
 状态使用规则：
 
-- `resolved`：评论已完整处理。
-- `partially_resolved`：评论已部分处理，`resolution` 中说明剩余问题。
-- `unresolved`：评论未处理，`resolution` 中说明阻塞原因。
+- `resolved`：评论已完整处理，包括已回答的问题或已完成的文档修改。
+- `open`：评论还需要用户确认或补充。追加 `reply.author = "codex"` 说明需要确认什么。
+- `partially_resolved`：仅在用户明确接受部分处理时使用，并在 `resolution` 和 Codex 回复中说明剩余问题。
+- `unresolved`：仅在确定无法处理且不需要用户继续确认时使用，并在 `resolution` 和 Codex 回复中说明原因。
 - `ignored`：仅在用户或 agent 明确跳过评论时使用。
+
+回写时优先给每条被 Codex 处理过的评论追加 `reply`：
+
+- 已修改文档：`reply.body` 简短说明“已优化/已修改”的结果。
+- 已回答问题：`reply.body` 直接回答问题。
+- 需要用户确认：`status` 保持 `open`，`reply.body` 用一句话说明需要用户确认的选择或补充信息。
 
 目标落点字段用于在下一版 Markdown 中显示处理结果角标：
 

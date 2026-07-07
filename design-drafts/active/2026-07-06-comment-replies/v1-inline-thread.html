@@ -1,0 +1,118 @@
+<!doctype html>
+<!--
+status: active
+basedOn:
+  - ../../runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+purpose: Inline comment replies with clear resolved/open behavior
+-->
+<html class="dark-mode">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment replies v1</title>
+    <link rel="stylesheet" href="./draft-shared.css">
+  </head>
+  <body>
+    <div class="dev-container">
+      <aside class="dev-sidebar">
+        <div class="sidebar-icon-bar">
+          <button class="icon-button" title="Open sidebar">▣</button>
+          <button class="icon-button" title="Search">⌕</button>
+          <div style="flex: 1"></div>
+          <button class="icon-button" title="Switch theme">☼</button>
+        </div>
+      </aside>
+      <main class="dev-main">
+        <div class="markdown-with-comments">
+          <div class="markdown-container">
+            <header class="markdown-header"><h1>TECHNICAL_DESIGN.v2.md</h1></header>
+            <div class="markdown-reader-scroll">
+              <section class="markdown-reader">
+                <div class="markdown-content">
+                  <div class="document-meta">Markdown preview · latest version</div>
+                  <h1>Comment handling protocol</h1>
+                  <p class="line-with-marker"><span class="marker">?</span>Codex reads open comments and decides whether each comment can be clearly satisfied or needs confirmation from the user.</p>
+                  <h2 class="line-with-marker"><span class="marker resolved">✓</span>Clear comments</h2>
+                  <p>When the intent is clear, Codex completes the work, writes a reply to the comment, and resolves that comment.</p>
+                  <h2>Ambiguous comments</h2>
+                  <p>When the intent is unclear, Codex asks a focused question in the comment reply and keeps the comment open in the latest version.</p>
+                </div>
+              </section>
+            </div>
+          </div>
+          <aside class="comments-sidebar">
+            <div class="comment-list">
+              <div class="comments-top">
+                <div class="comment-list-header">
+                  <h3 class="comment-list-title">Comments</h3>
+                  <button class="icon-button" title="Hide comments">›</button>
+                </div>
+                <div class="comments-subtitle">Current file · replies stay anchored</div>
+                <div class="comment-tabs">
+                  <button class="active">Open 1</button>
+                  <button>Done 1</button>
+                  <button>All 2</button>
+                </div>
+                <div class="comment-list-actions">
+                  <button class="comment-button">▣ Copy All</button>
+                  <button class="comment-button">⌫ Clear</button>
+                </div>
+              </div>
+              <div class="comment-list-items">
+                <article class="comment-item active">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 3</span>
+                      <span class="status-pill status-open">Open</span>
+                      <span class="status-pill status-confirm">Needs confirmation</span>
+                    </div>
+                    <div class="comment-item-actions">✎ ⧉ ×</div>
+                  </div>
+                  <div class="comment-item-selection">"whether each comment can be clearly satisfied"</div>
+                  <div class="comment-item-text">这里是不是不太对？</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-confirmation">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Needs confirmation</span>
+                      </div>
+                      <p>我不确定你是希望我解释判断规则，还是希望我修改这段表述。请确认你希望我怎么处理。</p>
+                    </div>
+                  </div>
+                  <div class="reply-editor">
+                    <textarea>希望你调整文档表述，强调 Codex 不应该误改。</textarea>
+                    <div class="reply-editor-actions">
+                      <button class="comment-button">Cancel</button>
+                      <button class="primary-compact">Reply</button>
+                    </div>
+                  </div>
+                </article>
+                <article class="comment-item resolved">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 7</span>
+                      <span class="status-pill status-resolved">Resolved</span>
+                    </div>
+                    <div class="comment-item-actions">⧉</div>
+                  </div>
+                  <div class="comment-item-selection">"writes a reply to the comment"</div>
+                  <div class="comment-item-text">补充一下已处理时是否要 resolve。</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-done">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Done</span>
+                      </div>
+                      <p>已补充规则：意图清晰时完成操作、写回 reply，并将该 comment 标记为 resolved。</p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div class="comment-list-footer-hint">Unclear comments stay open. Codex replies are part of the anchored comment record.</div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

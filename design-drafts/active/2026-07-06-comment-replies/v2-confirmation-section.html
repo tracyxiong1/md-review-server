@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+status: active
+basedOn:
+  - ../../runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+purpose: Group open confirmation comments without adding a new action center
+-->
+<html class="dark-mode">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment replies v2</title>
+    <link rel="stylesheet" href="./draft-shared.css">
+  </head>
+  <body>
+    <div class="dev-container">
+      <aside class="dev-sidebar">
+        <div class="sidebar-icon-bar">
+          <button class="icon-button" title="Open sidebar">▣</button>
+          <button class="icon-button" title="Search">⌕</button>
+          <div style="flex: 1"></div>
+          <button class="icon-button" title="Switch theme">☼</button>
+        </div>
+      </aside>
+      <main class="dev-main">
+        <div class="markdown-with-comments">
+          <div class="markdown-container">
+            <header class="markdown-header"><h1>TECHNICAL_DESIGN.v2.md</h1></header>
+            <div class="markdown-reader-scroll">
+              <section class="markdown-reader">
+                <div class="markdown-content">
+                  <div class="document-meta">Markdown preview · review queue</div>
+                  <h1>Comment handling protocol</h1>
+                  <p class="line-with-marker"><span class="marker">?</span>Ambiguous review comments should not be resolved until the user confirms what outcome they expect.</p>
+                  <h2>Latest version carryover</h2>
+                  <p class="line-with-marker"><span class="marker resolved">✓</span>Resolved comments remain available in Done, while unresolved confirmation comments continue as open comments in the latest version.</p>
+                  <h2>Reply policy</h2>
+                  <p>Codex writes a short reply on every handled comment so the decision is visible in context.</p>
+                </div>
+              </section>
+            </div>
+          </div>
+          <aside class="comments-sidebar">
+            <div class="comment-list">
+              <div class="comments-top">
+                <div class="comment-list-header">
+                  <h3 class="comment-list-title">Comments</h3>
+                  <button class="icon-button" title="Hide comments">›</button>
+                </div>
+                <div class="comments-subtitle">Current file · anchored to selection</div>
+                <div class="comment-tabs">
+                  <button class="active">Open 2</button>
+                  <button>Done 1</button>
+                  <button>All 3</button>
+                </div>
+                <div class="carryover-row">
+                  <span>2 need your confirmation</span>
+                  <span>Latest</span>
+                </div>
+              </div>
+              <div class="comment-list-items">
+                <div class="comment-section-label">Needs confirmation</div>
+                <article class="comment-item active">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 3</span>
+                      <span class="status-pill status-open">Open</span>
+                    </div>
+                    <div class="comment-item-actions">✎ ⧉ ×</div>
+                  </div>
+                  <div class="comment-item-selection">"should not be resolved"</div>
+                  <div class="comment-item-text">这个是不是太保守了？</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-confirmation">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Needs confirmation</span>
+                      </div>
+                      <p>我不确定你是希望我解释为什么保守，还是把策略改成允许部分处理。请确认。</p>
+                    </div>
+                  </div>
+                </article>
+                <article class="comment-item">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 9</span>
+                      <span class="status-pill status-open">Open</span>
+                    </div>
+                    <div class="comment-item-actions">✎ ⧉ ×</div>
+                  </div>
+                  <div class="comment-item-selection">"continue as open comments"</div>
+                  <div class="comment-item-text">这里要不要迁移到新版？</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-confirmation">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Needs confirmation</span>
+                      </div>
+                      <p>这条评论是在确认产品规则。请确认是否采用：未确认评论迁移到最新版，并继续保持 open。</p>
+                    </div>
+                  </div>
+                </article>
+                <div class="comment-section-label">Resolved by Codex</div>
+                <article class="comment-item resolved">
+                  <div class="comment-item-header">
+                    <div class="comment-item-meta">
+                      <span class="comment-line">Line 13</span>
+                      <span class="status-pill status-resolved">Resolved</span>
+                    </div>
+                    <div class="comment-item-actions">⧉</div>
+                  </div>
+                  <div class="comment-item-text">说明一下 reply 写在哪里。</div>
+                  <div class="comment-replies">
+                    <div class="comment-reply reply-done">
+                      <div class="comment-reply-header">
+                        <span>Codex</span>
+                        <span class="reply-kind">Done</span>
+                      </div>
+                      <p>已明确：处理结果写回对应 comment 的 replies，chat 只做总览。</p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div class="comment-list-footer-hint">Open tab prioritizes confirmation blockers first, then other open comments.</div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -243,13 +243,15 @@ Components are compact, familiar, and state-explicit. They should preserve the c
 
 - **Header:** Comments title, subtitle, and segmented filter are the top-level structure.
 - **Runtime Dimensions:** The comments panel is about 300px wide. The comments header is about 113px high without comment actions and about 143px high when `Copy All` and `Clear` appear.
+- **Default Review State:** The comment filter defaults to `Open`. The comments sidebar auto-expands only when the current file has open comments. If a generated document only has resolved history, keep the sidebar collapsed by default; users can open `Done` or `All` when they want history.
 - **Comment Items:** Default items are flat rows with bottom dividers. Only the active or focused comment gets a bordered container.
+- **Comment Replies:** Replies live inside the existing comment item as a flat text thread. Use only `Codex` and `你` author labels with subtle time text; align reply times to a stable column. Show very recent times relatively (`刚刚`, `n分钟前`, `n小时前`) and older times as concrete local dates (`7月8日 10:30`, with year only when needed). Do not use avatars, nested reply cards, chat bubbles, or a separate confirmation status. If Codex needs clarification, append a Codex reply and keep the comment `Open`. If the user appends a comment to a `Done` item, reopen that item as `Open` so the next Codex loop treats it as active again.
 - **Handoff State:** Codex handoff belongs inside the comments workflow. Represent it as a compact state row near existing comment actions or as a low-height status row below them, using existing text, pill, and small button patterns. Do not add a large CTA block, new leading icon language, independent action-center card, wider comments panel, or a tall block that pushes the first comment far down.
 
 ### Selection and Review Markers
 
 - **Selection Popover:** Floating, compact, 9px radius, soft shadow. The selection editor stays near the selection and clamps to the viewport.
-- **Review Markers:** Small circular markers with semantic status color. Multiple comments use a tiny count badge. Marker popovers use existing floating panel rules.
+- **Review Markers:** Small circular markers with semantic status color. Markers live in the document gutter area, independent of Markdown indentation, list nesting, or table content. The marker center sits on the document content border so the border visually passes through the icon center. Multiple comments and multi-round history on the same line use one marker with a tiny count badge. Marker popovers use existing floating panel rules.
 
 ## 6. Do's and Don'ts
 

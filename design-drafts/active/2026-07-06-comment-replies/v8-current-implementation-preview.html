@@ -1,0 +1,899 @@
+<!--
+status: active
+basedOn:
+  - ../../runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+  - ../../../src/components/CommentList.tsx
+  - ../../../src/components/MarkdownPreview.tsx
+  - ../../../src/styles/markdown.css
+purpose: Static preview of the current implemented comment reply UI, including aligned marker, author labels, and timestamp formatting.
+-->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comment Replies Current Implementation Preview</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg-primary: #151515;
+        --bg-secondary: #181818;
+        --bg-tertiary: #202020;
+        --bg-panel: #181818;
+        --bg-control: #202020;
+        --bg-control-active: #2a2a2a;
+        --bg-elevated: #181818;
+        --text-primary: #eeeeee;
+        --text-secondary: #c9c9c9;
+        --text-tertiary: #8d8d8d;
+        --border-primary: #2a2a2a;
+        --border-secondary: #232323;
+        --link-color: #7eb6ff;
+        --status-blue: #8bbcff;
+        --status-blue-bg: rgb(47 111 214 / 16%);
+        --status-blue-border: rgb(126 182 255 / 34%);
+        --status-green: #8fd19e;
+        --status-green-bg: rgb(47 125 69 / 18%);
+        --status-green-border: rgb(143 209 158 / 30%);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+          "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      .browser-frame {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: 48px 52px minmax(0, 1fr);
+        background: var(--bg-primary);
+      }
+
+      .browser-tabs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--border-secondary);
+      }
+
+      .browser-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 32px;
+        min-width: 0;
+        padding: 0 14px;
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 520;
+      }
+
+      .browser-tab svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .browser-plus {
+        width: 30px;
+        height: 30px;
+        display: inline-grid;
+        place-items: center;
+        color: var(--text-tertiary);
+        background: transparent;
+        border: 0;
+        border-radius: 8px;
+        font-size: 24px;
+        line-height: 1;
+      }
+
+      .browser-bar {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr) 132px;
+        align-items: center;
+        gap: 16px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border-secondary);
+      }
+
+      .browser-nav,
+      .browser-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text-tertiary);
+      }
+
+      .browser-actions {
+        justify-content: end;
+      }
+
+      .browser-nav svg,
+      .browser-actions svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .browser-address {
+        justify-self: center;
+        max-width: 620px;
+        width: 100%;
+        color: var(--text-primary);
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: 54px minmax(0, 1fr) 304px;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .icon-rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 0;
+        color: var(--text-secondary);
+        border-right: 1px solid var(--border-secondary);
+        background: var(--bg-primary);
+      }
+
+      .rail-spacer {
+        flex: 1;
+      }
+
+      .rail-button {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+      }
+
+      .rail-button svg {
+        width: 19px;
+        height: 19px;
+      }
+
+      .main-pane {
+        display: grid;
+        grid-template-rows: 58px minmax(0, 1fr);
+        min-width: 0;
+        border-right: 1px solid var(--border-secondary);
+      }
+
+      .document-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 0;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--border-secondary);
+      }
+
+      .document-title {
+        margin: 0;
+        min-width: 0;
+        overflow: hidden;
+        color: var(--text-primary);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 16px;
+        font-weight: 540;
+      }
+
+      .view-switch {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 2px;
+        background: var(--bg-control);
+        border: 1px solid var(--border-secondary);
+        border-radius: 9px;
+      }
+
+      .view-switch button {
+        min-width: 62px;
+        height: 28px;
+        color: var(--text-tertiary);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .view-switch .active {
+        color: var(--text-primary);
+        background: var(--bg-control-active);
+      }
+
+      .reader-scroll {
+        min-height: 0;
+        overflow: auto;
+        padding: 30px 28px 72px;
+      }
+
+      .markdown-content {
+        position: relative;
+        max-width: 820px;
+        min-height: 730px;
+        margin: 0 auto;
+        padding: 34px 42px 48px;
+        color: var(--text-secondary);
+        background: var(--bg-panel);
+        border: 1px solid var(--border-secondary);
+        border-radius: 12px;
+        font-size: 17px;
+        line-height: 1.74;
+      }
+
+      .document-meta {
+        margin-bottom: 22px;
+        color: var(--text-tertiary);
+        font-size: 13px;
+      }
+
+      .markdown-content h1,
+      .markdown-content h2 {
+        color: var(--text-primary);
+        letter-spacing: 0;
+      }
+
+      .markdown-content h1 {
+        margin: 0 0 34px;
+        font-size: 31px;
+        line-height: 1.18;
+        font-weight: 600;
+      }
+
+      .markdown-content h2 {
+        margin: 30px 0 14px;
+        font-size: 21px;
+        line-height: 1.35;
+        font-weight: 560;
+      }
+
+      .markdown-content p,
+      .markdown-content ul {
+        margin: 0 0 18px;
+      }
+
+      .markdown-content li {
+        margin: 7px 0;
+      }
+
+      .markdown-content code {
+        padding: 2px 6px;
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+        border-radius: 5px;
+        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.9em;
+      }
+
+      .processed-comment-marker {
+        position: absolute;
+        top: 286px;
+        left: -8px;
+        display: inline-flex;
+        transform: translateY(-50%);
+        z-index: 2;
+      }
+
+      .processed-comment-marker-button {
+        position: relative;
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        color: var(--status-blue);
+        background: var(--status-blue-bg);
+        border: 1px solid var(--status-blue-border);
+        border-radius: 999px;
+      }
+
+      .processed-comment-marker-button svg {
+        width: 11px;
+        height: 11px;
+      }
+
+      .comments-sidebar {
+        display: flex;
+        min-width: 0;
+        min-height: 0;
+        flex-direction: column;
+        background: var(--bg-secondary);
+      }
+
+      .comments-top {
+        flex: 0 0 auto;
+        padding: 18px 14px 14px;
+        border-bottom: 1px solid var(--border-secondary);
+      }
+
+      .comment-list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .comment-list-title {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 16px;
+        line-height: 1.25;
+        font-weight: 540;
+      }
+
+      .collapse-button {
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        color: var(--text-secondary);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+      }
+
+      .collapse-button svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .comments-subtitle {
+        margin-top: 10px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .comment-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2px;
+        margin-top: 14px;
+        padding: 2px;
+        background: var(--bg-control);
+        border: 1px solid var(--border-secondary);
+        border-radius: 9px;
+      }
+
+      .comment-tabs button {
+        min-width: 0;
+        height: 28px;
+        color: var(--text-tertiary);
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .comment-tabs .active {
+        color: var(--text-primary);
+        background: var(--bg-control-active);
+      }
+
+      .comment-list-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .compact-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 9px;
+        color: var(--text-secondary);
+        background: transparent;
+        border: 1px solid var(--border-secondary);
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .compact-button svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .comment-list-items {
+        min-height: 0;
+        overflow: auto;
+      }
+
+      .comment-item {
+        padding: 14px;
+        border-bottom: 1px solid var(--border-secondary);
+      }
+
+      .comment-item.active {
+        margin: 12px 8px;
+        border: 1px solid var(--status-blue-border);
+        border-radius: 9px;
+        background: var(--bg-secondary);
+      }
+
+      .comment-item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .comment-item-meta,
+      .comment-item-actions {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        gap: 7px;
+      }
+
+      .comment-item-lines {
+        padding: 0;
+        color: var(--text-tertiary);
+        background: transparent;
+        border: 0;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .comment-item-status {
+        display: inline-flex;
+        align-items: center;
+        height: 20px;
+        padding: 0 8px;
+        color: var(--text-primary);
+        background: var(--bg-control);
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .comment-icon-button {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        color: var(--text-secondary);
+        background: transparent;
+        border: 0;
+        border-radius: 6px;
+      }
+
+      .comment-icon-button:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+
+      .comment-icon-button svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .comment-item-selection {
+        margin-top: 14px;
+        color: var(--text-tertiary);
+        font-size: 12.5px;
+        font-style: italic;
+        line-height: 1.4;
+      }
+
+      .comment-item-text {
+        margin-top: 10px;
+        color: var(--text-secondary);
+        font-size: 12.8px;
+        line-height: 1.5;
+      }
+
+      .comment-reply-thread {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .comment-reply-row {
+        display: grid;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .comment-reply-meta {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        align-items: baseline;
+        column-gap: 6px;
+        min-width: 0;
+        font-size: 11.5px;
+        line-height: 1.2;
+      }
+
+      .comment-reply-author {
+        min-width: 0;
+        color: var(--text-secondary);
+        font-weight: 540;
+      }
+
+      .comment-reply-time {
+        min-width: 0;
+        color: var(--text-tertiary);
+        font-weight: 400;
+      }
+
+      .comment-reply-body {
+        color: var(--text-secondary);
+        font-size: 12.7px;
+        line-height: 1.48;
+      }
+
+      .comment-reply-composer {
+        display: grid;
+        gap: 6px;
+        margin-top: 1px;
+      }
+
+      .comment-reply-label {
+        color: var(--text-secondary);
+        font-size: 11.5px;
+        font-weight: 540;
+        line-height: 1.2;
+      }
+
+      .comment-reply-input {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .comment-reply-input textarea {
+        width: 100%;
+        min-height: 54px;
+        padding: 7px 8px;
+        resize: vertical;
+        color: var(--text-primary);
+        background: transparent;
+        border: 1px solid var(--border-secondary);
+        border-radius: 7px;
+        font-size: 12.5px;
+        line-height: 1.45;
+      }
+
+      .comment-reply-input textarea::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      .comment-reply-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+
+      .comment-reply-save,
+      .comment-reply-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 26px;
+        padding: 0 9px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .comment-reply-save {
+        color: var(--text-tertiary);
+        background: transparent;
+        border: 1px solid var(--border-secondary);
+      }
+
+      .comment-reply-cancel {
+        color: var(--text-tertiary);
+        background: transparent;
+        border: 0;
+      }
+
+      .comment-list-footer-hint {
+        margin: 0 12px 12px;
+        padding-top: 10px;
+        color: var(--text-tertiary);
+        border-top: 1px solid var(--border-secondary);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 920px) {
+        .app-shell {
+          grid-template-columns: 46px minmax(0, 1fr) 292px;
+        }
+
+        .reader-scroll {
+          padding: 22px 18px 56px;
+        }
+
+        .markdown-content {
+          padding: 30px 34px 42px;
+        }
+
+        .processed-comment-marker {
+          left: -8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="browser-frame">
+      <div class="browser-tabs">
+        <div class="browser-tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M2 12h20"></path>
+            <path d="M12 2a15.3 15.3 0 0 1 0 20"></path>
+            <path d="M12 2a15.3 15.3 0 0 0 0 20"></path>
+          </svg>
+          <span>Markdown Review</span>
+        </div>
+        <button class="browser-plus" type="button" aria-label="New tab">+</button>
+      </div>
+
+      <div class="browser-bar">
+        <div class="browser-nav" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m15 18-6-6 6-6"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m9 18 6-6-6-6"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 0 1-9 9 9.7 9.7 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M3 21v-5h5"></path>
+            <path d="M3 12a9 9 0 0 1 9-9 9.7 9.7 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+          </svg>
+        </div>
+        <div class="browser-address">127.0.0.1:6191/?file=resolved-only.v3.md</div>
+        <div class="browser-actions" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06"></path>
+            <path d="M4.2 4.2l15.6 15.6"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+            <path d="M12 8v6"></path>
+            <path d="M9 11h6"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <main class="app-shell">
+        <nav class="icon-rail" aria-label="Workspace navigation">
+          <button class="rail-button" type="button" title="Files">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 4h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path>
+            </svg>
+          </button>
+          <button class="rail-button" type="button" title="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+          <div class="rail-spacer"></div>
+          <button class="rail-button" type="button" title="Theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="M4.93 4.93 6.34 6.34"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+          </button>
+        </nav>
+
+        <section class="main-pane" aria-label="Markdown preview">
+          <header class="document-header">
+            <h1 class="document-title">resolved-only.v3.md</h1>
+            <div class="view-switch" aria-label="View mode">
+              <button class="active" type="button">Preview</button>
+              <button type="button">Diff</button>
+            </div>
+          </header>
+
+          <div class="reader-scroll">
+            <article class="markdown-content">
+              <span class="processed-comment-marker">
+                <span class="processed-comment-marker-button" title="Review comments on line 6">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M7 8h10"></path>
+                    <path d="M7 12h6"></path>
+                    <path d="M5 4h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H9l-6 3V7a3 3 0 0 1 3-3Z"></path>
+                  </svg>
+                </span>
+              </span>
+              <div class="document-meta">Markdown preview · local review</div>
+              <h1>Event Pipeline Observability</h1>
+
+              <h2>1. Goals</h2>
+              <ul>
+                <li>Detect ingest interruption within two minutes.</li>
+                <li>Redesign event <code>schema</code>.</li>
+                <li>Keep replay context stable.</li>
+              </ul>
+
+              <h2>2. Signal Model</h2>
+              <p>Each stage exports common metric dimensions:</p>
+              <ul>
+                <li><code>tenant_id</code></li>
+                <li><code>region</code></li>
+                <li><code>event_type</code></li>
+                <li><code>pipeline_stage</code></li>
+              </ul>
+
+              <h2>3. Delivery Health</h2>
+              <p>
+                The dashboard groups received, rejected, processing, and delivered counts by stage.
+                Operators should be able to follow a single event family from gateway validation to
+                consumer publish without switching tools.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <aside class="comments-sidebar" aria-label="Comments">
+          <div class="comments-top">
+            <div class="comment-list-header">
+              <h2 class="comment-list-title">Comments</h2>
+              <button class="collapse-button" type="button" title="Hide comments">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m9 18 6-6-6-6"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="comments-subtitle">Current file · anchored to selection</div>
+            <div class="comment-tabs" aria-label="Comment status summary">
+              <button class="active" type="button">Open 1</button>
+              <button type="button">Done 0</button>
+              <button type="button">All 1</button>
+            </div>
+            <div class="comment-list-actions">
+              <button class="compact-button" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy All</span>
+              </button>
+              <button class="compact-button" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18"></path>
+                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                </svg>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="comment-list-items">
+            <section class="comment-item active">
+              <div class="comment-item-header">
+                <div class="comment-item-meta">
+                  <button class="comment-item-lines" type="button">Line 6</button>
+                  <span class="comment-item-status">Open</span>
+                </div>
+                <div class="comment-item-actions">
+                  <button class="comment-icon-button" type="button" title="Edit comment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                  <button class="comment-icon-button" type="button" title="Add comment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+                      <path d="M8 10h8"></path>
+                      <path d="M8 14h5"></path>
+                    </svg>
+                  </button>
+                  <button class="comment-icon-button" type="button" title="Copy comment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                  <button class="comment-icon-button" type="button" title="Delete comment">×</button>
+                </div>
+              </div>
+              <div class="comment-item-selection">"schema"</div>
+              <div class="comment-item-text">schema 是什么意思</div>
+
+              <div class="comment-reply-thread">
+                <div class="comment-reply-row">
+                  <div class="comment-reply-meta">
+                    <span class="comment-reply-author">Codex</span>
+                    <span class="comment-reply-time">7月8日 08:01</span>
+                  </div>
+                  <div class="comment-reply-body">schema 指事件的数据结构约定。</div>
+                </div>
+
+                <div class="comment-reply-row">
+                  <div class="comment-reply-meta">
+                    <span class="comment-reply-author">你</span>
+                    <span class="comment-reply-time">17分钟前</span>
+                  </div>
+                  <div class="comment-reply-body">这个问题我想继续追问一下。</div>
+                </div>
+
+                <div class="comment-reply-composer">
+                  <div class="comment-reply-label">你</div>
+                  <div class="comment-reply-input">
+                    <textarea placeholder="Reply..."></textarea>
+                    <div class="comment-reply-actions">
+                      <button class="comment-reply-cancel" type="button">Cancel</button>
+                      <button class="comment-reply-save" type="button">Reply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="comment-list-footer-hint">
+            页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
