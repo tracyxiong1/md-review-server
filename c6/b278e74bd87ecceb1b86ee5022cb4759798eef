@@ -1,0 +1,21 @@
+src/components/CommentList.test.tsx
+  s_93cc561b24cfef::t_a6ff2b1adadd92 184-187,213
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "c6b278e74bd87ecceb1b86ee5022cb4759798eef",
+  "prompts": {},
+  "sessions": {
+    "s_93cc561b24cfef": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f21b1-4e4f-7b11-8301-799ec9951bba",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
