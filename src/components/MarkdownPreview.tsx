@@ -1,6 +1,7 @@
 import {
   useRef,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ComponentProps,
@@ -38,13 +39,17 @@ interface MarkdownPreviewProps {
   onDeleteComment?: (id: string, file: string) => Promise<void> | void;
   onDeleteAllComments?: (file: string) => Promise<void> | void;
   onEditComment?: (id: string, file: string, comment: string) => Promise<void> | void;
+  onAddCommentReply?: (id: string, file: string, body: string) => Promise<void> | void;
 }
 
 interface ProcessedCommentMarkerProps {
   line: number;
   comments: Comment[];
   label: string;
+  top: number;
 }
+
+const EMPTY_COMMENTS: Comment[] = [];
 
 const getCommentText = (comment: Comment) => comment.comment || comment.text || '';
 
@@ -133,6 +138,20 @@ const dedupeMarkerComments = (comments: Comment[]): Comment[] => {
   });
 };
 
+const areMarkerPositionsEqual = (
+  currentPositions: Record<number, number>,
+  nextPositions: Record<number, number>,
+) => {
+  const currentEntries = Object.entries(currentPositions);
+  const nextEntries = Object.entries(nextPositions);
+
+  if (currentEntries.length !== nextEntries.length) {
+    return false;
+  }
+
+  return nextEntries.every(([line, top]) => currentPositions[Number(line)] === top);
+};
+
 const StatusMarkerIcon = ({ kind }: { kind: string }) => {
   if (kind === 'check') {
     return (
@@ -190,7 +209,7 @@ const StatusMarkerIcon = ({ kind }: { kind: string }) => {
   );
 };
 
-const ProcessedCommentMarker = ({ line, comments, label }: ProcessedCommentMarkerProps) => {
+const ProcessedCommentMarker = ({ line, comments, label, top }: ProcessedCommentMarkerProps) => {
   const [open, setOpen] = useState(false);
   const markerRef = useRef<HTMLSpanElement>(null);
   const firstComment = comments[0];
@@ -222,7 +241,7 @@ const ProcessedCommentMarker = ({ line, comments, label }: ProcessedCommentMarke
   }, [open]);
 
   return (
-    <span className="processed-comment-marker" ref={markerRef}>
+    <span className="processed-comment-marker" ref={markerRef} style={{ top: `${top}px` }}>
       <button
         type="button"
         className={`processed-comment-marker-button ${getStatusClassName(markerStatus)}`}
@@ -271,45 +290,20 @@ const ProcessedCommentMarker = ({ line, comments, label }: ProcessedCommentMarke
   );
 };
 
-const createComponentsWithLinePosition = (
-  targetCommentsByLine: Map<number, Comment[]>,
-  sourceCommentsByLine: Map<number, Comment[]>,
-): Components => {
-  const renderMarker = (line?: number) => {
-    if (typeof line !== 'number') {
-      return null;
-    }
-
-    const sourceComments = sourceCommentsByLine.get(line) || [];
-    const targetComments = targetCommentsByLine.get(line) || [];
-    const comments = dedupeMarkerComments([...sourceComments, ...targetComments]);
-    if (!comments?.length) {
-      return null;
-    }
-
-    return (
-      <ProcessedCommentMarker
-        line={line}
-        comments={comments}
-        label={sourceComments.length > 0 ? 'Review comments' : 'Processed comments'}
-      />
-    );
-  };
-
+const createComponentsWithLinePosition = (markerLines: Set<number>): Components => {
   const withLineMarker = (
     Tag: ElementType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { node, children, ...props }: any,
   ) => {
     const line = node?.position?.start?.line;
-    const marker = renderMarker(line);
-    const className = [props.className, marker ? 'markdown-line-with-processed-comment' : null]
+    const hasMarker = typeof line === 'number' && markerLines.has(line);
+    const className = [props.className, hasMarker ? 'markdown-line-with-processed-comment' : null]
       .filter(Boolean)
       .join(' ');
 
     return (
       <Tag {...props} data-line-start={line} className={className || undefined}>
-        {marker}
         {children}
       </Tag>
     );
@@ -368,17 +362,18 @@ export const MarkdownPreview = ({
   compareFilename,
   compareContent,
   comments,
-  targetComments = [],
+  targetComments = EMPTY_COMMENTS,
   readonly = false,
   onCreateComment,
   onDeleteComment,
   onDeleteAllComments,
   onEditComment,
+  onAddCommentReply,
 }: MarkdownPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const previousCommentCountRef = useRef(comments.length);
   const [activeDiffKey, setActiveDiffKey] = useState<string | null>(null);
   const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
+  const [markerPositions, setMarkerPositions] = useState<Record<number, number>>({});
   const { isDark } = useDarkMode();
   const { frontmatter, body } = parseMdContent(content, filename);
   const frontmatterEntries = Object.entries(frontmatter);
@@ -415,10 +410,38 @@ export const MarkdownPreview = ({
 
     return next;
   }, [comments]);
-  const componentsWithLinePosition = useMemo(
-    () => createComponentsWithLinePosition(targetCommentsByLine, sourceCommentsByLine),
-    [targetCommentsByLine, sourceCommentsByLine],
+  const markerGroups = useMemo(() => {
+    const lines = new Set<number>([...targetCommentsByLine.keys(), ...sourceCommentsByLine.keys()]);
+
+    return [...lines]
+      .sort((a, b) => a - b)
+      .map((line) => {
+        const sourceComments = sourceCommentsByLine.get(line) || [];
+        const targetComments = targetCommentsByLine.get(line) || [];
+        const lineComments = dedupeMarkerComments([...sourceComments, ...targetComments]);
+
+        return {
+          line,
+          comments: lineComments,
+          label: sourceComments.length > 0 ? 'Review comments' : 'Processed comments',
+        };
+      })
+      .filter((group) => group.comments.length > 0);
+  }, [sourceCommentsByLine, targetCommentsByLine]);
+  const markerLines = useMemo(
+    () => new Set(markerGroups.map((group) => group.line)),
+    [markerGroups],
   );
+  const componentsWithLinePosition = useMemo(
+    () => createComponentsWithLinePosition(markerLines),
+    [markerLines],
+  );
+  const openCommentCount = useMemo(
+    () => comments.filter((comment) => (comment.status || 'open') === 'open').length,
+    [comments],
+  );
+  const previousOpenCommentCountRef = useRef(openCommentCount);
+  const documentKey = filePath || filename;
   const documentMeta = 'Markdown preview · local review';
   const {
     width: commentsSidebarWidth,
@@ -435,7 +458,7 @@ export const MarkdownPreview = ({
     direction: 'right',
     collapsible: true,
     collapseThreshold: 70,
-    initialCollapsed: comments.length === 0,
+    initialCollapsed: openCommentCount === 0,
   });
 
   // Update highlight.js theme based on dark mode
@@ -455,13 +478,69 @@ export const MarkdownPreview = ({
   }, [isDark]);
 
   useEffect(() => {
-    const previousCommentCount = previousCommentCountRef.current;
-    previousCommentCountRef.current = comments.length;
+    const previousOpenCommentCount = previousOpenCommentCountRef.current;
+    previousOpenCommentCountRef.current = openCommentCount;
 
-    if (previousCommentCount === 0 && comments.length > 0) {
+    if (previousOpenCommentCount === 0 && openCommentCount > 0) {
       setIsCollapsed(false);
+    } else if (previousOpenCommentCount > 0 && openCommentCount === 0) {
+      setIsCollapsed(true);
     }
-  }, [comments.length, setIsCollapsed]);
+  }, [openCommentCount, setIsCollapsed]);
+
+  useLayoutEffect(() => {
+    if (showDiff || markerGroups.length === 0) {
+      return;
+    }
+
+    const contentElement = contentRef.current;
+    if (!contentElement) {
+      return;
+    }
+
+    let frameId = 0;
+
+    const updateMarkerPositions = () => {
+      const contentRect = contentElement.getBoundingClientRect();
+      const nextPositions: Record<number, number> = {};
+
+      for (const group of markerGroups) {
+        const lineElement = contentElement.querySelector<HTMLElement>(
+          `[data-line-start="${group.line}"]`,
+        );
+        if (!lineElement) {
+          continue;
+        }
+
+        const lineRect = lineElement.getBoundingClientRect();
+        nextPositions[group.line] = lineRect.top - contentRect.top + lineRect.height / 2;
+      }
+
+      setMarkerPositions((currentPositions) =>
+        areMarkerPositionsEqual(currentPositions, nextPositions) ? currentPositions : nextPositions,
+      );
+    };
+
+    const scheduleMarkerPositionUpdate = () => {
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(updateMarkerPositions);
+    };
+
+    scheduleMarkerPositionUpdate();
+
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(scheduleMarkerPositionUpdate)
+        : null;
+    resizeObserver?.observe(contentElement);
+    window.addEventListener('resize', scheduleMarkerPositionUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', scheduleMarkerPositionUpdate);
+    };
+  }, [body, markerGroups, showDiff]);
 
   const handleSubmitComment = (
     comment: string,
@@ -501,6 +580,11 @@ export const MarkdownPreview = ({
   const handleEditComment = (id: string, newText: string) => {
     if (!onEditComment || readonly) return;
     onEditComment(id, filePath || filename, newText);
+  };
+
+  const handleAddCommentReply = (id: string, body: string) => {
+    if (!onAddCommentReply || readonly) return;
+    onAddCommentReply(id, filePath || filename, body);
   };
 
   const handleLineClick = (line: number) => {
@@ -616,6 +700,26 @@ export const MarkdownPreview = ({
                 >
                   {body}
                 </ReactMarkdown>
+                {markerGroups.length > 0 && (
+                  <div className="processed-comment-marker-layer">
+                    {markerGroups.map((group) => {
+                      const top = markerPositions[group.line];
+                      if (typeof top !== 'number') {
+                        return null;
+                      }
+
+                      return (
+                        <ProcessedCommentMarker
+                          key={group.line}
+                          line={group.line}
+                          comments={group.comments}
+                          label={group.label}
+                          top={top}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
             {!showDiff && !readonly && (
@@ -641,7 +745,7 @@ export const MarkdownPreview = ({
                 strokeLinejoin="round"
               />
             </svg>
-            {comments.length > 0 && <span className="comments-badge">{comments.length}</span>}
+            {openCommentCount > 0 && <span className="comments-badge">{openCommentCount}</span>}
           </button>
         </aside>
       )}
@@ -649,13 +753,15 @@ export const MarkdownPreview = ({
         <aside className="comments-sidebar" style={{ width: `${commentsSidebarWidth}px` }}>
           <div className="comments-sidebar-resizer" onMouseDown={handleMouseDown} />
           <CommentList
+            key={documentKey}
             comments={[...comments].sort((a, b) => a.startLine - b.startLine)}
-            filename={filePath || filename}
+            filename={documentKey}
             onDeleteComment={!readonly ? handleDeleteComment : undefined}
             onDeleteAll={!readonly ? handleDeleteAllComments : undefined}
             onClose={toggleCollapse}
             onLineClick={handleLineClick}
             onEditComment={!readonly ? handleEditComment : undefined}
+            onAddReply={!readonly ? handleAddCommentReply : undefined}
           />
         </aside>
       )}

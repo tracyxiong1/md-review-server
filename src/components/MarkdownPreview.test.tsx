@@ -80,6 +80,25 @@ describe('MarkdownPreview', () => {
     expect(screen.getByText('Please revise this paragraph')).toBeInTheDocument();
   });
 
+  it('keeps the comments sidebar collapsed by default when only done comments exist', () => {
+    const comments: Comment[] = [
+      {
+        id: 'c001',
+        text: 'Answered question',
+        selectedText: 'Body',
+        startLine: 3,
+        endLine: 3,
+        status: 'resolved',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    render(<MarkdownPreview {...baseProps} comments={comments} />);
+
+    expect(screen.getByRole('button', { name: 'Show comments' })).toBeInTheDocument();
+    expect(screen.queryByText('Answered question')).not.toBeInTheDocument();
+  });
+
   it('expands when comments load after an empty initial render', () => {
     const comments: Comment[] = [
       {
@@ -99,6 +118,55 @@ describe('MarkdownPreview', () => {
 
     expect(screen.queryByRole('button', { name: 'Show comments' })).not.toBeInTheDocument();
     expect(screen.getByText('Loaded comment')).toBeInTheDocument();
+  });
+
+  it('does not expand when only done comments load after an empty initial render', () => {
+    const comments: Comment[] = [
+      {
+        id: 'c001',
+        text: 'Loaded resolved comment',
+        selectedText: 'Body',
+        startLine: 3,
+        endLine: 3,
+        status: 'resolved',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    const { rerender } = render(<MarkdownPreview {...baseProps} comments={[]} />);
+
+    rerender(<MarkdownPreview {...baseProps} comments={comments} />);
+
+    expect(screen.getByRole('button', { name: 'Show comments' })).toBeInTheDocument();
+    expect(screen.queryByText('Loaded resolved comment')).not.toBeInTheDocument();
+  });
+
+  it('collapses when the current file has no remaining open comments', () => {
+    const openComments: Comment[] = [
+      {
+        id: 'c001',
+        text: 'Loaded comment',
+        selectedText: 'Body',
+        startLine: 3,
+        endLine: 3,
+        status: 'open',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+    const doneComments: Comment[] = [
+      {
+        ...openComments[0],
+        status: 'resolved',
+      },
+    ];
+
+    const { rerender } = render(<MarkdownPreview {...baseProps} comments={openComments} />);
+
+    expect(screen.queryByRole('button', { name: 'Show comments' })).not.toBeInTheDocument();
+
+    rerender(<MarkdownPreview {...baseProps} comments={doneComments} />);
+
+    expect(screen.getByRole('button', { name: 'Show comments' })).toBeInTheDocument();
   });
 
   it('renders frontmatter as document metadata', () => {
@@ -145,7 +213,7 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    const marker = screen.getByRole('button', { name: 'Processed comments on line 3' });
+    const marker = await screen.findByRole('button', { name: 'Processed comments on line 3' });
     expect(marker).toBeInTheDocument();
 
     await user.click(marker);
@@ -184,12 +252,12 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Processed comments on line 3' }));
+    await user.click(await screen.findByRole('button', { name: 'Processed comments on line 3' }));
 
     expect(screen.getByText(`${longFilename}:12`)).toHaveAttribute('title', `${longFilename}:12`);
   });
 
-  it('does not double count the same comment when it is both source and target anchored', () => {
+  it('does not double count the same comment when it is both source and target anchored', async () => {
     const comment: Comment = {
       id: 'c001',
       file: 'guide.v4.md',
@@ -214,8 +282,82 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    const marker = screen.getByTestId('review-marker-c001');
+    const marker = await screen.findByTestId('review-marker-c001');
     expect(within(marker).queryByText('2')).not.toBeInTheDocument();
+  });
+
+  it('stacks current open comments with processed comments on the same line', async () => {
+    const comments: Comment[] = [
+      {
+        id: 'c002',
+        file: 'guide.v4.md',
+        text: 'Second round comment',
+        selectedText: 'Permission boundary',
+        startLine: 3,
+        endLine: 3,
+        status: 'open',
+        createdAt: new Date('2026-07-01T00:00:00Z'),
+      },
+    ];
+    const targetComments: Comment[] = [
+      {
+        id: 'c001',
+        file: 'guide.v3.md',
+        text: 'First round comment',
+        selectedText: 'Permission',
+        startLine: 2,
+        endLine: 2,
+        status: 'resolved',
+        targetFile: 'guide.v4.md',
+        targetStartLine: 3,
+        resolution: 'Done.',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    render(
+      <MarkdownPreview
+        content={'# Guide\n\nPermission boundary'}
+        filename="guide.v4.md"
+        comments={comments}
+        targetComments={targetComments}
+      />,
+    );
+
+    const marker = await screen.findByRole('button', { name: 'Review comments on line 3' });
+    expect(marker).toHaveTextContent('2');
+  });
+
+  it('renders markers in the document gutter layer instead of list item content', async () => {
+    const targetComments: Comment[] = [
+      {
+        id: 'c001',
+        file: 'guide.v3.md',
+        text: 'First round comment',
+        selectedText: 'exactly once',
+        startLine: 2,
+        endLine: 2,
+        status: 'resolved',
+        targetFile: 'guide.v4.md',
+        targetStartLine: 3,
+        resolution: 'Done.',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    render(
+      <MarkdownPreview
+        content={'# Guide\n\n- exactly once delivery'}
+        filename="guide.v4.md"
+        comments={[]}
+        targetComments={targetComments}
+      />,
+    );
+
+    const marker = await screen.findByTestId('review-marker-c001');
+
+    expect(marker.closest('li')).toBeNull();
+    expect(marker.closest('.processed-comment-marker-layer')).toBeInTheDocument();
   });
 
   it('shows open comment markers on source lines', async () => {
@@ -241,7 +383,7 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    const marker = screen.getByRole('button', { name: 'Review comments on line 3' });
+    const marker = await screen.findByRole('button', { name: 'Review comments on line 3' });
     expect(marker).toBeInTheDocument();
     expect(marker).toHaveAttribute('data-status-icon', 'comment');
 
@@ -251,7 +393,7 @@ describe('MarkdownPreview', () => {
     expect(screen.getByText('guide.v4.md:3')).toBeInTheDocument();
   });
 
-  it('uses status-specific marker icons for processed comments', () => {
+  it('uses status-specific marker icons for processed comments', async () => {
     const targetComments: Comment[] = [
       {
         id: 'c001',
@@ -303,9 +445,18 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    expect(screen.getByTestId('review-marker-c001')).toHaveAttribute('data-status-icon', 'check');
-    expect(screen.getByTestId('review-marker-c002')).toHaveAttribute('data-status-icon', 'alert');
-    expect(screen.getByTestId('review-marker-c003')).toHaveAttribute('data-status-icon', 'alert');
+    expect(await screen.findByTestId('review-marker-c001')).toHaveAttribute(
+      'data-status-icon',
+      'check',
+    );
+    expect(await screen.findByTestId('review-marker-c002')).toHaveAttribute(
+      'data-status-icon',
+      'alert',
+    );
+    expect(await screen.findByTestId('review-marker-c003')).toHaveAttribute(
+      'data-status-icon',
+      'alert',
+    );
   });
 
   it('closes marker tips when pressing Escape', async () => {
@@ -335,7 +486,7 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Processed comments on line 3' }));
+    await user.click(await screen.findByRole('button', { name: 'Processed comments on line 3' }));
     expect(screen.getByText('Added the missing setup details.')).toBeInTheDocument();
 
     await user.keyboard('{Escape}');
@@ -370,7 +521,7 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Processed comments on line 3' }));
+    await user.click(await screen.findByRole('button', { name: 'Processed comments on line 3' }));
     expect(screen.getByText('Added the missing setup details.')).toBeInTheDocument();
 
     await user.click(screen.getByRole('heading', { name: 'Guide' }));

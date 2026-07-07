@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { type UserEvent, userEvent } from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { CommentList, Comment } from './CommentList';
 
 describe('CommentList', () => {
@@ -35,12 +35,20 @@ describe('CommentList', () => {
     vi.clearAllMocks();
   });
 
-  it('should display comment list', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should display open comments by default', async () => {
     render(<CommentList comments={mockComments} filename="test.md" />);
 
     expect(screen.getByText('First comment')).toBeInTheDocument();
-    expect(screen.getByText('Second comment')).toBeInTheDocument();
+    expect(screen.queryByText('Second comment')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '2 comments' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'All 2' }));
+
+    expect(screen.getByText('Second comment')).toBeInTheDocument();
   });
 
   it('should display empty state when no comments', () => {
@@ -110,16 +118,21 @@ describe('CommentList', () => {
     expect(onLineClick).toHaveBeenCalledWith(1);
   });
 
-  it('should display line range when comment spans multiple lines', () => {
+  it('should display line range when comment spans multiple lines after switching to all', async () => {
     render(<CommentList comments={mockComments} filename="test.md" />);
+
+    await user.click(screen.getByRole('button', { name: 'All 2' }));
 
     expect(screen.getByRole('button', { name: 'Line 5-10' })).toBeInTheDocument();
   });
 
-  it('should display comment status labels', () => {
+  it('should display comment status labels', async () => {
     render(<CommentList comments={mockComments} filename="test.md" />);
 
     expect(screen.getByText('Open')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'All 2' }));
+
     expect(screen.getByText('Resolved')).toBeInTheDocument();
   });
 
@@ -133,6 +146,81 @@ describe('CommentList', () => {
     await user.click(screen.getByRole('button', { name: 'Done 1' }));
     expect(screen.queryByText('First comment')).not.toBeInTheDocument();
     expect(screen.getByText('Second comment')).toBeInTheDocument();
+  });
+
+  it('should display replies and submit a user reply', async () => {
+    const onAddReply = vi.fn();
+    const commentsWithReplies: Comment[] = [
+      {
+        ...mockComments[0],
+        replies: [
+          {
+            id: 'r001',
+            author: 'codex',
+            body: '我不确定你是希望解释流程，还是调整文档表述。',
+            createdAt: '2026-07-06T00:00:00Z',
+          },
+        ],
+      },
+    ];
+
+    render(
+      <CommentList comments={commentsWithReplies} filename="test.md" onAddReply={onAddReply} />,
+    );
+
+    expect(screen.getByText('Codex')).toBeInTheDocument();
+    expect(screen.getByText('我不确定你是希望解释流程，还是调整文档表述。')).toBeInTheDocument();
+    expect(screen.getByText('你')).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('Reply to comment on line 1'), '请按修改文档处理。');
+    await user.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(onAddReply).toHaveBeenCalledWith('1', '请按修改文档处理。');
+  });
+
+  it('should format reply authors and relative or absolute reply times', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-08T10:30:00+08:00'));
+    const commentsWithReplies: Comment[] = [
+      {
+        ...mockComments[0],
+        replies: [
+          {
+            id: 'r001',
+            author: 'codex',
+            body: '刚才补充的说明。',
+            createdAt: '2026-07-08T10:25:00+08:00',
+          },
+          {
+            id: 'r002',
+            author: 'user',
+            body: '昨天的追问。',
+            createdAt: '2026-07-07T09:05:00+08:00',
+          },
+        ],
+      },
+    ];
+
+    render(<CommentList comments={commentsWithReplies} filename="test.md" />);
+
+    expect(screen.getByText('Codex')).toBeInTheDocument();
+    expect(screen.getByText('你')).toBeInTheDocument();
+    expect(screen.getByText('5分钟前')).toBeInTheDocument();
+    expect(screen.getByText('7月7日 09:05')).toBeInTheDocument();
+  });
+
+  it('should append a user comment to a done comment from the comments panel', async () => {
+    const onAddReply = vi.fn();
+
+    render(<CommentList comments={mockComments} filename="test.md" onAddReply={onAddReply} />);
+
+    await user.click(screen.getByRole('button', { name: 'Done 1' }));
+    await user.click(screen.getByRole('button', { name: 'Add comment' }));
+
+    await user.type(screen.getByLabelText('Reply to comment on line 5'), '这个点我再补充一下。');
+    await user.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(onAddReply).toHaveBeenCalledWith('2', '这个点我再补充一下。');
   });
 
   it('should enter edit mode when edit button is clicked', async () => {

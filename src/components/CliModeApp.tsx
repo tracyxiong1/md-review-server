@@ -58,6 +58,7 @@ export const CliModeApp = () => {
       onDeleteComment={commentState.deleteComment}
       onDeleteAllComments={commentState.deleteAllComments}
       onEditComment={commentState.editComment}
+      onAddCommentReply={commentState.addCommentReply}
     />
   );
 };

@@ -291,6 +291,7 @@ export const DevModeApp = () => {
             onDeleteComment={commentState.deleteComment}
             onDeleteAllComments={commentState.deleteAllComments}
             onEditComment={commentState.editComment}
+            onAddCommentReply={commentState.addCommentReply}
           />
         ) : (
           <div className="dev-placeholder">
