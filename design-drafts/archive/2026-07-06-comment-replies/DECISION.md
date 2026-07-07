@@ -61,4 +61,4 @@ Follow-up runtime fixes from product trial:
 
 ## Baseline Updated
 
-Not yet. The implementation was verified against runtime E2E, but the full six-case `design-drafts/runtime-baseline/` matrix has not been recaptured in this change because the existing baseline has no capture script and should be refreshed as a complete matrix rather than partially overwritten.
+Yes. The full six-case `design-drafts/runtime-baseline/` matrix was recaptured from the running app at `127.0.0.1:6160` after implementation. The fixture now includes reply-thread examples so future UI work can compare against the shipped `Codex` / `你` thread layout, open-tab default, and gutter marker positioning.

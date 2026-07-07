@@ -3,10 +3,14 @@
 <html class="dark-mode"><head>
 <meta name="runtime-baseline-case" content="{&quot;id&quot;:&quot;02-dark-collapsed-comments-open-empty&quot;,&quot;label&quot;:&quot;Dark, sidebar collapsed, comments open, empty state&quot;}">
 
+
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Review</title>
-  <style type="text/css" data-vite-dev-id="src/index.css">* {
+  <style type="text/css" data-vite-dev-id="/Users/xiongle/Study/LLM/md-review-server/src/index.css">* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -132,7 +136,7 @@ body {
   width: 16px;
   height: 16px;
 }
-</style><style type="text/css" data-vite-dev-id="src/styles/filetree.css">.file-tree {
+</style><style type="text/css" data-vite-dev-id="/Users/xiongle/Study/LLM/md-review-server/src/styles/filetree.css">.file-tree {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -500,7 +504,7 @@ body {
 .file-tree-content::-webkit-scrollbar-thumb:hover {
   background: var(--text-tertiary);
 }
-</style><style type="text/css" data-vite-dev-id="node_modules/.pnpm/highlight.js@11.11.1/node_modules/highlight.js/styles/github.css">pre code.hljs {
+</style><style type="text/css" data-vite-dev-id="/Users/xiongle/Study/LLM/md-review-server/node_modules/.pnpm/highlight.js@11.11.1/node_modules/highlight.js/styles/github.css">pre code.hljs {
   display: block;
   overflow-x: auto;
   padding: 1em
@@ -616,8 +620,8 @@ code.hljs {
 .hljs-punctuation,
 .hljs-tag {
   /* purposely ignored */
-  
-}</style><style type="text/css" data-vite-dev-id="node_modules/.pnpm/highlight.js@11.11.1/node_modules/highlight.js/styles/github-dark.css">pre code.hljs {
+
+}</style><style type="text/css" data-vite-dev-id="/Users/xiongle/Study/LLM/md-review-server/node_modules/.pnpm/highlight.js@11.11.1/node_modules/highlight.js/styles/github-dark.css">pre code.hljs {
   display: block;
   overflow-x: auto;
   padding: 1em
@@ -733,8 +737,8 @@ code.hljs {
 .hljs-punctuation,
 .hljs-tag {
   /* purposely ignored */
-  
-}</style><style type="text/css" data-vite-dev-id="src/styles/markdown.css">.markdown-with-comments {
+
+}</style><style type="text/css" data-vite-dev-id="/Users/xiongle/Study/LLM/md-review-server/src/styles/markdown.css">.markdown-with-comments {
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--comments-sidebar-width, 304px);
   gap: 0;
@@ -1120,14 +1124,21 @@ code.hljs {
   position: relative;
 }
 
+.processed-comment-marker-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
 .processed-comment-marker {
   position: absolute;
-  left: -50px;
-  top: 50%;
+  left: -8px;
   transform: translateY(-50%);
   z-index: 20;
   display: inline-flex;
   line-height: 1;
+  pointer-events: auto;
 }
 
 .processed-comment-marker-button {
@@ -1223,6 +1234,7 @@ code.hljs {
   white-space: normal;
   overflow: auto;
   overflow-wrap: anywhere;
+  pointer-events: auto;
 }
 
 .processed-comment {
@@ -1932,6 +1944,7 @@ code.hljs {
   align-items: center;
 }
 
+.comment-item-reply,
 .comment-item-copy,
 .comment-item-delete {
   background: none;
@@ -1954,6 +1967,7 @@ code.hljs {
   line-height: 1;
 }
 
+.comment-item-reply:hover,
 .comment-item-copy:hover {
   color: var(--text-primary);
   background: var(--bg-tertiary);
@@ -1988,6 +2002,137 @@ code.hljs {
   line-height: 1.5;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+}
+
+.comment-reply-thread {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.comment-reply-row {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.comment-reply-meta {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 6px;
+  min-width: 0;
+  font-size: 11.5px;
+  line-height: 1.2;
+}
+
+.comment-reply-author {
+  color: var(--text-secondary);
+  font-weight: 540;
+  min-width: 0;
+}
+
+.comment-reply-time {
+  color: var(--text-tertiary);
+  font-weight: 400;
+  min-width: 0;
+}
+
+.comment-reply-body {
+  color: var(--text-secondary);
+  font-size: 12.7px;
+  line-height: 1.48;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.comment-reply-composer {
+  display: grid;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.comment-reply-label {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 540;
+  line-height: 1.2;
+}
+
+.comment-reply-input {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.comment-reply-input textarea {
+  width: 100%;
+  min-height: 54px;
+  padding: 7px 8px;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.comment-reply-input textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.comment-reply-input textarea:focus {
+  outline: none;
+  border-color: var(--link-color);
+  background: var(--bg-secondary);
+}
+
+.comment-reply-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.comment-reply-save,
+.comment-reply-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.comment-reply-save {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+}
+
+.comment-reply-save:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.comment-reply-save:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+}
+
+.comment-reply-cancel {
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 0;
+}
+
+.comment-reply-cancel:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
 }
 
 .comment-list-footer-hint {
@@ -2203,7 +2348,7 @@ code.hljs {
   }
 
   .processed-comment-marker {
-    left: -42px;
+    left: -8px;
   }
 }
 
@@ -2234,7 +2379,7 @@ code.hljs {
   }
 
   .processed-comment-marker {
-    left: -34px;
+    left: -8px;
   }
 }
 
@@ -2298,7 +2443,7 @@ code.hljs {
     font-size: 11.5px;
   }
 }
-</style><style type="text/css" data-vite-dev-id="src/styles/devmode.css">.dev-container {
+</style><style type="text/css" data-vite-dev-id="/Users/xiongle/Study/LLM/md-review-server/src/styles/devmode.css">.dev-container {
   display: flex;
   height: 100vh;
   overflow: hidden;
@@ -2544,5 +2689,8 @@ code.hljs {
 <h2 data-line-start="9">Proposed flow</h2>
 <p data-line-start="11">A compact handoff control in the comments panel submits open comments to Codex and keeps the result visible in the review state.</p>
 <h2 data-line-start="13">Failure state</h2>
-<p data-line-start="15">If the handoff cannot start, the user should see a clear retry path and a copyable fallback prompt.</p></div></section></div></div><aside class="comments-sidebar" style="width: 300px;"><div class="comments-sidebar-resizer"></div><div class="comment-list"><div class="comments-top"><div class="comment-list-header"><h3 class="comment-list-title" aria-label="0 comments">Comments</h3><button class="comment-list-collapse-btn" title="Hide comments" aria-label="Hide comments"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button></div><div class="comments-subtitle">Current file · anchored to selection</div><div class="comment-tabs" aria-label="Comment status summary"><button type="button" class="" aria-pressed="false">Open 0</button><button type="button" class="" aria-pressed="false">Done 0</button><button type="button" class="active" aria-pressed="true">All 0</button></div></div><div class="comment-list-empty"><p>No comments yet</p><p class="comment-list-hint">Select text to add a comment</p></div><div class="comment-list-footer-hint">页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。</div></div></aside></div></div></div></div>
-    </body><div id="codex-browser-sidebar-comments-root" style="position: fixed; inset: 0px; pointer-events: none; z-index: 2147483647;"></div></html>
+<p data-line-start="15">If the handoff cannot start, the user should see a clear retry path and a copyable fallback prompt.</p></div></section></div></div><aside class="comments-sidebar" style="width: 300px;"><div class="comments-sidebar-resizer"></div><div class="comment-list"><div class="comments-top"><div class="comment-list-header"><h3 class="comment-list-title" aria-label="0 comments">Comments</h3><button class="comment-list-collapse-btn" title="Hide comments" aria-label="Hide comments"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button></div><div class="comments-subtitle">Current file · anchored to selection</div><div class="comment-tabs" aria-label="Comment status summary"><button type="button" class="active" aria-pressed="true">Open 0</button><button type="button" class="" aria-pressed="false">Done 0</button><button type="button" class="" aria-pressed="false">All 0</button></div></div><div class="comment-list-empty"><p>No comments yet</p><p class="comment-list-hint">Select text to add a comment</p></div><div class="comment-list-footer-hint">页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。</div></div></aside></div></div></div></div>
+
+
+
+</body><div id="codex-browser-sidebar-comments-root" style="position: fixed; inset: 0px; pointer-events: none; z-index: 2147483647;"></div></html>

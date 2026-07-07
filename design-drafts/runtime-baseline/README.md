@@ -51,6 +51,7 @@ Detailed DOM measurements are stored in [cases.json](./cases.json).
 - Comments header without actions is about `113px` high.
 - Comments header with `Copy All` and `Clear` actions is about `143px` high.
 - Comment markers are compact `16px` buttons anchored in the document gutter.
+- The with-comments fixture includes a multi-round reply thread so `Codex` / `你` labels, reply time treatment, and the `Open` default filter stay visible in baseline captures.
 - Only the first visible comment receives the stronger active card treatment. Later comments remain flatter rows.
 
 ## Design Implications For Codex Handoff

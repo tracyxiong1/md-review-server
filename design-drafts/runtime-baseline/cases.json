@@ -54,8 +54,8 @@
       "comments": {
         "h": 994,
         "text": "CommentsCurrent file · anchored to selectionOpen 0Done 0All 0No comments yetSelect text to add a comment页面只收集评论和展示状态。Codex skill 读取 open comments，生成下一版后回写结果。",
-        "w": 299,
-        "x": 506,
+        "w": 300,
+        "x": 505,
         "y": 0
       },
       "commentsTop": {
@@ -104,8 +104,9 @@
       "commentItems": [
         {
           "cls": "comment-item active",
-          "h": 117,
-          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+          "h": 362,
+          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Codex7月6日 18:20这里可以补一行说明：提交后状态仍留在评论面板里，用户不需要回到聊天窗口确认队列。你7月6日 18:28对，重点是让用户知道后续还在当前页面可追踪。你CancelReply",
+          "title": "",
           "w": 291,
           "x": 510,
           "y": 153
@@ -114,24 +115,17 @@
           "cls": "comment-item ",
           "h": 118,
           "text": "Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+          "title": "",
           "w": 283,
           "x": 514,
-          "y": 274
-        },
-        {
-          "cls": "comment-item ",
-          "h": 98,
-          "text": "Line 13Resolved×\"clear retry path\"已补充失败恢复说明。",
-          "w": 283,
-          "x": 514,
-          "y": 392
+          "y": 520
         }
       ],
       "comments": {
         "h": 994,
-        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comment",
-        "w": 299,
-        "x": 506,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Codex7月6日 18:20这里可以补一行说明：提交后状态仍留在评论面板里，用户不需要回到聊天窗口确认队列。你7月6日 18:28",
+        "w": 300,
+        "x": 505,
         "y": 0
       },
       "commentsTop": {
@@ -152,26 +146,29 @@
         {
           "cls": "processed-comment-marker-button status-open",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 3",
           "w": 16,
-          "x": 53,
-          "y": 228
+          "x": 55,
+          "y": 229
         },
         {
           "cls": "processed-comment-marker-button status-open",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 9",
           "w": 16,
-          "x": 53,
-          "y": 428
+          "x": 55,
+          "y": 429
         },
         {
           "cls": "processed-comment-marker-button status-resolved",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 13",
           "w": 16,
-          "x": 53,
-          "y": 570
+          "x": 55,
+          "y": 571
         }
       ],
       "sidebar": {
@@ -205,8 +202,9 @@
       "commentItems": [
         {
           "cls": "comment-item active",
-          "h": 117,
-          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+          "h": 362,
+          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Codex7月6日 18:20这里可以补一行说明：提交后状态仍留在评论面板里，用户不需要回到聊天窗口确认队列。你7月6日 18:28对，重点是让用户知道后续还在当前页面可追踪。你CancelReply",
+          "title": "",
           "w": 291,
           "x": 510,
           "y": 153
@@ -215,24 +213,17 @@
           "cls": "comment-item ",
           "h": 118,
           "text": "Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+          "title": "",
           "w": 283,
           "x": 514,
-          "y": 274
-        },
-        {
-          "cls": "comment-item ",
-          "h": 98,
-          "text": "Line 13Resolved×\"clear retry path\"已补充失败恢复说明。",
-          "w": 283,
-          "x": 514,
-          "y": 392
+          "y": 520
         }
       ],
       "comments": {
         "h": 994,
-        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comment",
-        "w": 299,
-        "x": 506,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Codex7月6日 18:20这里可以补一行说明：提交后状态仍留在评论面板里，用户不需要回到聊天窗口确认队列。你7月6日 18:28",
+        "w": 300,
+        "x": 505,
         "y": 0
       },
       "commentsTop": {
@@ -253,26 +244,29 @@
         {
           "cls": "processed-comment-marker-button status-open",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 3",
           "w": 16,
-          "x": 247,
-          "y": 310
+          "x": 249,
+          "y": 311
         },
         {
           "cls": "processed-comment-marker-button status-open",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 9",
           "w": 16,
-          "x": 247,
-          "y": 614
+          "x": 249,
+          "y": 615
         },
         {
           "cls": "processed-comment-marker-button status-resolved",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 13",
           "w": 16,
-          "x": 247,
-          "y": 807
+          "x": 249,
+          "y": 808
         }
       ],
       "sidebar": {
@@ -312,8 +306,9 @@
       "commentItems": [
         {
           "cls": "comment-item active",
-          "h": 117,
-          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。",
+          "h": 362,
+          "text": "Line 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Codex7月6日 18:20这里可以补一行说明：提交后状态仍留在评论面板里，用户不需要回到聊天窗口确认队列。你7月6日 18:28对，重点是让用户知道后续还在当前页面可追踪。你CancelReply",
+          "title": "",
           "w": 291,
           "x": 510,
           "y": 153
@@ -322,24 +317,17 @@
           "cls": "comment-item ",
           "h": 118,
           "text": "Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comments，而不是上传整篇文档。",
+          "title": "",
           "w": 283,
           "x": 514,
-          "y": 274
-        },
-        {
-          "cls": "comment-item ",
-          "h": 98,
-          "text": "Line 13Resolved×\"clear retry path\"已补充失败恢复说明。",
-          "w": 283,
-          "x": 514,
-          "y": 392
+          "y": 520
         }
       ],
       "comments": {
         "h": 994,
-        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Line 9Open×\"submits open comments to Codex\"按钮文案要说明是提交 open comment",
-        "w": 299,
-        "x": 506,
+        "text": "CommentsCurrent file · anchored to selectionOpen 2Done 1All 3Copy AllClearLine 3Open×\"continue analysis without making the user return t...\"这里需要强调触发 Codex 后用户仍然能看到队列、状态和失败恢复。Codex7月6日 18:20这里可以补一行说明：提交后状态仍留在评论面板里，用户不需要回到聊天窗口确认队列。你7月6日 18:28",
+        "w": 300,
+        "x": 505,
         "y": 0
       },
       "commentsTop": {
@@ -360,26 +348,29 @@
         {
           "cls": "processed-comment-marker-button status-open",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 3",
           "w": 16,
-          "x": 247,
-          "y": 310
+          "x": 249,
+          "y": 311
         },
         {
           "cls": "processed-comment-marker-button status-open",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 9",
           "w": 16,
-          "x": 247,
-          "y": 614
+          "x": 249,
+          "y": 615
         },
         {
           "cls": "processed-comment-marker-button status-resolved",
           "h": 16,
+          "text": "",
           "title": "Review comments on line 13",
           "w": 16,
-          "x": 247,
-          "y": 807
+          "x": 249,
+          "y": 808
         }
       ],
       "sidebar": {

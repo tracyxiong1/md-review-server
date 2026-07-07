@@ -40,6 +40,10 @@ Start here for Codex handoff:
 
 - `runtime-baseline/`: authoritative runtime UI baseline.
 
+### Archived Decisions
+
+- [`archive/2026-07-06-comment-replies/`](./archive/2026-07-06-comment-replies/): shipped multi-round comment replies with flat `Codex` / `你` threads, open-tab default, and gutter-centered review markers.
+
 ### Superseded Static Drafts
 
 These were useful during exploration, but should not be used as implementation baselines:
