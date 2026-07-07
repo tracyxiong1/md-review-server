@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, rename, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, resolve } from 'path';
 
 const VALID_STATUSES = new Set(['open', 'resolved', 'partially_resolved', 'unresolved', 'ignored']);
+const VALID_REPLY_AUTHORS = new Set(['user', 'codex']);
 
 function normalizeReviewFile(file) {
   if (!file || typeof file !== 'string') {
@@ -52,6 +53,46 @@ function nextCommentId(comments) {
   return `c${String(max + 1).padStart(3, '0')}`;
 }
 
+function nextReplyId(replies) {
+  const max = replies.reduce((currentMax, reply) => {
+    const match = /^r(\d+)$/.exec(reply.id || '');
+    return match ? Math.max(currentMax, Number(match[1])) : currentMax;
+  }, 0);
+  return `r${String(max + 1).padStart(3, '0')}`;
+}
+
+function normalizeReply(reply, timestamp, fallbackId) {
+  if (!reply || typeof reply !== 'object') {
+    throw new Error('Comment reply is required');
+  }
+
+  const author = reply.author || 'user';
+  if (!VALID_REPLY_AUTHORS.has(author)) {
+    throw new Error(`Invalid comment reply author: ${author}`);
+  }
+
+  if (typeof reply.body !== 'string' || !reply.body.trim()) {
+    throw new Error('Comment reply body is required');
+  }
+
+  return {
+    id: typeof reply.id === 'string' && reply.id ? reply.id : fallbackId,
+    author,
+    body: reply.body.trim(),
+    createdAt: typeof reply.createdAt === 'string' && reply.createdAt ? reply.createdAt : timestamp,
+  };
+}
+
+function normalizeReplies(replies, timestamp) {
+  if (!Array.isArray(replies)) {
+    throw new Error('Comment replies must be an array');
+  }
+
+  return replies.map((reply, index) =>
+    normalizeReply(reply, timestamp, `r${String(index + 1).padStart(3, '0')}`),
+  );
+}
+
 function applyPatch(comment, patch, timestamp) {
   const next = { ...comment };
   const fields = [
@@ -76,6 +117,15 @@ function applyPatch(comment, patch, timestamp) {
     if (patch[field] !== undefined) {
       next[field] = patch[field];
     }
+  }
+
+  if (patch.replies !== undefined) {
+    next.replies = normalizeReplies(patch.replies, timestamp);
+  }
+
+  if (patch.reply !== undefined) {
+    const replies = Array.isArray(next.replies) ? next.replies : [];
+    next.replies = [...replies, normalizeReply(patch.reply, timestamp, nextReplyId(replies))];
   }
 
   if (patch.status !== undefined) {

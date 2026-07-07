@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useComments } from './useComments';
 
@@ -88,5 +88,75 @@ describe('useComments', () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith('/api/comments?targetFile=guide.v4.md', undefined);
+  });
+
+  it('submits a user reply to a comment', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
+      const url = String(input);
+
+      if (url === '/api/session') {
+        return jsonResponse({ readonly: false });
+      }
+
+      if (url === '/api/comments?file=guide.v4.md') {
+        return jsonResponse([
+          {
+            id: 'c002',
+            file: 'guide.v4.md',
+            startLine: 3,
+            endLine: 3,
+            selectedText: 'current',
+            comment: 'Current file comment',
+            status: 'open',
+            createdAt: '2026-06-30T00:00:00Z',
+          },
+        ]);
+      }
+
+      if (url === '/api/comments?targetFile=guide.v4.md') {
+        return jsonResponse([]);
+      }
+
+      if (url === '/api/comments/c002' && init?.method === 'PATCH') {
+        return jsonResponse({
+          id: 'c002',
+          replies: [
+            {
+              id: 'r001',
+              author: 'user',
+              body: '请按修改文档处理。',
+              createdAt: '2026-07-06T00:00:00Z',
+            },
+          ],
+        });
+      }
+
+      return Promise.resolve(new Response('Not found', { status: 404 }));
+    });
+
+    const { result } = renderHook(() => useComments('guide.v4.md'));
+
+    await waitFor(() => {
+      expect(result.current.comments).toHaveLength(1);
+    });
+
+    await act(async () => {
+      await result.current.addCommentReply('c002', 'guide.v4.md', '请按修改文档处理。');
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/comments/c002',
+      expect.objectContaining({
+        method: 'PATCH',
+        body: JSON.stringify({
+          file: 'guide.v4.md',
+          status: 'open',
+          reply: {
+            author: 'user',
+            body: '请按修改文档处理。',
+          },
+        }),
+      }),
+    );
   });
 });

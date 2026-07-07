@@ -159,6 +159,50 @@ describe('FileCommentStore', () => {
     await expect(store.listComments({ targetFile: 'guide.v5.md' })).resolves.toEqual([]);
   });
 
+  it('appends comment replies with stable ids', async () => {
+    const comment = await store.createComment({
+      file: 'guide.md',
+      startLine: 1,
+      endLine: 1,
+      selectedText: 'text',
+      comment: 'Original question',
+    });
+
+    const withCodexReply = await store.updateComment(comment.id, {
+      file: 'guide.md',
+      reply: {
+        author: 'codex',
+        body: '请确认你希望我解释流程，还是调整文档表述。',
+      },
+    });
+    expect(withCodexReply.replies).toMatchObject([
+      {
+        id: 'r001',
+        author: 'codex',
+        body: '请确认你希望我解释流程，还是调整文档表述。',
+        createdAt: expect.any(String),
+      },
+    ]);
+
+    const withUserReply = await store.updateComment(comment.id, {
+      file: 'guide.md',
+      reply: {
+        author: 'user',
+        body: '调整文档表述。',
+      },
+    });
+    expect(withUserReply.replies).toMatchObject([
+      { id: 'r001', author: 'codex' },
+      { id: 'r002', author: 'user', body: '调整文档表述。' },
+    ]);
+
+    const stored = await store.listComments({ file: 'guide.md' });
+    expect(stored[0].replies).toMatchObject([
+      { id: 'r001', author: 'codex' },
+      { id: 'r002', author: 'user' },
+    ]);
+  });
+
   it('edits and deletes comments', async () => {
     const comment = await store.createComment({
       file: 'guide.md',

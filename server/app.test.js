@@ -147,6 +147,28 @@ describe('review API', () => {
       comment: 'Edited comment',
     });
 
+    const replyResponse = await app.request('/api/comments/c001', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file: 'guide.v1.md',
+        reply: {
+          author: 'codex',
+          body: '请确认这是提问还是修改请求。',
+        },
+      }),
+    });
+    await expect(replyResponse.json()).resolves.toMatchObject({
+      id: 'c001',
+      replies: [
+        {
+          id: 'r001',
+          author: 'codex',
+          body: '请确认这是提问还是修改请求。',
+        },
+      ],
+    });
+
     const batchResponse = await app.request('/api/comments', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

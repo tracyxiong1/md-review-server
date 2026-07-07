@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CreateCommentInput, ReviewComment } from '../types/review';
+import { CreateCommentInput, ReviewComment, ReviewCommentReplyAuthor } from '../types/review';
 
 interface ReviewSession {
   readonly: boolean;
@@ -14,6 +14,12 @@ interface UseCommentsData {
   reload: () => void;
   createComment: (input: CreateCommentInput) => Promise<void>;
   editComment: (id: string, file: string, comment: string) => Promise<void>;
+  addCommentReply: (
+    id: string,
+    file: string,
+    body: string,
+    author?: ReviewCommentReplyAuthor,
+  ) => Promise<void>;
   deleteComment: (id: string, file: string) => Promise<void>;
   deleteAllComments: (file: string) => Promise<void>;
 }
@@ -103,6 +109,25 @@ export const useComments = (filePath?: string | null): UseCommentsData => {
     [reload],
   );
 
+  const addCommentReply = useCallback(
+    async (id: string, file: string, body: string, author: ReviewCommentReplyAuthor = 'user') => {
+      await fetchJson<ReviewComment>(`/api/comments/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file,
+          ...(author === 'user' ? { status: 'open' } : {}),
+          reply: {
+            author,
+            body,
+          },
+        }),
+      });
+      reload();
+    },
+    [reload],
+  );
+
   const deleteComment = useCallback(
     async (id: string, file: string) => {
       const response = await fetch(`/api/comments/${id}?file=${encodeURIComponent(file)}`, {
@@ -134,6 +159,7 @@ export const useComments = (filePath?: string | null): UseCommentsData => {
     reload,
     createComment,
     editComment,
+    addCommentReply,
     deleteComment,
     deleteAllComments,
   };
