@@ -2,6 +2,14 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.5.0](https://github.com/tracyxiong1/md-review-server/compare/v0.4.0...v0.5.0) (2026-07-07)
+
+
+### Features
+
+* add comment reply persistence ([9b72466](https://github.com/tracyxiong1/md-review-server/commit/9b72466df80201ad51d1ba71558bb5daabef2407))
+* add threaded comment replies UI ([13b6f13](https://github.com/tracyxiong1/md-review-server/commit/13b6f131fc3343eb950dfd9c0e6a99f787c3ceb3))
+
 ## [0.4.0](https://github.com/tracyxiong1/md-review-server/compare/v0.3.2...v0.4.0) (2026-07-01)
 
 
