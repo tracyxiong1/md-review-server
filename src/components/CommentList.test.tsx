@@ -181,6 +181,10 @@ describe('CommentList', () => {
   it('should format reply authors and relative or absolute reply times', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-07-08T10:30:00+08:00'));
+    const olderReplyDate = new Date('2026-07-07T09:05:00+08:00');
+    const expectedOlderReplyTime = `${olderReplyDate.getMonth() + 1}月${olderReplyDate.getDate()}日 ${String(
+      olderReplyDate.getHours(),
+    ).padStart(2, '0')}:${String(olderReplyDate.getMinutes()).padStart(2, '0')}`;
     const commentsWithReplies: Comment[] = [
       {
         ...mockComments[0],
@@ -206,7 +210,7 @@ describe('CommentList', () => {
     expect(screen.getByText('Codex')).toBeInTheDocument();
     expect(screen.getByText('你')).toBeInTheDocument();
     expect(screen.getByText('5分钟前')).toBeInTheDocument();
-    expect(screen.getByText('7月7日 09:05')).toBeInTheDocument();
+    expect(screen.getByText(expectedOlderReplyTime)).toBeInTheDocument();
   });
 
   it('should append a user comment to a done comment from the comments panel', async () => {
