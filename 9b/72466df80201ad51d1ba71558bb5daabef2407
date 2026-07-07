@@ -1,0 +1,31 @@
+server/app.test.js
+  s_93cc561b24cfef::t_1ed037fece300d 150-171
+server/comment-store.js
+  s_93cc561b24cfef::t_62a6bb20b7564f 5,56-95,122-130
+server/comment-store.test.js
+  s_93cc561b24cfef::t_cf503d8dbf6f75 162-205
+src/hooks/useComments.test.ts
+  s_93cc561b24cfef::t_efc0d54147062c 1,92-161
+src/hooks/useComments.ts
+  s_93cc561b24cfef::t_5e922a7d3c51ba 2,17-22,112-130,162
+src/types/review.ts
+  s_93cc561b24cfef::t_4f96e6dbb1e90c 8-16,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "9b72466df80201ad51d1ba71558bb5daabef2407",
+  "prompts": {},
+  "sessions": {
+    "s_93cc561b24cfef": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f21b1-4e4f-7b11-8301-799ec9951bba",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
