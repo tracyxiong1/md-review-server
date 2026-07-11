@@ -31,3 +31,10 @@ yarn.lock
 
 # Auto-generated files
 CHANGELOG.md
+
+# Frozen runtime and historical design artifacts
+.impeccable/critique/
+design-drafts/archive/2026-07-02-superseded-static/
+design-drafts/archive/2026-07-06-comment-replies/
+design-drafts/runtime-baseline/html/
+design-drafts/runtime-baseline/fragments/
