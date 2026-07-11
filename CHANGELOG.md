@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.5.3](https://github.com/tracyxiong1/md-review-server/compare/v0.5.2...v0.5.3) (2026-07-11)
+
+
+### Bug Fixes
+
+* add branded review favicon ([1ef8898](https://github.com/tracyxiong1/md-review-server/commit/1ef8898f5aeb93cbea40bfef57620827496a75c3))
+
 ## [0.5.2](https://github.com/tracyxiong1/md-review-server/compare/v0.5.1...v0.5.2) (2026-07-11)
 
 
