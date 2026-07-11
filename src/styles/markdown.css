@@ -649,6 +649,178 @@
   font-size: 100%;
 }
 
+/* Native-neutral syntax palette. Keep selectors scoped so app theme wins over
+   the bundled highlight.js defaults in both runtime modes. */
+/* stylelint-disable selector-class-pattern -- highlight.js owns these token class names. */
+.markdown-content .hljs {
+  color: #242424;
+  background: transparent;
+}
+
+.markdown-content .hljs-doctag,
+.markdown-content .hljs-keyword,
+.markdown-content .hljs-meta .hljs-keyword,
+.markdown-content .hljs-template-tag,
+.markdown-content .hljs-template-variable,
+.markdown-content .hljs-type,
+.markdown-content .hljs-variable.language_ {
+  color: #7a2e3a;
+}
+
+.markdown-content .hljs-title,
+.markdown-content .hljs-title.class_,
+.markdown-content .hljs-title.class_.inherited__,
+.markdown-content .hljs-title.function_ {
+  color: #5b3f73;
+}
+
+.markdown-content .hljs-attr,
+.markdown-content .hljs-attribute,
+.markdown-content .hljs-property,
+.markdown-content .hljs-meta,
+.markdown-content .hljs-variable,
+.markdown-content .hljs-selector-attr,
+.markdown-content .hljs-selector-class,
+.markdown-content .hljs-selector-id {
+  color: #24527a;
+}
+
+.markdown-content .hljs-literal {
+  color: #6b4978;
+}
+
+.markdown-content .hljs-number,
+.markdown-content .hljs-operator {
+  color: #8a4b0e;
+}
+
+.markdown-content .hljs-regexp,
+.markdown-content .hljs-string,
+.markdown-content .hljs-meta .hljs-string {
+  color: #1f6b5b;
+}
+
+.markdown-content .hljs-built_in,
+.markdown-content .hljs-symbol,
+.markdown-content .hljs-bullet {
+  color: #7a4c16;
+}
+
+.markdown-content .hljs-comment,
+.markdown-content .hljs-code,
+.markdown-content .hljs-formula {
+  color: #6b6b67;
+}
+
+.markdown-content .hljs-name,
+.markdown-content .hljs-quote,
+.markdown-content .hljs-selector-tag,
+.markdown-content .hljs-selector-pseudo {
+  color: #2f6b3d;
+}
+
+.markdown-content .hljs-subst,
+.markdown-content .hljs-params,
+.markdown-content .hljs-punctuation,
+.markdown-content .hljs-tag {
+  color: #3f3f3c;
+}
+
+.markdown-content .hljs-section,
+.markdown-content .hljs-link {
+  color: #24527a;
+}
+
+.markdown-content .hljs-addition {
+  color: #285e35;
+  background-color: #e3f1e6;
+}
+
+.markdown-content .hljs-deletion {
+  color: #92333b;
+  background-color: #f7e3e5;
+}
+
+.dark-mode .markdown-content .hljs {
+  color: #eeeeec;
+}
+
+.dark-mode .markdown-content .hljs-doctag,
+.dark-mode .markdown-content .hljs-keyword,
+.dark-mode .markdown-content .hljs-meta .hljs-keyword,
+.dark-mode .markdown-content .hljs-template-tag,
+.dark-mode .markdown-content .hljs-template-variable,
+.dark-mode .markdown-content .hljs-type,
+.dark-mode .markdown-content .hljs-variable.language_ {
+  color: #f0a0aa;
+}
+
+.dark-mode .markdown-content .hljs-title,
+.dark-mode .markdown-content .hljs-title.class_,
+.dark-mode .markdown-content .hljs-title.class_.inherited__,
+.dark-mode .markdown-content .hljs-title.function_,
+.dark-mode .markdown-content .hljs-literal {
+  color: #c9b1e5;
+}
+
+.dark-mode .markdown-content .hljs-attr,
+.dark-mode .markdown-content .hljs-attribute,
+.dark-mode .markdown-content .hljs-property,
+.dark-mode .markdown-content .hljs-meta,
+.dark-mode .markdown-content .hljs-variable,
+.dark-mode .markdown-content .hljs-selector-attr,
+.dark-mode .markdown-content .hljs-selector-class,
+.dark-mode .markdown-content .hljs-selector-id,
+.dark-mode .markdown-content .hljs-section,
+.dark-mode .markdown-content .hljs-link {
+  color: #9fc7ea;
+}
+
+.dark-mode .markdown-content .hljs-number,
+.dark-mode .markdown-content .hljs-operator,
+.dark-mode .markdown-content .hljs-built_in,
+.dark-mode .markdown-content .hljs-symbol,
+.dark-mode .markdown-content .hljs-bullet {
+  color: #e3bc72;
+}
+
+.dark-mode .markdown-content .hljs-regexp,
+.dark-mode .markdown-content .hljs-string,
+.dark-mode .markdown-content .hljs-meta .hljs-string {
+  color: #95ccba;
+}
+
+.dark-mode .markdown-content .hljs-comment,
+.dark-mode .markdown-content .hljs-code,
+.dark-mode .markdown-content .hljs-formula {
+  color: #a8a8a3;
+}
+
+.dark-mode .markdown-content .hljs-name,
+.dark-mode .markdown-content .hljs-quote,
+.dark-mode .markdown-content .hljs-selector-tag,
+.dark-mode .markdown-content .hljs-selector-pseudo {
+  color: #95cc9a;
+}
+
+.dark-mode .markdown-content .hljs-subst,
+.dark-mode .markdown-content .hljs-params,
+.dark-mode .markdown-content .hljs-punctuation,
+.dark-mode .markdown-content .hljs-tag {
+  color: #d6d6d3;
+}
+
+.dark-mode .markdown-content .hljs-addition {
+  color: #b7ddb9;
+  background-color: #203524;
+}
+
+.dark-mode .markdown-content .hljs-deletion {
+  color: #f0b0b5;
+  background-color: #3b2226;
+}
+/* stylelint-enable selector-class-pattern */
+
 .markdown-content ul,
 .markdown-content ol {
   padding-left: 20px;

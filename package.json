@@ -1,6 +1,6 @@
 {
   "name": "md-review-server",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Visual Markdown review server with Codex skill, sidecar comments, and HTTP APIs",
   "type": "module",
   "bin": {

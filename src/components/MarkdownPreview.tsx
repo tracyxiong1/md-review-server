@@ -14,7 +14,6 @@ import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css';
-import 'highlight.js/styles/github-dark.css';
 import '../styles/markdown.css';
 import { SelectionPopover } from './SelectionPopover';
 import { CommentList, Comment } from './CommentList';
@@ -461,22 +460,6 @@ export const MarkdownPreview = ({
     collapseThreshold: 70,
     initialCollapsed: openCommentCount === 0,
   });
-
-  // Update highlight.js theme based on dark mode
-  useEffect(() => {
-    const lightTheme = document.querySelector('link[href*="github.css"]');
-    const darkTheme = document.querySelector('link[href*="github-dark.css"]');
-
-    if (lightTheme && darkTheme) {
-      if (isDark) {
-        (lightTheme as HTMLLinkElement).disabled = true;
-        (darkTheme as HTMLLinkElement).disabled = false;
-      } else {
-        (lightTheme as HTMLLinkElement).disabled = false;
-        (darkTheme as HTMLLinkElement).disabled = true;
-      }
-    }
-  }, [isDark]);
 
   useEffect(() => {
     const previousOpenCommentCount = previousOpenCommentCountRef.current;

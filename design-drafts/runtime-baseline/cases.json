@@ -433,5 +433,109 @@
         "w": 785
       }
     }
+  },
+  {
+    "id": "07-dark-color-compatibility",
+    "file": "docs/color-compatibility.md",
+    "theme": "dark",
+    "sidebar": false,
+    "comments": false,
+    "label": "Dark, collapsed sidebar, Mermaid and highlighted code",
+    "screenshot": "07-dark-color-compatibility.png",
+    "html": "html/07-dark-color-compatibility.html",
+    "fragment": "fragments/07-dark-color-compatibility.root.html",
+    "metrics": {
+      "app": "dev-container sidebar-closed ",
+      "theme": "dark",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fcolor-compatibility.md",
+      "viewport": { "h": 720, "w": 1280 },
+      "main": { "h": 720, "w": 1192, "x": 46, "y": 0 },
+      "comments": { "h": 720, "w": 42, "x": 1238, "y": 0 },
+      "mermaids": [
+        {
+          "h": 311.5,
+          "w": 700,
+          "x": 292,
+          "y": 328.7421875,
+          "viewBox": "-50 -10 948 395",
+          "actorText": "rgb(242, 242, 242)",
+          "messageText": "rgb(214, 214, 211)",
+          "nodeText": null
+        },
+        {
+          "h": 168.875,
+          "w": 700,
+          "x": 292,
+          "y": 773.1875,
+          "viewBox": "0 0 859.1796875 174",
+          "actorText": null,
+          "messageText": null,
+          "nodeText": "rgb(238, 238, 236)"
+        }
+      ],
+      "code": {
+        "background": "rgb(34, 34, 34)",
+        "tokens": [
+          { "cls": "hljs-punctuation", "color": "rgb(214, 214, 211)" },
+          { "cls": "hljs-attr", "color": "rgb(159, 199, 234)" },
+          { "cls": "hljs-number", "color": "rgb(227, 188, 114)" },
+          { "cls": "hljs-string", "color": "rgb(149, 204, 186)" },
+          { "cls": "hljs-literal", "color": "rgb(201, 177, 229)" },
+          { "cls": "hljs-keyword", "color": "rgb(240, 160, 170)" }
+        ]
+      }
+    }
+  },
+  {
+    "id": "08-light-color-compatibility",
+    "file": "docs/color-compatibility.md",
+    "theme": "light",
+    "sidebar": false,
+    "comments": false,
+    "label": "Light, collapsed sidebar, Mermaid and highlighted code",
+    "screenshot": "08-light-color-compatibility.png",
+    "html": "html/08-light-color-compatibility.html",
+    "fragment": "fragments/08-light-color-compatibility.root.html",
+    "metrics": {
+      "app": "dev-container sidebar-closed ",
+      "theme": "light",
+      "url": "http://127.0.0.1:6160/?file=docs%2Fcolor-compatibility.md",
+      "viewport": { "h": 720, "w": 1280 },
+      "main": { "h": 720, "w": 1192, "x": 46, "y": 0 },
+      "comments": { "h": 720, "w": 42, "x": 1238, "y": 0 },
+      "mermaids": [
+        {
+          "h": 311.5,
+          "w": 700,
+          "x": 292,
+          "y": 328.7421875,
+          "viewBox": "-50 -10 948 395",
+          "actorText": "rgb(36, 36, 36)",
+          "messageText": "rgb(63, 63, 60)",
+          "nodeText": null
+        },
+        {
+          "h": 168.875,
+          "w": 700,
+          "x": 292,
+          "y": 773.1875,
+          "viewBox": "0 0 859.1796875 174",
+          "actorText": null,
+          "messageText": null,
+          "nodeText": "rgb(36, 36, 36)"
+        }
+      ],
+      "code": {
+        "background": "rgb(238, 238, 236)",
+        "tokens": [
+          { "cls": "hljs-punctuation", "color": "rgb(63, 63, 60)" },
+          { "cls": "hljs-attr", "color": "rgb(36, 82, 122)" },
+          { "cls": "hljs-number", "color": "rgb(138, 75, 14)" },
+          { "cls": "hljs-string", "color": "rgb(31, 107, 91)" },
+          { "cls": "hljs-literal", "color": "rgb(107, 73, 120)" },
+          { "cls": "hljs-keyword", "color": "rgb(122, 46, 58)" }
+        ]
+      }
+    }
   }
 ]

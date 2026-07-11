@@ -6,6 +6,82 @@ interface MermaidBlockProps {
   code: string;
 }
 
+export const lightMermaidThemeVariables = {
+  background: '#fafaf9',
+  primaryColor: '#f1f1ef',
+  primaryTextColor: '#242424',
+  primaryBorderColor: '#b8b8b3',
+  secondaryColor: '#e8e8e5',
+  secondaryTextColor: '#242424',
+  secondaryBorderColor: '#b8b8b3',
+  tertiaryColor: '#fafaf9',
+  tertiaryTextColor: '#242424',
+  tertiaryBorderColor: '#d9d9d6',
+  textColor: '#242424',
+  lineColor: '#6f6f6b',
+  mainBkg: '#f1f1ef',
+  nodeBorder: '#b8b8b3',
+  nodeTextColor: '#242424',
+  clusterBkg: '#fafaf9',
+  clusterBorder: '#d9d9d6',
+  titleColor: '#242424',
+  edgeLabelBackground: '#fafaf9',
+  actorBkg: '#f1f1ef',
+  actorBorder: '#b8b8b3',
+  actorTextColor: '#242424',
+  actorLineColor: '#8a8a85',
+  signalColor: '#6f6f6b',
+  signalTextColor: '#3f3f3c',
+  labelBoxBkgColor: '#f1f1ef',
+  labelBoxBorderColor: '#b8b8b3',
+  labelTextColor: '#3f3f3c',
+  loopTextColor: '#3f3f3c',
+  noteBorderColor: '#c8c8c3',
+  noteBkgColor: '#f6f1dc',
+  noteTextColor: '#3f3f3c',
+  activationBorderColor: '#8a8a85',
+  activationBkgColor: '#e8e8e5',
+  sequenceNumberColor: '#242424',
+};
+
+export const darkMermaidThemeVariables = {
+  background: '#1b1b1b',
+  primaryColor: '#2a2a2a',
+  primaryTextColor: '#f2f2f2',
+  primaryBorderColor: '#66635f',
+  secondaryColor: '#232323',
+  secondaryTextColor: '#eeeeec',
+  secondaryBorderColor: '#56534f',
+  tertiaryColor: '#303030',
+  tertiaryTextColor: '#eeeeec',
+  tertiaryBorderColor: '#66635f',
+  textColor: '#eeeeec',
+  lineColor: '#a0a0a0',
+  mainBkg: '#2a2a2a',
+  nodeBorder: '#66635f',
+  nodeTextColor: '#eeeeec',
+  clusterBkg: '#1b1b1b',
+  clusterBorder: '#4b4b48',
+  titleColor: '#f2f2f2',
+  edgeLabelBackground: '#252525',
+  actorBkg: '#2a2a2a',
+  actorBorder: '#66635f',
+  actorTextColor: '#f2f2f2',
+  actorLineColor: '#a0a0a0',
+  signalColor: '#b0b0ad',
+  signalTextColor: '#d6d6d3',
+  labelBoxBkgColor: '#303030',
+  labelBoxBorderColor: '#66635f',
+  labelTextColor: '#d6d6d3',
+  loopTextColor: '#d6d6d3',
+  noteBorderColor: '#716b55',
+  noteBkgColor: '#332f22',
+  noteTextColor: '#eeeeec',
+  activationBorderColor: '#77736e',
+  activationBkgColor: '#343434',
+  sequenceNumberColor: '#f2f2f2',
+};
+
 export const MermaidBlock = ({ code }: MermaidBlockProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>('');
@@ -19,7 +95,8 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
       try {
         mermaid.initialize({
           startOnLoad: false,
-          theme: isDark ? 'dark' : 'default',
+          theme: 'base',
+          themeVariables: isDark ? darkMermaidThemeVariables : lightMermaidThemeVariables,
           securityLevel: 'strict',
         });
 

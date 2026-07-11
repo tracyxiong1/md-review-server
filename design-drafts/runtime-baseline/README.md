@@ -33,14 +33,16 @@ Then open `http://127.0.0.1:6160/?file=docs%2Fwith-comments.md` or `http://127.0
 
 ## Case Matrix
 
-| Case | State | Screenshot | HTML | Fragment |
-| --- | --- | --- | --- | --- |
-| 01 | Dark, sidebar collapsed, comments closed, no comments | [PNG](./01-dark-collapsed-comments-closed-empty.png) | [HTML](./html/01-dark-collapsed-comments-closed-empty.html) | [Root](./fragments/01-dark-collapsed-comments-closed-empty.root.html) |
-| 02 | Dark, sidebar collapsed, comments open, no comments | [PNG](./02-dark-collapsed-comments-open-empty.png) | [HTML](./html/02-dark-collapsed-comments-open-empty.html) | [Root](./fragments/02-dark-collapsed-comments-open-empty.root.html) |
-| 03 | Dark, sidebar collapsed, comments open, with comments | [PNG](./03-dark-collapsed-comments-open-with-comments.png) | [HTML](./html/03-dark-collapsed-comments-open-with-comments.html) | [Root](./fragments/03-dark-collapsed-comments-open-with-comments.root.html) |
-| 04 | Dark, sidebar expanded, comments open, with comments | [PNG](./04-dark-expanded-comments-open-with-comments.png) | [HTML](./html/04-dark-expanded-comments-open-with-comments.html) | [Root](./fragments/04-dark-expanded-comments-open-with-comments.root.html) |
-| 05 | Light, sidebar expanded, comments open, with comments | [PNG](./05-light-expanded-comments-open-with-comments.png) | [HTML](./html/05-light-expanded-comments-open-with-comments.html) | [Root](./fragments/05-light-expanded-comments-open-with-comments.root.html) |
-| 06 | Light, sidebar collapsed, comments closed, no comments | [PNG](./06-light-collapsed-comments-closed-empty.png) | [HTML](./html/06-light-collapsed-comments-closed-empty.html) | [Root](./fragments/06-light-collapsed-comments-closed-empty.root.html) |
+| Case | State                                                  | Screenshot                                                 | HTML                                                              | Fragment                                                                    |
+| ---- | ------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 01   | Dark, sidebar collapsed, comments closed, no comments  | [PNG](./01-dark-collapsed-comments-closed-empty.png)       | [HTML](./html/01-dark-collapsed-comments-closed-empty.html)       | [Root](./fragments/01-dark-collapsed-comments-closed-empty.root.html)       |
+| 02   | Dark, sidebar collapsed, comments open, no comments    | [PNG](./02-dark-collapsed-comments-open-empty.png)         | [HTML](./html/02-dark-collapsed-comments-open-empty.html)         | [Root](./fragments/02-dark-collapsed-comments-open-empty.root.html)         |
+| 03   | Dark, sidebar collapsed, comments open, with comments  | [PNG](./03-dark-collapsed-comments-open-with-comments.png) | [HTML](./html/03-dark-collapsed-comments-open-with-comments.html) | [Root](./fragments/03-dark-collapsed-comments-open-with-comments.root.html) |
+| 04   | Dark, sidebar expanded, comments open, with comments   | [PNG](./04-dark-expanded-comments-open-with-comments.png)  | [HTML](./html/04-dark-expanded-comments-open-with-comments.html)  | [Root](./fragments/04-dark-expanded-comments-open-with-comments.root.html)  |
+| 05   | Light, sidebar expanded, comments open, with comments  | [PNG](./05-light-expanded-comments-open-with-comments.png) | [HTML](./html/05-light-expanded-comments-open-with-comments.html) | [Root](./fragments/05-light-expanded-comments-open-with-comments.root.html) |
+| 06   | Light, sidebar collapsed, comments closed, no comments | [PNG](./06-light-collapsed-comments-closed-empty.png)      | [HTML](./html/06-light-collapsed-comments-closed-empty.html)      | [Root](./fragments/06-light-collapsed-comments-closed-empty.root.html)      |
+| 07   | Dark, sidebar collapsed, Mermaid and highlighted code  | [PNG](./07-dark-color-compatibility.png)                   | [HTML](./html/07-dark-color-compatibility.html)                   | [Root](./fragments/07-dark-color-compatibility.root.html)                   |
+| 08   | Light, sidebar collapsed, Mermaid and highlighted code | [PNG](./08-light-color-compatibility.png)                  | [HTML](./html/08-light-color-compatibility.html)                  | [Root](./fragments/08-light-color-compatibility.root.html)                  |
 
 Detailed DOM measurements are stored in [cases.json](./cases.json).
 
@@ -52,6 +54,7 @@ Detailed DOM measurements are stored in [cases.json](./cases.json).
 - Comments header with `Copy All` and `Clear` actions is about `143px` high.
 - Comment markers are compact `16px` buttons anchored in the document gutter.
 - The with-comments fixture includes a multi-round reply thread so `Codex` / `你` labels, reply time treatment, and the `Open` default filter stay visible in baseline captures.
+- The color-compatibility fixture records Mermaid actor/message/node colors and representative JSON/TypeScript token colors in both themes without changing diagram geometry.
 - Only the first visible comment receives the stronger active card treatment. Later comments remain flatter rows.
 
 ## Design Implications For Codex Handoff

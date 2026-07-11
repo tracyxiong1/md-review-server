@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
 
+const THEME_CHANGE_EVENT = 'md-review-theme-change';
+
 const getSystemTheme = (): 'light' | 'dark' => {
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     return 'dark';
@@ -35,6 +37,15 @@ export const useDarkMode = () => {
     }
   }, [theme]);
 
+  useEffect(() => {
+    const handleThemeChange = (event: Event) => {
+      setTheme((event as CustomEvent<Theme>).detail);
+    };
+
+    window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+    return () => window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+  }, []);
+
   // Listen to system theme changes when theme is set to 'system'
   useEffect(() => {
     if (theme !== 'system') return;
@@ -62,6 +73,7 @@ export const useDarkMode = () => {
 
       // Save user's explicit choice to localStorage
       localStorage.setItem('md-review-theme', newTheme);
+      window.dispatchEvent(new CustomEvent<Theme>(THEME_CHANGE_EVENT, { detail: newTheme }));
       return newTheme;
     });
   };
@@ -69,6 +81,7 @@ export const useDarkMode = () => {
   const resetToSystem = () => {
     // Remove from localStorage to go back to system preference
     localStorage.removeItem('md-review-theme');
+    window.dispatchEvent(new CustomEvent<Theme>(THEME_CHANGE_EVENT, { detail: 'system' }));
     setTheme('system');
   };
 

@@ -47,6 +47,20 @@ describe('useDarkMode', () => {
     expect(localStorage.getItem('md-review-theme')).toBe('dark');
   });
 
+  it('keeps separate hook consumers in sync after a theme toggle', () => {
+    const { result } = renderHook(() => ({
+      toggleConsumer: useDarkMode(),
+      mermaidConsumer: useDarkMode(),
+    }));
+
+    act(() => {
+      result.current.toggleConsumer.toggleTheme();
+    });
+
+    expect(result.current.mermaidConsumer.theme).toBe('dark');
+    expect(result.current.mermaidConsumer.isDark).toBe(true);
+  });
+
   it('should reset to system theme', () => {
     localStorage.setItem('md-review-theme', 'dark');
     const { result } = renderHook(() => useDarkMode());

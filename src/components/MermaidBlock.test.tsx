@@ -10,16 +10,19 @@ vi.mock('mermaid', () => ({
   },
 }));
 
+const darkModeMock = vi.hoisted(() => ({ isDark: false }));
+
 vi.mock('../hooks/useDarkMode', () => ({
-  useDarkMode: () => ({ isDark: false }),
+  useDarkMode: () => ({ isDark: darkModeMock.isDark }),
 }));
 
 describe('MermaidBlock', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    darkModeMock.isDark = false;
   });
 
-  it('should render diagram with strict security level', async () => {
+  it('uses the readable native-neutral light palette', async () => {
     vi.mocked(mermaid.render).mockResolvedValue({
       svg: '<svg>diagram</svg>',
       diagramType: 'flowchart',
@@ -29,9 +32,47 @@ describe('MermaidBlock', () => {
 
     await waitFor(() => {
       expect(mermaid.initialize).toHaveBeenCalledWith(
-        expect.objectContaining({ securityLevel: 'strict' }),
+        expect.objectContaining({
+          securityLevel: 'strict',
+          theme: 'base',
+          themeVariables: expect.objectContaining({
+            primaryTextColor: '#242424',
+            lineColor: '#6f6f6b',
+            actorTextColor: '#242424',
+            signalTextColor: '#3f3f3c',
+            labelTextColor: '#3f3f3c',
+          }),
+        }),
       );
       expect(document.querySelector('.mermaid-container')).toBeInTheDocument();
+    });
+  });
+
+  it('uses the readable native-neutral dark palette', async () => {
+    darkModeMock.isDark = true;
+    vi.mocked(mermaid.render).mockResolvedValue({
+      svg: '<svg>diagram</svg>',
+      diagramType: 'sequence',
+    });
+
+    render(<MermaidBlock code="sequenceDiagram; A->>B: message" />);
+
+    await waitFor(() => {
+      expect(mermaid.initialize).toHaveBeenCalledWith(
+        expect.objectContaining({
+          securityLevel: 'strict',
+          theme: 'base',
+          themeVariables: expect.objectContaining({
+            background: '#1b1b1b',
+            primaryTextColor: '#f2f2f2',
+            lineColor: '#a0a0a0',
+            actorTextColor: '#f2f2f2',
+            signalTextColor: '#d6d6d3',
+            labelTextColor: '#d6d6d3',
+            noteTextColor: '#eeeeec',
+          }),
+        }),
+      );
     });
   });
 

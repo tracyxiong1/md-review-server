@@ -54,6 +54,23 @@ describe('MarkdownPreview', () => {
     diffViewerMock.mockClear();
   });
 
+  it('does not depend on toggling bundled highlight theme link elements', () => {
+    const querySelectorSpy = vi.spyOn(document, 'querySelector');
+
+    render(
+      <MarkdownPreview
+        {...baseProps}
+        content={'```json\n{"draftVersion": 42}\n```'}
+        comments={[]}
+      />,
+    );
+
+    expect(querySelectorSpy).not.toHaveBeenCalledWith('link[href*="github.css"]');
+    expect(querySelectorSpy).not.toHaveBeenCalledWith('link[href*="github-dark.css"]');
+
+    querySelectorSpy.mockRestore();
+  });
+
   it('collapses the comments sidebar by default when there are no comments', () => {
     render(<MarkdownPreview {...baseProps} comments={[]} />);
 
