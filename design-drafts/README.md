@@ -85,13 +85,16 @@ Add a `BRIEF.md`:
 # Feature Brief: Feature Name
 
 ## Goal
+
 What user problem this solves.
 
 ## Source Baseline
+
 - ../../runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
 - ../../runtime-baseline/html/05-light-expanded-comments-open-with-comments.html
 
 ## States To Cover
+
 - dark / light
 - sidebar collapsed / expanded
 - comments open / closed
@@ -99,6 +102,7 @@ What user problem this solves.
 - loading / success / failed, if relevant
 
 ## Constraints
+
 - Keep comments panel about 300px wide.
 - Avoid tall blocks above the first comment.
 - Reuse existing compact buttons, status pills, tabs, and panel rhythm.
@@ -136,19 +140,24 @@ Create a `DECISION.md` in the active folder:
 # Decision: Feature Name
 
 ## Final Direction
+
 What shipped.
 
 ## Why
+
 Why this direction won.
 
 ## Superseded
+
 Which drafts were rejected and why.
 
 ## Landed In
+
 - src/components/...
 - src/styles/...
 
 ## Baseline Updated
+
 Yes or no. If no, explain why.
 ```
 
