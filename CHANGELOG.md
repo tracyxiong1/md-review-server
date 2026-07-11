@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.5.2](https://github.com/tracyxiong1/md-review-server/compare/v0.5.1...v0.5.2) (2026-07-11)
+
+
+### Bug Fixes
+
+* improve diagram and code theme contrast ([e1be0bf](https://github.com/tracyxiong1/md-review-server/commit/e1be0bfbcfa209111731f34acfb9779984620013))
+
 ## [0.5.1](https://github.com/tracyxiong1/md-review-server/compare/v0.5.0...v0.5.1) (2026-07-11)
 
 
