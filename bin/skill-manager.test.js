@@ -30,7 +30,7 @@ describe('skill manager', () => {
     const target = join(homeDir, '.codex', 'skills', SKILL_NAME);
     expect(result.action).toBe('installed');
     expect(existsSync(join(target, 'SKILL.md'))).toBe(true);
-    expect(await readFile(join(target, 'VERSION'), 'utf-8')).toBe('0.1.1\n');
+    expect(await readFile(join(target, 'VERSION'), 'utf-8')).toBe('0.1.2\n');
   });
 
   it('skips update when installed version matches bundled version', async () => {
@@ -72,8 +72,8 @@ describe('skill manager', () => {
     });
 
     expect(getSkillStatus({ packageRoot: process.cwd(), env: { HOME: homeDir } })).toMatchObject({
-      bundledVersion: '0.1.1',
-      installedVersion: '0.1.1',
+      bundledVersion: '0.1.2',
+      installedVersion: '0.1.2',
       installed: true,
       upToDate: true,
     });

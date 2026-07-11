@@ -28,6 +28,7 @@ export interface ReviewComment {
   comment: string;
   status: ReviewCommentStatus;
   targetFile?: string;
+  /** One-based absolute lines in targetFile, including frontmatter and MDX imports/exports. */
   targetStartLine?: number;
   targetEndLine?: number;
   targetSelectedText?: string;

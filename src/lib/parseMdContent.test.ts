@@ -19,9 +19,17 @@ describe('parseMdContent', () => {
 
     it('returns empty frontmatter when none present', () => {
       const content = '# Body';
-      const { frontmatter, body } = parseMdContent(content, 'file.md');
+      const { frontmatter, body, bodyLineOffset } = parseMdContent(content, 'file.md');
       expect(frontmatter).toEqual({});
       expect(body).toBe('# Body');
+      expect(bodyLineOffset).toBe(0);
+    });
+
+    it('reports the number of source lines occupied by frontmatter', () => {
+      const content = '---\r\ntitle: Hello\r\ndate: 2024-01-01\r\n---\r\n\r\n# Body';
+      const { bodyLineOffset } = parseMdContent(content, 'file.md');
+
+      expect(bodyLineOffset).toBe(4);
     });
 
     it('handles frontmatter with extra whitespace around values', () => {
@@ -37,6 +45,7 @@ describe('parseMdContent', () => {
       const { body } = parseMdContent(content, 'file.mdx');
       expect(body).not.toContain('import');
       expect(body).toContain('# Body');
+      expect(body.split('\n')).toHaveLength(4);
     });
 
     it('strips export lines from .mdx', () => {

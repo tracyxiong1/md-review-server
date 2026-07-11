@@ -258,6 +258,8 @@ interface ReviewComment {
 }
 ```
 
+`targetStartLine` / `targetEndLine` 使用目标文件中从 1 开始的绝对行号，包含 YAML frontmatter 和 MDX import/export 等源文件行。
+
 ### 4.2 ReviewSummary
 
 建议在前端新增 `useReviewSummary(files)`，第一阶段可通过 `GET /api/comments` 获取全量评论后在前端聚合。后续如果评论数量明显变大，再增加服务端 summary API。

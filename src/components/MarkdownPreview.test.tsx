@@ -223,6 +223,76 @@ describe('MarkdownPreview', () => {
     expect(screen.getByText('guide.v3.md:2')).toBeInTheDocument();
   });
 
+  it('shows processed comment markers when target lines include frontmatter', async () => {
+    const targetComments: Comment[] = [
+      {
+        id: 'c001',
+        file: 'guide.v3.md',
+        text: 'Please clarify the setup steps',
+        selectedText: 'setup',
+        startLine: 3,
+        endLine: 3,
+        status: 'resolved',
+        targetFile: 'guide.v4.md',
+        targetStartLine: 7,
+        targetEndLine: 7,
+        targetSelectedText: 'Clear setup steps',
+        resolution: 'Added the missing setup details.',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    const { container } = render(
+      <MarkdownPreview
+        content={'---\ntitle: Guide\n---\n\n# Guide\n\nClear setup steps'}
+        filename="guide.v4.md"
+        comments={[]}
+        targetComments={targetComments}
+      />,
+    );
+
+    expect(await screen.findByTestId('review-marker-c001')).toBeInTheDocument();
+    expect(container.querySelector('.markdown-line-with-processed-comment')).toHaveTextContent(
+      'Clear setup steps',
+    );
+  });
+
+  it('preserves processed comment target lines after MDX imports are removed', async () => {
+    const targetComments: Comment[] = [
+      {
+        id: 'c001',
+        file: 'guide.v3.mdx',
+        text: 'Please clarify the setup steps',
+        selectedText: 'setup',
+        startLine: 3,
+        endLine: 3,
+        status: 'resolved',
+        targetFile: 'guide.v4.mdx',
+        targetStartLine: 9,
+        targetEndLine: 9,
+        targetSelectedText: 'Clear setup steps',
+        resolution: 'Added the missing setup details.',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+
+    const { container } = render(
+      <MarkdownPreview
+        content={
+          '---\ntitle: Guide\n---\n\nimport Callout from "./Callout"\n\n# Guide\n\nClear setup steps'
+        }
+        filename="guide.v4.mdx"
+        comments={[]}
+        targetComments={targetComments}
+      />,
+    );
+
+    expect(await screen.findByTestId('review-marker-c001')).toBeInTheDocument();
+    expect(container.querySelector('.markdown-line-with-processed-comment')).toHaveTextContent(
+      'Clear setup steps',
+    );
+  });
+
   it('preserves full processed comment source text for long filenames', async () => {
     const user = userEvent.setup();
     const longFilename =

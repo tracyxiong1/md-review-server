@@ -76,6 +76,8 @@ interface ReviewComment {
 }
 ```
 
+`targetStartLine` / `targetEndLine` 使用目标文件中从 1 开始的绝对行号，计入 YAML frontmatter 和 MDX import/export 等源文件行。前端预处理 Markdown 时负责将绝对行号转换为渲染正文行号。
+
 ### 3.3 当前体验缺口
 
 | 问题                       | 影响                                 | 升级方向                 |

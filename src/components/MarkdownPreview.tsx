@@ -375,7 +375,7 @@ export const MarkdownPreview = ({
   const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
   const [markerPositions, setMarkerPositions] = useState<Record<number, number>>({});
   const { isDark } = useDarkMode();
-  const { frontmatter, body } = parseMdContent(content, filename);
+  const { frontmatter, body, bodyLineOffset } = parseMdContent(content, filename);
   const frontmatterEntries = Object.entries(frontmatter);
   const canCompare = Boolean(compareFilename && typeof compareContent === 'string');
   const diffKey = canCompare ? `${compareFilename}->${filename}` : null;
@@ -388,13 +388,14 @@ export const MarkdownPreview = ({
         continue;
       }
 
-      const commentsForLine = next.get(comment.targetStartLine) || [];
+      const renderedLine = comment.targetStartLine - bodyLineOffset;
+      const commentsForLine = next.get(renderedLine) || [];
       commentsForLine.push(comment);
-      next.set(comment.targetStartLine, commentsForLine);
+      next.set(renderedLine, commentsForLine);
     }
 
     return next;
-  }, [targetComments]);
+  }, [bodyLineOffset, targetComments]);
   const sourceCommentsByLine = useMemo(() => {
     const next = new Map<number, Comment[]>();
 
