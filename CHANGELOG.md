@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.5.1](https://github.com/tracyxiong1/md-review-server/compare/v0.5.0...v0.5.1) (2026-07-11)
+
+
+### Bug Fixes
+
+* align comment markers with source lines ([3e0753a](https://github.com/tracyxiong1/md-review-server/commit/3e0753a201b8be67174c3f81a7fef68d4283e912))
+
 ## [0.5.0](https://github.com/tracyxiong1/md-review-server/compare/v0.4.0...v0.5.0) (2026-07-07)
 
 
