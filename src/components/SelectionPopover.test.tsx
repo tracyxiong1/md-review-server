@@ -152,4 +152,18 @@ describe('SelectionPopover', () => {
 
     expect(screen.queryByPlaceholderText('Add a comment...')).not.toBeInTheDocument();
   });
+
+  it('cancels a pending selection update when unmounted', () => {
+    vi.useFakeTimers();
+    const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
+    const { unmount } = render(<TestHarness />);
+
+    act(() => {
+      screen.getByText('Selected text').dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    });
+    unmount();
+
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+    vi.useRealTimers();
+  });
 });

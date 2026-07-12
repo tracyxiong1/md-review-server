@@ -346,7 +346,16 @@ const createComponentsWithLinePosition = (markerLines: Set<number>): Components 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     blockquote: (props: any) => withLineMarker('blockquote', props),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pre: (props: any) => withLineMarker('pre', props),
+    pre: (props: any) => {
+      const codeClassNames = props.node?.children?.[0]?.properties?.className;
+      const isMermaid =
+        Array.isArray(codeClassNames) && codeClassNames.includes('language-mermaid');
+      const className = [props.className, isMermaid ? 'mermaid-pre' : null]
+        .filter(Boolean)
+        .join(' ');
+
+      return withLineMarker('pre', { ...props, className: className || undefined });
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     td: (props: any) => withLineMarker('td', props),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
