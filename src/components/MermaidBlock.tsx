@@ -147,9 +147,12 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
           type="button"
           className="mermaid-expand-button"
           aria-label="放大查看 Mermaid 图表"
+          title="放大查看"
           onClick={() => setIsViewerOpen(true)}
         >
-          放大查看
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16">
+            <path d="M6 3H3v3M10 3h3v3M6 13H3v-3M10 13h3v-3" />
+          </svg>
         </button>
       )}
       <div

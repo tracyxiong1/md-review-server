@@ -71,6 +71,14 @@ describe('MarkdownPreview', () => {
     querySelectorSpy.mockRestore();
   });
 
+  it('marks the outer pre element as a Mermaid diagram container', () => {
+    render(
+      <MarkdownPreview {...baseProps} content={'```mermaid\ngraph TD; A-->B\n```'} comments={[]} />,
+    );
+
+    expect(screen.getByTestId('mermaid-block').parentElement).toHaveClass('mermaid-pre');
+  });
+
   it('collapses the comments sidebar by default when there are no comments', () => {
     render(<MarkdownPreview {...baseProps} comments={[]} />);
 

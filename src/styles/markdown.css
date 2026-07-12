@@ -626,7 +626,7 @@
 .markdown-content pre {
   background-color: var(--code-bg);
   border-radius: 8px;
-  padding: 16px;
+  padding: var(--markdown-pre-padding, 16px);
   overflow: auto;
   font-size: 14px;
   line-height: 1.45;
@@ -1664,9 +1664,15 @@
 }
 
 /* Mermaid diagram styles */
-.mermaid-block {
+.mermaid-pre {
+  --markdown-pre-padding: 48px 16px 16px;
+
   position: relative;
-  margin: 1.5rem 0;
+}
+
+.mermaid-block {
+  position: static;
+  margin: 0;
 }
 
 .mermaid-container {
@@ -1690,8 +1696,11 @@
   top: 12px;
   right: 12px;
   z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
   height: 28px;
-  padding: 0 9px;
+  padding: 0;
   border: 1px solid var(--border-primary);
   border-radius: 7px;
   background: var(--bg-control-active);
@@ -1704,6 +1713,16 @@
     background-color 0.18s ease,
     color 0.18s ease,
     opacity 0.18s ease;
+}
+
+.mermaid-expand-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .mermaid-expand-button:hover,

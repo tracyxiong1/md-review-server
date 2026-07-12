@@ -23,13 +23,14 @@ Mermaid 正文预览右上角增加“放大查看”入口。入口打开覆盖
 
 ## Verification
 
-- 相关自动化测试：17 项通过。
+- 相关自动化测试：18 项通过。
 - JS 与 CSS lint：通过。
 - TypeScript 与 Vite 生产构建：通过。
 - 目标页面：`repository-architecture.v3.md`。
 - 运行时状态：5.3 长时序图以 51% 适应窗口；工具栏放大到 76%；鼠标拖动和普通触控板平移更新二维位移；关闭后恢复页面滚动与入口焦点。
 - 组合滚轮缩放由组件测试覆盖；浏览器自动化无法稳定合成操作系统级捏合事件。
 - 体验复查后将 `wheel` 处理从 React passive 委托事件调整为图表视口上的 `{ passive: false }` 原生监听，并为视口增加 `overscroll-behavior: contain`。触控板手势只在图表视口内生效，浏览器级缩放和滚动链不会继续处理该事件。
+- 正文入口使用 28px 四角展开图标，并定位到 Mermaid 外层灰色容器的右上角。外层 `pre.mermaid-pre` 预留独立操作带，图标不再覆盖 SVG 内容。
 
 ## Baseline Updated
 

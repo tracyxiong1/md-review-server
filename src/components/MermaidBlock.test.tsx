@@ -96,6 +96,9 @@ describe('MermaidBlock', () => {
     render(<MermaidBlock code="sequenceDiagram; A->>B: message" />);
 
     const trigger = await screen.findByRole('button', { name: '放大查看 Mermaid 图表' });
+    expect(trigger).toHaveAttribute('title', '放大查看');
+    expect(trigger).toHaveTextContent('');
+    expect(trigger.querySelector('svg')).toBeInTheDocument();
     await user.click(trigger);
     expect(screen.getByRole('dialog', { name: 'Mermaid 图表查看器' })).toBeInTheDocument();
 
