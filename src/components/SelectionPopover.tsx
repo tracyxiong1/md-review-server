@@ -330,8 +330,10 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
   };
 
   useEffect(() => {
+    let mouseUpTimer: number | undefined;
+
     const handleMouseUp = (e: MouseEvent) => {
-      setTimeout(() => {
+      mouseUpTimer = window.setTimeout(() => {
         if ((e.target as HTMLElement)?.closest('.selection-popover')) {
           return;
         }
@@ -361,6 +363,9 @@ export const SelectionPopover = ({ containerRef, onSubmitComment }: SelectionPop
     document.addEventListener('mousedown', handleMouseDown);
 
     return () => {
+      if (mouseUpTimer !== undefined) {
+        window.clearTimeout(mouseUpTimer);
+      }
       document.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mousedown', handleMouseDown);
     };
