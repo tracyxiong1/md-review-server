@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.6.0](https://github.com/tracyxiong1/md-review-server/compare/v0.5.3...v0.6.0) (2026-07-12)
+
+
+### Features
+
+* add interactive Mermaid diagram viewer ([#8](https://github.com/tracyxiong1/md-review-server/issues/8)) ([7f21725](https://github.com/tracyxiong1/md-review-server/commit/7f21725448d6aed1325e8561b42b612f26067755))
+
 ## [0.5.3](https://github.com/tracyxiong1/md-review-server/compare/v0.5.2...v0.5.3) (2026-07-11)
 
 
