@@ -79,6 +79,32 @@ describe('MermaidDiagramViewer', () => {
     );
   });
 
+  it('registers a non-passive wheel listener on the diagram viewport', () => {
+    const addEventListener = vi.spyOn(HTMLDivElement.prototype, 'addEventListener');
+
+    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+
+    expect(addEventListener).toHaveBeenCalledWith('wheel', expect.any(Function), {
+      passive: false,
+    });
+  });
+
+  it('does not zoom when a modifier wheel event starts outside the diagram viewport', () => {
+    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    const scaleButton = screen.getByRole('button', {
+      name: '当前比例，点击适应窗口',
+    });
+
+    fireEvent.wheel(document.body, {
+      deltaY: -20,
+      ctrlKey: true,
+      clientX: 400,
+      clientY: 300,
+    });
+
+    expect(scaleButton).toHaveTextContent('50%');
+  });
+
   it('moves the diagram with pointer drag', () => {
     render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
     const viewport = screen.getByTestId('mermaid-viewer-viewport');

@@ -1,6 +1,5 @@
 import {
   type PointerEvent as ReactPointerEvent,
-  type WheelEvent as ReactWheelEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -113,29 +112,40 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
     };
   }, [fitDiagram, onClose]);
 
-  const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    hasUserAdjustedRef.current = true;
-    if (event.ctrlKey || event.metaKey) {
-      const rect = viewportRect();
-      if (!rect) return;
-      setTransform((current) =>
-        zoomAtPoint(
-          current,
-          current.scale * Math.exp(-event.deltaY * 0.01),
-          { x: event.clientX, y: event.clientY },
-          { x: rect.left, y: rect.top },
-        ),
-      );
-      return;
-    }
+  const handleWheel = useCallback(
+    (event: WheelEvent) => {
+      event.preventDefault();
+      hasUserAdjustedRef.current = true;
+      if (event.ctrlKey || event.metaKey) {
+        const rect = viewportRect();
+        if (!rect) return;
+        setTransform((current) =>
+          zoomAtPoint(
+            current,
+            current.scale * Math.exp(-event.deltaY * 0.01),
+            { x: event.clientX, y: event.clientY },
+            { x: rect.left, y: rect.top },
+          ),
+        );
+        return;
+      }
 
-    setTransform((current) => ({
-      ...current,
-      x: current.x - event.deltaX,
-      y: current.y - event.deltaY,
-    }));
-  };
+      setTransform((current) => ({
+        ...current,
+        x: current.x - event.deltaX,
+        y: current.y - event.deltaY,
+      }));
+    },
+    [viewportRect],
+  );
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+    return () => viewport.removeEventListener('wheel', handleWheel);
+  }, [handleWheel]);
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
@@ -222,7 +232,6 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
           className="mermaid-viewer-viewport"
           data-testid="mermaid-viewer-viewport"
           data-dragging={isDragging}
-          onWheel={handleWheel}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={endPointerDrag}
