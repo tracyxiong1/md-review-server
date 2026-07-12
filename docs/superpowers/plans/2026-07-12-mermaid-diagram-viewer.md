@@ -24,34 +24,37 @@
 ### Task 1: Viewport Transform Model
 
 **Files:**
+
 - Create: `src/lib/diagramViewport.ts`
 - Test: `src/lib/diagramViewport.test.ts`
 
 - [ ] **Step 1: Write failing tests for scale limits, fit, and pointer-centered zoom**
 
 ```ts
-import { describe, expect, it } from 'vitest';
-import { clampScale, fitScale, zoomAtPoint } from './diagramViewport';
+import { describe, expect, it } from "vitest";
+import { clampScale, fitScale, zoomAtPoint } from "./diagramViewport";
 
-describe('diagramViewport', () => {
-  it('clamps scale to the supported 25% to 400% range', () => {
+describe("diagramViewport", () => {
+  it("clamps scale to the supported 25% to 400% range", () => {
     expect(clampScale(0.1)).toBe(0.25);
     expect(clampScale(2)).toBe(2);
     expect(clampScale(5)).toBe(4);
   });
 
-  it('fits the complete diagram inside the available viewport', () => {
-    expect(fitScale({ width: 1600, height: 800 }, { width: 800, height: 600 })).toBe(0.5);
+  it("fits the complete diagram inside the available viewport", () => {
+    expect(
+      fitScale({ width: 1600, height: 800 }, { width: 800, height: 600 })
+    ).toBe(0.5);
   });
 
-  it('keeps the diagram point below the pointer fixed while zooming', () => {
+  it("keeps the diagram point below the pointer fixed while zooming", () => {
     expect(
       zoomAtPoint(
         { scale: 1, x: 0, y: 0 },
         2,
         { x: 300, y: 200 },
-        { x: 100, y: 50 },
-      ),
+        { x: 100, y: 50 }
+      )
     ).toEqual({ scale: 2, x: -200, y: -150 });
   });
 });
@@ -87,25 +90,27 @@ export const clampScale = (scale: number) =>
   Math.min(MAX_DIAGRAM_SCALE, Math.max(MIN_DIAGRAM_SCALE, scale));
 
 export const fitScale = (diagram: Size, viewport: Size) =>
-  clampScale(Math.min(viewport.width / diagram.width, viewport.height / diagram.height));
+  clampScale(
+    Math.min(viewport.width / diagram.width, viewport.height / diagram.height)
+  );
 
 export const zoomAtPoint = (
   transform: DiagramTransform,
   requestedScale: number,
   pointer: Point,
-  viewportOrigin: Point,
+  viewportOrigin: Point
 ): DiagramTransform => {
   const scale = clampScale(requestedScale);
   const localPointer = {
     x: pointer.x - viewportOrigin.x,
-    y: pointer.y - viewportOrigin.y,
+    y: pointer.y - viewportOrigin.y
   };
   const ratio = scale / transform.scale;
 
   return {
     scale,
     x: localPointer.x - (localPointer.x - transform.x) * ratio,
-    y: localPointer.y - (localPointer.y - transform.y) * ratio,
+    y: localPointer.y - (localPointer.y - transform.y) * ratio
   };
 };
 ```
@@ -126,36 +131,39 @@ git commit -m "feat: add diagram viewport transforms"
 ### Task 2: Accessible Portal Viewer
 
 **Files:**
+
 - Create: `src/components/MermaidDiagramViewer.tsx`
 - Test: `src/components/MermaidDiagramViewer.test.tsx`
 
 - [ ] **Step 1: Write a failing dialog lifecycle test**
 
 ```tsx
-import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { MermaidDiagramViewer } from './MermaidDiagramViewer';
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import { MermaidDiagramViewer } from "./MermaidDiagramViewer";
 
 const svg = '<svg viewBox="0 0 1600 800"><text>diagram</text></svg>';
 
-describe('MermaidDiagramViewer', () => {
-  it('renders an accessible dialog and closes with Escape', async () => {
+describe("MermaidDiagramViewer", () => {
+  it("renders an accessible dialog and closes with Escape", async () => {
     const onClose = vi.fn();
     render(<MermaidDiagramViewer svg={svg} onClose={onClose} />);
 
-    expect(screen.getByRole('dialog', { name: 'Mermaid 图表查看器' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '关闭大图' })).toHaveFocus();
+    expect(
+      screen.getByRole("dialog", { name: "Mermaid 图表查看器" })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "关闭大图" })).toHaveFocus();
 
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: "Escape" });
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('closes from the close button', async () => {
+  it("closes from the close button", async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(<MermaidDiagramViewer svg={svg} onClose={onClose} />);
-    await user.click(screen.getByRole('button', { name: '关闭大图' }));
+    await user.click(screen.getByRole("button", { name: "关闭大图" }));
     expect(onClose).toHaveBeenCalledOnce();
   });
 });
@@ -177,40 +185,67 @@ interface MermaidDiagramViewerProps {
   onClose: () => void;
 }
 
-export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps) => {
+export const MermaidDiagramViewer = ({
+  svg,
+  onClose
+}: MermaidDiagramViewerProps) => {
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     closeRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === "Escape") onClose();
     };
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
   }, [onClose]);
 
   return createPortal(
-    <div className="mermaid-viewer-backdrop" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose();
-    }}>
-      <section className="mermaid-viewer" role="dialog" aria-modal="true" aria-label="Mermaid 图表查看器">
+    <div
+      className="mermaid-viewer-backdrop"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section
+        className="mermaid-viewer"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mermaid 图表查看器"
+      >
         <div className="mermaid-viewer-toolbar">
-          <button type="button" aria-label="缩小图表">−</button>
-          <button type="button" aria-label="当前比例，点击适应窗口">100%</button>
-          <button type="button" aria-label="放大图表">＋</button>
-          <button ref={closeRef} type="button" aria-label="关闭大图" onClick={onClose}>×</button>
+          <button type="button" aria-label="缩小图表">
+            −
+          </button>
+          <button type="button" aria-label="当前比例，点击适应窗口">
+            100%
+          </button>
+          <button type="button" aria-label="放大图表">
+            ＋
+          </button>
+          <button
+            ref={closeRef}
+            type="button"
+            aria-label="关闭大图"
+            onClick={onClose}
+          >
+            ×
+          </button>
         </div>
         <div className="mermaid-viewer-viewport">
-          <div className="mermaid-viewer-diagram" dangerouslySetInnerHTML={{ __html: svg }} />
+          <div
+            className="mermaid-viewer-diagram"
+            dangerouslySetInnerHTML={{ __html: svg }}
+          />
         </div>
       </section>
     </div>,
-    document.body,
+    document.body
   );
 };
 ```
@@ -226,23 +261,40 @@ Expected: 2 tests PASS.
 Add tests that mock `getBoundingClientRect()` for an `800 × 600` viewport and assert:
 
 ```tsx
-it('zooms from the toolbar and restores fit scale from the percentage button', async () => {
+it("zooms from the toolbar and restores fit scale from the percentage button", async () => {
   const user = userEvent.setup();
   render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
-  expect(screen.getByRole('button', { name: '当前比例，点击适应窗口' })).toHaveTextContent('50%');
-  await user.click(screen.getByRole('button', { name: '放大图表' }));
-  expect(screen.getByRole('button', { name: '当前比例，点击适应窗口' })).toHaveTextContent('75%');
-  await user.click(screen.getByRole('button', { name: '当前比例，点击适应窗口' }));
-  expect(screen.getByRole('button', { name: '当前比例，点击适应窗口' })).toHaveTextContent('50%');
+  expect(
+    screen.getByRole("button", { name: "当前比例，点击适应窗口" })
+  ).toHaveTextContent("50%");
+  await user.click(screen.getByRole("button", { name: "放大图表" }));
+  expect(
+    screen.getByRole("button", { name: "当前比例，点击适应窗口" })
+  ).toHaveTextContent("75%");
+  await user.click(
+    screen.getByRole("button", { name: "当前比例，点击适应窗口" })
+  );
+  expect(
+    screen.getByRole("button", { name: "当前比例，点击适应窗口" })
+  ).toHaveTextContent("50%");
 });
 
-it('uses ordinary wheel input for pan and modifier wheel input for zoom', () => {
+it("uses ordinary wheel input for pan and modifier wheel input for zoom", () => {
   render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
-  const viewport = screen.getByTestId('mermaid-viewer-viewport');
+  const viewport = screen.getByTestId("mermaid-viewer-viewport");
   fireEvent.wheel(viewport, { deltaX: 20, deltaY: 30 });
-  expect(screen.getByTestId('mermaid-viewer-diagram')).toHaveStyle({ transform: expect.stringContaining('translate(-20px, -30px)') });
-  fireEvent.wheel(viewport, { deltaY: -20, ctrlKey: true, clientX: 400, clientY: 300 });
-  expect(screen.getByRole('button', { name: '当前比例，点击适应窗口' })).not.toHaveTextContent('50%');
+  expect(screen.getByTestId("mermaid-viewer-diagram")).toHaveStyle({
+    transform: expect.stringContaining("translate(-20px, -30px)")
+  });
+  fireEvent.wheel(viewport, {
+    deltaY: -20,
+    ctrlKey: true,
+    clientX: 400,
+    clientY: 300
+  });
+  expect(
+    screen.getByRole("button", { name: "当前比例，点击适应窗口" })
+  ).not.toHaveTextContent("50%");
 });
 ```
 
@@ -267,10 +319,16 @@ const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
   event.preventDefault();
   if (event.ctrlKey || event.metaKey) {
     const nextScale = transform.scale * Math.exp(-event.deltaY * 0.01);
-    setTransform((current) => zoomAtPoint(current, nextScale, event, viewportOrigin()));
+    setTransform((current) =>
+      zoomAtPoint(current, nextScale, event, viewportOrigin())
+    );
     return;
   }
-  setTransform((current) => ({ ...current, x: current.x - event.deltaX, y: current.y - event.deltaY }));
+  setTransform((current) => ({
+    ...current,
+    x: current.x - event.deltaX,
+    y: current.y - event.deltaY
+  }));
 };
 ```
 
@@ -292,32 +350,41 @@ git commit -m "feat: add interactive mermaid viewer"
 ### Task 3: Mermaid Block Integration
 
 **Files:**
+
 - Modify: `src/components/MermaidBlock.tsx`
 - Modify: `src/components/MermaidBlock.test.tsx`
 
 - [ ] **Step 1: Write failing integration tests for the expand entry and focus restoration**
 
 ```tsx
-it('opens the rendered diagram in the large viewer and restores trigger focus', async () => {
+it("opens the rendered diagram in the large viewer and restores trigger focus", async () => {
   const user = userEvent.setup();
   vi.mocked(mermaid.render).mockResolvedValue({
     svg: '<svg viewBox="0 0 1600 800">diagram</svg>',
-    diagramType: 'sequence',
+    diagramType: "sequence"
   });
   render(<MermaidBlock code="sequenceDiagram; A->>B: message" />);
 
-  const trigger = await screen.findByRole('button', { name: '放大查看 Mermaid 图表' });
+  const trigger = await screen.findByRole("button", {
+    name: "放大查看 Mermaid 图表"
+  });
   await user.click(trigger);
-  expect(screen.getByRole('dialog', { name: 'Mermaid 图表查看器' })).toBeInTheDocument();
-  await user.click(screen.getByRole('button', { name: '关闭大图' }));
+  expect(
+    screen.getByRole("dialog", { name: "Mermaid 图表查看器" })
+  ).toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "关闭大图" }));
   expect(trigger).toHaveFocus();
 });
 
-it('does not show the large-view entry when Mermaid rendering fails', async () => {
-  vi.mocked(mermaid.render).mockRejectedValue(new Error('Invalid syntax'));
+it("does not show the large-view entry when Mermaid rendering fails", async () => {
+  vi.mocked(mermaid.render).mockRejectedValue(new Error("Invalid syntax"));
   render(<MermaidBlock code="invalid code" />);
-  expect(await screen.findByText('Mermaid error: Invalid syntax')).toBeInTheDocument();
-  expect(screen.queryByRole('button', { name: '放大查看 Mermaid 图表' })).not.toBeInTheDocument();
+  expect(
+    await screen.findByText("Mermaid error: Invalid syntax")
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "放大查看 Mermaid 图表" })
+  ).not.toBeInTheDocument();
 });
 ```
 
@@ -351,7 +418,11 @@ return (
     >
       放大查看
     </button>
-    <div ref={containerRef} className="mermaid-container" dangerouslySetInnerHTML={{ __html: svg }} />
+    <div
+      ref={containerRef}
+      className="mermaid-container"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
     {isViewerOpen && <MermaidDiagramViewer svg={svg} onClose={closeViewer} />}
   </div>
 );
@@ -373,6 +444,7 @@ git commit -m "feat: open mermaid diagrams in viewer"
 ### Task 4: Viewer Styling and Runtime Verification
 
 **Files:**
+
 - Modify: `src/styles/markdown.css`
 - Create: `design-drafts/active/2026-07-12-mermaid-diagram-viewer/DECISION.md`
 
@@ -381,14 +453,59 @@ git commit -m "feat: open mermaid diagrams in viewer"
 Add styles for:
 
 ```css
-.mermaid-block { position: relative; }
-.mermaid-expand-button { position: absolute; top: 12px; right: 12px; z-index: 1; height: 28px; }
-.mermaid-viewer-backdrop { position: fixed; inset: 0; z-index: 400; display: flex; padding: 24px; background: rgb(0 0 0 / 64%); }
-.mermaid-viewer { position: relative; flex: 1; min-width: 0; min-height: 0; overflow: hidden; border-radius: 12px; background: var(--bg-panel); }
-.mermaid-viewer-toolbar { position: absolute; top: 12px; right: 12px; z-index: 2; display: flex; gap: 4px; padding: 3px; border-radius: 9px; background: var(--bg-control); }
-.mermaid-viewer-viewport { width: 100%; height: 100%; overflow: hidden; cursor: grab; touch-action: none; }
-.mermaid-viewer-viewport[data-dragging='true'] { cursor: grabbing; }
-.mermaid-viewer-diagram { position: absolute; transform-origin: 0 0; will-change: transform; }
+.mermaid-block {
+  position: relative;
+}
+.mermaid-expand-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  height: 28px;
+}
+.mermaid-viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  padding: 24px;
+  background: rgb(0 0 0 / 64%);
+}
+.mermaid-viewer {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-panel);
+}
+.mermaid-viewer-toolbar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--bg-control);
+}
+.mermaid-viewer-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+.mermaid-viewer-viewport[data-dragging="true"] {
+  cursor: grabbing;
+}
+.mermaid-viewer-diagram {
+  position: absolute;
+  transform-origin: 0 0;
+  will-change: transform;
+}
 ```
 
 Complete button default, hover, focus-visible, disabled, dark-theme-compatible, small-viewport, and `prefers-reduced-motion` states. Do not add a wide shadow to the bordered viewer surface.

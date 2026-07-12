@@ -3,7 +3,7 @@ import {
   type WheelEvent as ReactWheelEvent,
   useCallback,
   useEffect,
-  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -44,7 +44,8 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
   const closeRef = useRef<HTMLButtonElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
-  const diagramSizeRef = useRef(readDiagramSize(svg));
+  const hasUserAdjustedRef = useRef(false);
+  const diagramSize = useMemo(() => readDiagramSize(svg), [svg]);
   const [transform, setTransform] = useState<DiagramTransform>({ scale: 1, x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
 
@@ -54,14 +55,14 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
     const rect = viewportRect();
     if (!rect) return;
 
-    const diagram = diagramSizeRef.current;
-    const scale = fitScale(diagram, { width: rect.width, height: rect.height });
+    const scale = fitScale(diagramSize, { width: rect.width, height: rect.height });
     setTransform({
       scale,
-      x: (rect.width - diagram.width * scale) / 2,
-      y: (rect.height - diagram.height * scale) / 2,
+      x: (rect.width - diagramSize.width * scale) / 2,
+      y: (rect.height - diagramSize.height * scale) / 2,
     });
-  }, [viewportRect]);
+    hasUserAdjustedRef.current = false;
+  }, [diagramSize, viewportRect]);
 
   const zoomFromCenter = useCallback(
     (nextScale: number) => {
@@ -75,13 +76,18 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
           { x: rect.left, y: rect.top },
         ),
       );
+      hasUserAdjustedRef.current = true;
     },
     [viewportRect],
   );
 
-  useLayoutEffect(() => {
-    fitDiagram();
-  }, [fitDiagram]);
+  const setViewportNode = useCallback(
+    (node: HTMLDivElement | null) => {
+      viewportRef.current = node;
+      if (node) fitDiagram();
+    },
+    [fitDiagram],
+  );
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -94,7 +100,9 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
         onClose();
       }
     };
-    const handleResize = () => fitDiagram();
+    const handleResize = () => {
+      if (!hasUserAdjustedRef.current) fitDiagram();
+    };
 
     document.addEventListener('keydown', handleKeyDown);
     window.addEventListener('resize', handleResize);
@@ -107,6 +115,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
 
   const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
     event.preventDefault();
+    hasUserAdjustedRef.current = true;
     if (event.ctrlKey || event.metaKey) {
       const rect = viewportRect();
       if (!rect) return;
@@ -130,6 +139,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
+    hasUserAdjustedRef.current = true;
     dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
     event.currentTarget.setPointerCapture?.(event.pointerId);
     setIsDragging(true);
@@ -159,6 +169,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
   const handleDoubleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const rect = viewportRect();
     if (!rect) return;
+    hasUserAdjustedRef.current = true;
     setTransform((current) =>
       zoomAtPoint(
         current,
@@ -207,7 +218,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
           </button>
         </div>
         <div
-          ref={viewportRef}
+          ref={setViewportNode}
           className="mermaid-viewer-viewport"
           data-testid="mermaid-viewer-viewport"
           data-dragging={isDragging}
@@ -222,8 +233,8 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
             className="mermaid-viewer-diagram"
             data-testid="mermaid-viewer-diagram"
             style={{
-              width: diagramSizeRef.current.width,
-              height: diagramSizeRef.current.height,
+              width: diagramSize.width,
+              height: diagramSize.height,
               transform: `translate(${transform.x}px, ${transform.y}px) scale(${clampScale(transform.scale)})`,
             }}
             dangerouslySetInnerHTML={{ __html: svg }}

@@ -91,4 +91,18 @@ describe('MermaidDiagramViewer', () => {
     expect(diagram.style.transform).toContain('translate(40px, 125px)');
     expect(viewport).toHaveAttribute('data-dragging', 'false');
   });
+
+  it('preserves a manually adjusted scale when the window resizes', async () => {
+    const user = userEvent.setup();
+    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    const scaleButton = screen.getByRole('button', {
+      name: '当前比例，点击适应窗口',
+    });
+
+    await user.click(screen.getByRole('button', { name: '放大图表' }));
+    expect(scaleButton).toHaveTextContent('75%');
+
+    fireEvent(window, new Event('resize'));
+    expect(scaleButton).toHaveTextContent('75%');
+  });
 });

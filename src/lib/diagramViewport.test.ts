@@ -17,13 +17,8 @@ describe('diagramViewport', () => {
   });
 
   it('keeps the diagram point below the pointer fixed while zooming', () => {
-    expect(
-      zoomAtPoint(
-        { scale: 1, x: 0, y: 0 },
-        2,
-        { x: 300, y: 200 },
-        { x: 100, y: 50 },
-      ),
-    ).toEqual({ scale: 2, x: -200, y: -150 });
+    expect(zoomAtPoint({ scale: 1, x: 0, y: 0 }, 2, { x: 300, y: 200 }, { x: 100, y: 50 })).toEqual(
+      { scale: 2, x: -200, y: -150 },
+    );
   });
 });
