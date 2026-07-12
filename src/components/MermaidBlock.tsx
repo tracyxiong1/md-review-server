@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { useDarkMode } from '../hooks/useDarkMode';
+import { MermaidDiagramViewer } from './MermaidDiagramViewer';
 
 interface MermaidBlockProps {
   code: string;
@@ -84,8 +85,10 @@ export const darkMermaidThemeVariables = {
 
 export const MermaidBlock = ({ code }: MermaidBlockProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const expandButtonRef = useRef<HTMLButtonElement>(null);
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
   const { isDark } = useDarkMode();
 
   useEffect(() => {
@@ -131,11 +134,30 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
     );
   }
 
+  const closeViewer = () => {
+    setIsViewerOpen(false);
+    expandButtonRef.current?.focus();
+  };
+
   return (
-    <div
-      ref={containerRef}
-      className="mermaid-container"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <div className="mermaid-block">
+      {svg && (
+        <button
+          ref={expandButtonRef}
+          type="button"
+          className="mermaid-expand-button"
+          aria-label="放大查看 Mermaid 图表"
+          onClick={() => setIsViewerOpen(true)}
+        >
+          放大查看
+        </button>
+      )}
+      <div
+        ref={containerRef}
+        className="mermaid-container"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+      {isViewerOpen && <MermaidDiagramViewer svg={svg} onClose={closeViewer} />}
+    </div>
   );
 };
