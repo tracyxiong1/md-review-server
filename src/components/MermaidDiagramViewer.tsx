@@ -17,9 +17,12 @@ import {
   zoomAtPoint,
 } from '../lib/diagramViewport';
 
+export type ViewerInputMethod = 'keyboard' | 'pointer';
+
 interface MermaidDiagramViewerProps {
   svg: string;
-  onClose: () => void;
+  initialFocusMethod: ViewerInputMethod;
+  onClose: (method: ViewerInputMethod) => void;
 }
 
 const ZOOM_STEP = 0.25;
@@ -39,7 +42,11 @@ const readDiagramSize = (svg: string): Size => {
   };
 };
 
-export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps) => {
+export const MermaidDiagramViewer = ({
+  svg,
+  initialFocusMethod,
+  onClose,
+}: MermaidDiagramViewerProps) => {
   const closeRef = useRef<HTMLButtonElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
@@ -47,6 +54,9 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
   const diagramSize = useMemo(() => readDiagramSize(svg), [svg]);
   const [transform, setTransform] = useState<DiagramTransform>({ scale: 1, x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [suppressInitialFocusRing, setSuppressInitialFocusRing] = useState(
+    initialFocusMethod === 'pointer',
+  );
 
   const viewportRect = useCallback(() => viewportRef.current?.getBoundingClientRect(), []);
 
@@ -96,7 +106,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        onClose();
+        onClose('keyboard');
       }
     };
     const handleResize = () => {
@@ -194,7 +204,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
     <div
       className="mermaid-viewer-backdrop"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget) onClose('pointer');
       }}
     >
       <section
@@ -202,6 +212,7 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
         role="dialog"
         aria-modal="true"
         aria-label="Mermaid 图表查看器"
+        onKeyDownCapture={() => setSuppressInitialFocusRing(false)}
       >
         <div className="mermaid-viewer-toolbar" aria-label="图表缩放控件">
           <button
@@ -223,7 +234,14 @@ export const MermaidDiagramViewer = ({ svg, onClose }: MermaidDiagramViewerProps
           >
             ＋
           </button>
-          <button ref={closeRef} type="button" aria-label="关闭大图" onClick={onClose}>
+          <button
+            ref={closeRef}
+            type="button"
+            aria-label="关闭大图"
+            data-suppress-focus-ring={suppressInitialFocusRing}
+            onBlur={() => setSuppressInitialFocusRing(false)}
+            onClick={(event) => onClose(event.detail === 0 ? 'keyboard' : 'pointer')}
+          >
             ×
           </button>
         </div>

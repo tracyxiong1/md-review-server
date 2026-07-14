@@ -1791,6 +1791,10 @@
   outline-offset: 2px;
 }
 
+.mermaid-viewer-toolbar button[data-suppress-focus-ring='true']:focus-visible {
+  outline: none;
+}
+
 .mermaid-viewer-toolbar button:disabled {
   color: var(--text-tertiary);
   cursor: not-allowed;

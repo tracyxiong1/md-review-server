@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MermaidBlock } from './MermaidBlock';
@@ -87,7 +87,7 @@ describe('MermaidBlock', () => {
     });
   });
 
-  it('opens the rendered diagram in the large viewer and restores trigger focus', async () => {
+  it('opens and closes the rendered diagram with the mouse without restoring trigger focus', async () => {
     const user = userEvent.setup();
     vi.mocked(mermaid.render).mockResolvedValue({
       svg: '<svg viewBox="0 0 1600 800">diagram</svg>',
@@ -102,8 +102,50 @@ describe('MermaidBlock', () => {
     await user.click(trigger);
     expect(screen.getByRole('dialog', { name: 'Mermaid 图表查看器' })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: '关闭大图' }));
-    await waitFor(() => expect(trigger).toHaveFocus());
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'true');
+    await user.click(closeButton);
+
+    expect(screen.queryByRole('dialog', { name: 'Mermaid 图表查看器' })).not.toBeInTheDocument();
+    expect(trigger).not.toHaveFocus();
+  });
+
+  it('restores trigger focus when a mouse-opened viewer closes with Escape', async () => {
+    const user = userEvent.setup();
+    vi.mocked(mermaid.render).mockResolvedValue({
+      svg: '<svg viewBox="0 0 1600 800">diagram</svg>',
+      diagramType: 'sequence',
+    });
+    render(<MermaidBlock code="sequenceDiagram; A->>B: message" />);
+
+    const trigger = await screen.findByRole('button', { name: '放大查看 Mermaid 图表' });
+    await user.click(trigger);
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(screen.queryByRole('dialog', { name: 'Mermaid 图表查看器' })).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it('uses keyboard focus semantics for detail-zero trigger and close activations', async () => {
+    vi.mocked(mermaid.render).mockResolvedValue({
+      svg: '<svg viewBox="0 0 1600 800">diagram</svg>',
+      diagramType: 'sequence',
+    });
+    render(<MermaidBlock code="sequenceDiagram; A->>B: message" />);
+
+    const trigger = await screen.findByRole('button', { name: '放大查看 Mermaid 图表' });
+    trigger.focus();
+    fireEvent.click(trigger, { detail: 0 });
+
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+    expect(closeButton).toHaveFocus();
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'false');
+
+    fireEvent.click(closeButton, { detail: 0 });
+
+    expect(screen.queryByRole('dialog', { name: 'Mermaid 图表查看器' })).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
   });
 
   it('does not show the large-view entry when Mermaid rendering fails', async () => {
