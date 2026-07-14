@@ -2,6 +2,15 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.6.2](https://github.com/tracyxiong1/md-review-server/compare/v0.6.1...v0.6.2) (2026-07-14)
+
+
+### Bug Fixes
+
+* contain focus in Mermaid viewer ([f66559f](https://github.com/tracyxiong1/md-review-server/commit/f66559f01560bb6bf7bedc734358fc47a5802ace))
+* restore Mermaid trigger focus without pointer highlight ([ad8d3f5](https://github.com/tracyxiong1/md-review-server/commit/ad8d3f5e915d356507efa47a381e64526004ecfd))
+* track Mermaid viewer interaction modality ([774ff33](https://github.com/tracyxiong1/md-review-server/commit/774ff33c2778d0c0d2153c51b73f787cb02153d3))
+
 ## [0.6.1](https://github.com/tracyxiong1/md-review-server/compare/v0.6.0...v0.6.1) (2026-07-14)
 
 
