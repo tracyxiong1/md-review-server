@@ -30,7 +30,10 @@ describe('MermaidDiagramViewer', () => {
     expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'false');
 
     fireEvent.keyDown(document, { key: 'Escape' });
-    expect(onClose).toHaveBeenCalledWith('keyboard');
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'escape',
+      inputMethod: 'keyboard',
+    });
   });
 
   it('closes from the close button and restores body scrolling', async () => {
@@ -42,7 +45,10 @@ describe('MermaidDiagramViewer', () => {
 
     expect(document.body).toHaveStyle({ overflow: 'hidden' });
     await user.click(screen.getByRole('button', { name: '关闭大图' }));
-    expect(onClose).toHaveBeenCalledWith('pointer');
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'close-button',
+      inputMethod: 'pointer',
+    });
 
     unmount();
     expect(document.body.style.overflow).toBe('');
@@ -54,7 +60,10 @@ describe('MermaidDiagramViewer', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '关闭大图' }), { detail: 0 });
 
-    expect(onClose).toHaveBeenCalledWith('keyboard');
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'close-button',
+      inputMethod: 'keyboard',
+    });
   });
 
   it('reports pointer activation from a backdrop mouse down', () => {
@@ -63,7 +72,53 @@ describe('MermaidDiagramViewer', () => {
 
     fireEvent.mouseDown(screen.getByRole('dialog').parentElement!);
 
-    expect(onClose).toHaveBeenCalledWith('pointer');
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'backdrop',
+      inputMethod: 'pointer',
+    });
+  });
+
+  it('keeps pointer modality when Escape is the first key after pointer open', () => {
+    const onClose = vi.fn();
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={onClose} />);
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'escape',
+      inputMethod: 'pointer',
+    });
+  });
+
+  it('switches to keyboard modality after keyboard navigation', () => {
+    const onClose = vi.fn();
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={onClose} />);
+
+    fireEvent.keyDown(screen.getByRole('button', { name: '关闭大图' }), { key: 'Tab' });
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'escape',
+      inputMethod: 'keyboard',
+    });
+  });
+
+  it('switches back to pointer modality after pointer interaction', () => {
+    const onClose = vi.fn();
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={onClose} />);
+
+    fireEvent.pointerDown(screen.getByTestId('mermaid-viewer-viewport'), {
+      button: 0,
+      pointerId: 1,
+      clientX: 100,
+      clientY: 100,
+    });
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledWith({
+      reason: 'escape',
+      inputMethod: 'pointer',
+    });
   });
 
   it('suppresses pointer-opened initial focus ring until keyboard input reaches the dialog', () => {

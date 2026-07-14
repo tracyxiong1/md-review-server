@@ -1,4 +1,5 @@
 import {
+  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
@@ -18,14 +19,24 @@ import {
 } from '../lib/diagramViewport';
 
 export type ViewerInputMethod = 'keyboard' | 'pointer';
+export type ViewerCloseReason = 'escape' | 'close-button' | 'backdrop';
+
+export interface ViewerCloseEvent {
+  reason: ViewerCloseReason;
+  inputMethod: ViewerInputMethod;
+}
 
 interface MermaidDiagramViewerProps {
   svg: string;
   initialFocusMethod: ViewerInputMethod;
-  onClose: (method: ViewerInputMethod) => void;
+  onClose: (event: ViewerCloseEvent) => void;
 }
 
 const ZOOM_STEP = 0.25;
+const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta']);
+
+const isEffectiveKeyboardInput = (event: ReactKeyboardEvent<HTMLElement>) =>
+  event.key !== 'Escape' && !MODIFIER_KEYS.has(event.key);
 
 const readDiagramSize = (svg: string): Size => {
   const document = new DOMParser().parseFromString(svg, 'image/svg+xml');
@@ -50,6 +61,7 @@ export const MermaidDiagramViewer = ({
   const closeRef = useRef<HTMLButtonElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
+  const interactionMethodRef = useRef<ViewerInputMethod>(initialFocusMethod);
   const hasUserAdjustedRef = useRef(false);
   const diagramSize = useMemo(() => readDiagramSize(svg), [svg]);
   const [transform, setTransform] = useState<DiagramTransform>({ scale: 1, x: 0, y: 0 });
@@ -106,7 +118,10 @@ export const MermaidDiagramViewer = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        onClose('keyboard');
+        onClose({
+          reason: 'escape',
+          inputMethod: interactionMethodRef.current,
+        });
       }
     };
     const handleResize = () => {
@@ -124,6 +139,7 @@ export const MermaidDiagramViewer = ({
 
   const handleWheel = useCallback(
     (event: WheelEvent) => {
+      interactionMethodRef.current = 'pointer';
       event.preventDefault();
       hasUserAdjustedRef.current = true;
       if (event.ctrlKey || event.metaKey) {
@@ -204,7 +220,10 @@ export const MermaidDiagramViewer = ({
     <div
       className="mermaid-viewer-backdrop"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose('pointer');
+        if (event.target === event.currentTarget) {
+          interactionMethodRef.current = 'pointer';
+          onClose({ reason: 'backdrop', inputMethod: 'pointer' });
+        }
       }}
     >
       <section
@@ -212,7 +231,15 @@ export const MermaidDiagramViewer = ({
         role="dialog"
         aria-modal="true"
         aria-label="Mermaid 图表查看器"
-        onKeyDownCapture={() => setSuppressInitialFocusRing(false)}
+        onKeyDownCapture={(event) => {
+          if (isEffectiveKeyboardInput(event)) {
+            interactionMethodRef.current = 'keyboard';
+            setSuppressInitialFocusRing(false);
+          }
+        }}
+        onPointerDownCapture={() => {
+          interactionMethodRef.current = 'pointer';
+        }}
       >
         <div className="mermaid-viewer-toolbar" aria-label="图表缩放控件">
           <button
@@ -240,7 +267,11 @@ export const MermaidDiagramViewer = ({
             aria-label="关闭大图"
             data-suppress-focus-ring={suppressInitialFocusRing}
             onBlur={() => setSuppressInitialFocusRing(false)}
-            onClick={(event) => onClose(event.detail === 0 ? 'keyboard' : 'pointer')}
+            onClick={(event) => {
+              const inputMethod = event.detail === 0 ? 'keyboard' : 'pointer';
+              interactionMethodRef.current = inputMethod;
+              onClose({ reason: 'close-button', inputMethod });
+            }}
           >
             ×
           </button>

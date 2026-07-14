@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { useDarkMode } from '../hooks/useDarkMode';
-import { MermaidDiagramViewer, type ViewerInputMethod } from './MermaidDiagramViewer';
+import {
+  MermaidDiagramViewer,
+  type ViewerCloseEvent,
+  type ViewerInputMethod,
+} from './MermaidDiagramViewer';
 
 interface MermaidBlockProps {
   code: string;
@@ -134,9 +138,9 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
     );
   }
 
-  const closeViewer = (method: ViewerInputMethod) => {
+  const closeViewer = ({ reason, inputMethod }: ViewerCloseEvent) => {
     setViewerOpenMethod(null);
-    if (method === 'keyboard') {
+    if (reason === 'escape' || inputMethod === 'keyboard') {
       expandButtonRef.current?.focus();
     }
   };
