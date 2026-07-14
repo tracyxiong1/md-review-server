@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MermaidDiagramViewer } from './MermaidDiagramViewer';
@@ -22,31 +22,81 @@ describe('MermaidDiagramViewer', () => {
 
   it('renders an accessible dialog and closes with Escape', () => {
     const onClose = vi.fn();
-    render(<MermaidDiagramViewer svg={svg} onClose={onClose} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={onClose} />);
 
     expect(screen.getByRole('dialog', { name: 'Mermaid 图表查看器' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '关闭大图' })).toHaveFocus();
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+    expect(closeButton).toHaveFocus();
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'false');
 
     fireEvent.keyDown(document, { key: 'Escape' });
-    expect(onClose).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledWith('keyboard');
   });
 
   it('closes from the close button and restores body scrolling', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
-    const { unmount } = render(<MermaidDiagramViewer svg={svg} onClose={onClose} />);
+    const { unmount } = render(
+      <MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={onClose} />,
+    );
 
     expect(document.body).toHaveStyle({ overflow: 'hidden' });
     await user.click(screen.getByRole('button', { name: '关闭大图' }));
-    expect(onClose).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledWith('pointer');
 
     unmount();
     expect(document.body.style.overflow).toBe('');
   });
 
+  it('reports keyboard activation from the close button', () => {
+    const onClose = vi.fn();
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={onClose} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '关闭大图' }), { detail: 0 });
+
+    expect(onClose).toHaveBeenCalledWith('keyboard');
+  });
+
+  it('reports pointer activation from a backdrop mouse down', () => {
+    const onClose = vi.fn();
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={onClose} />);
+
+    fireEvent.mouseDown(screen.getByRole('dialog').parentElement!);
+
+    expect(onClose).toHaveBeenCalledWith('pointer');
+  });
+
+  it('suppresses pointer-opened initial focus ring until keyboard input reaches the dialog', () => {
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+
+    expect(closeButton).toHaveFocus();
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'true');
+
+    fireEvent.keyDown(closeButton, { key: 'Tab' });
+
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'false');
+  });
+
+  it('does not suppress a later focus after the pointer-opened initial focus blurs', () => {
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'true');
+
+    const zoomOutButton = screen.getByRole('button', { name: '缩小图表' });
+    act(() => zoomOutButton.focus());
+    expect(zoomOutButton).toHaveFocus();
+
+    act(() => closeButton.focus());
+
+    expect(closeButton).toHaveFocus();
+    expect(closeButton).toHaveAttribute('data-suppress-focus-ring', 'false');
+  });
+
   it('zooms from the toolbar and restores fit scale from the percentage button', async () => {
     const user = userEvent.setup();
-    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
 
     const scaleButton = screen.getByRole('button', {
       name: '当前比例，点击适应窗口',
@@ -61,7 +111,7 @@ describe('MermaidDiagramViewer', () => {
   });
 
   it('uses ordinary wheel input for pan and modifier wheel input for zoom', () => {
-    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
     const viewport = screen.getByTestId('mermaid-viewer-viewport');
     const diagram = screen.getByTestId('mermaid-viewer-diagram');
 
@@ -82,7 +132,7 @@ describe('MermaidDiagramViewer', () => {
   it('registers a non-passive wheel listener on the diagram viewport', () => {
     const addEventListener = vi.spyOn(HTMLDivElement.prototype, 'addEventListener');
 
-    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
 
     expect(addEventListener).toHaveBeenCalledWith('wheel', expect.any(Function), {
       passive: false,
@@ -90,7 +140,7 @@ describe('MermaidDiagramViewer', () => {
   });
 
   it('does not zoom when a modifier wheel event starts outside the diagram viewport', () => {
-    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
     const scaleButton = screen.getByRole('button', {
       name: '当前比例，点击适应窗口',
     });
@@ -106,7 +156,7 @@ describe('MermaidDiagramViewer', () => {
   });
 
   it('moves the diagram with pointer drag', () => {
-    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
     const viewport = screen.getByTestId('mermaid-viewer-viewport');
     const diagram = screen.getByTestId('mermaid-viewer-diagram');
 
@@ -120,7 +170,7 @@ describe('MermaidDiagramViewer', () => {
 
   it('preserves a manually adjusted scale when the window resizes', async () => {
     const user = userEvent.setup();
-    render(<MermaidDiagramViewer svg={svg} onClose={vi.fn()} />);
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
     const scaleButton = screen.getByRole('button', {
       name: '当前比例，点击适应窗口',
     });

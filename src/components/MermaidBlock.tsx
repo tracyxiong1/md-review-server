@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { useDarkMode } from '../hooks/useDarkMode';
-import { MermaidDiagramViewer } from './MermaidDiagramViewer';
+import { MermaidDiagramViewer, type ViewerInputMethod } from './MermaidDiagramViewer';
 
 interface MermaidBlockProps {
   code: string;
@@ -88,7 +88,7 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
   const expandButtonRef = useRef<HTMLButtonElement>(null);
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [viewerOpenMethod, setViewerOpenMethod] = useState<ViewerInputMethod | null>(null);
   const { isDark } = useDarkMode();
 
   useEffect(() => {
@@ -134,9 +134,11 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
     );
   }
 
-  const closeViewer = () => {
-    setIsViewerOpen(false);
-    expandButtonRef.current?.focus();
+  const closeViewer = (method: ViewerInputMethod) => {
+    setViewerOpenMethod(null);
+    if (method === 'keyboard') {
+      expandButtonRef.current?.focus();
+    }
   };
 
   return (
@@ -148,7 +150,7 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
           className="mermaid-expand-button"
           aria-label="放大查看 Mermaid 图表"
           title="放大查看"
-          onClick={() => setIsViewerOpen(true)}
+          onClick={(event) => setViewerOpenMethod(event.detail === 0 ? 'keyboard' : 'pointer')}
         >
           <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16">
             <path d="M6 3H3v3M10 3h3v3M6 13H3v-3M10 13h3v-3" />
@@ -160,7 +162,13 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
         className="mermaid-container"
         dangerouslySetInnerHTML={{ __html: svg }}
       />
-      {isViewerOpen && <MermaidDiagramViewer svg={svg} onClose={closeViewer} />}
+      {viewerOpenMethod !== null && (
+        <MermaidDiagramViewer
+          svg={svg}
+          initialFocusMethod={viewerOpenMethod}
+          onClose={closeViewer}
+        />
+      )}
     </div>
   );
 };
