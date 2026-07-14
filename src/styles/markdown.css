@@ -1726,15 +1726,19 @@
 }
 
 .mermaid-expand-button:hover,
-.mermaid-expand-button:focus-visible {
+.mermaid-expand-button:focus-visible:not([data-suppress-focus-ring='true']) {
   background: var(--bg-tertiary);
   color: var(--text-primary);
   opacity: 1;
 }
 
-.mermaid-expand-button:focus-visible {
+.mermaid-expand-button:focus-visible:not([data-suppress-focus-ring='true']) {
   outline: 2px solid var(--link-color);
   outline-offset: 2px;
+}
+
+.mermaid-expand-button[data-suppress-focus-ring='true']:focus-visible {
+  outline: none;
 }
 
 .mermaid-viewer-backdrop {

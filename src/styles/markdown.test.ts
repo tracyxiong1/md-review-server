@@ -22,6 +22,15 @@ describe('Mermaid markdown styles', () => {
     expect(stylesheet).toMatch(/^[ \t]*\.mermaid-expand-button\s*\{[^}]*top:\s*4px;/ms);
   });
 
+  it('shows the expand focus ring unless pointer focus suppression is requested', () => {
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.mermaid-expand-button:focus-visible:not\(\[data-suppress-focus-ring='true'\]\)\s*\{[^}]*outline:\s*2px solid var\(--link-color\);/ms,
+    );
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.mermaid-expand-button\[data-suppress-focus-ring='true'\]:focus-visible\s*\{[^}]*outline:\s*none;/ms,
+    );
+  });
+
   it('suppresses only explicitly requested viewer toolbar focus rings', () => {
     expect(stylesheet).toMatch(
       /^[ \t]*\.mermaid-viewer-toolbar button\[data-suppress-focus-ring='true'\]:focus-visible\s*\{[^}]*outline:\s*none;/ms,

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { useDarkMode } from '../hooks/useDarkMode';
 import {
@@ -93,6 +93,8 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [viewerOpenMethod, setViewerOpenMethod] = useState<ViewerInputMethod | null>(null);
+  const [returnFocusMethod, setReturnFocusMethod] = useState<ViewerInputMethod | null>(null);
+  const restoreFocusAfterCloseRef = useRef(false);
   const { isDark } = useDarkMode();
 
   useEffect(() => {
@@ -129,6 +131,24 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
     };
   }, [code, isDark]);
 
+  useLayoutEffect(() => {
+    if (!restoreFocusAfterCloseRef.current || viewerOpenMethod !== null) return;
+
+    restoreFocusAfterCloseRef.current = false;
+    expandButtonRef.current?.focus({ preventScroll: true });
+  }, [returnFocusMethod, viewerOpenMethod]);
+
+  const openViewer = (inputMethod: ViewerInputMethod) => {
+    setReturnFocusMethod(null);
+    setViewerOpenMethod(inputMethod);
+  };
+
+  const closeViewer = ({ inputMethod }: ViewerCloseEvent) => {
+    restoreFocusAfterCloseRef.current = true;
+    setReturnFocusMethod(inputMethod);
+    setViewerOpenMethod(null);
+  };
+
   if (error) {
     return (
       <div className="mermaid-error">
@@ -137,13 +157,6 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
       </div>
     );
   }
-
-  const closeViewer = ({ reason, inputMethod }: ViewerCloseEvent) => {
-    setViewerOpenMethod(null);
-    if (reason === 'escape' || inputMethod === 'keyboard') {
-      expandButtonRef.current?.focus();
-    }
-  };
 
   return (
     <div className="mermaid-block">
@@ -154,7 +167,10 @@ export const MermaidBlock = ({ code }: MermaidBlockProps) => {
           className="mermaid-expand-button"
           aria-label="放大查看 Mermaid 图表"
           title="放大查看"
-          onClick={(event) => setViewerOpenMethod(event.detail === 0 ? 'keyboard' : 'pointer')}
+          data-suppress-focus-ring={returnFocusMethod === 'pointer'}
+          onBlur={() => setReturnFocusMethod(null)}
+          onKeyDownCapture={() => setReturnFocusMethod(null)}
+          onClick={(event) => openViewer(event.detail === 0 ? 'keyboard' : 'pointer')}
         >
           <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16">
             <path d="M6 3H3v3M10 3h3v3M6 13H3v-3M10 13h3v-3" />
