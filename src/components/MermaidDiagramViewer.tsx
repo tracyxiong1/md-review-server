@@ -3,6 +3,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -59,6 +60,7 @@ export const MermaidDiagramViewer = ({
   onClose,
 }: MermaidDiagramViewerProps) => {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const interactionMethodRef = useRef<ViewerInputMethod>(initialFocusMethod);
@@ -109,6 +111,16 @@ export const MermaidDiagramViewer = ({
     },
     [fitDiagram],
   );
+
+  useLayoutEffect(() => {
+    const appRoot = document.getElementById('root');
+    const previousInert = Boolean(appRoot?.inert);
+
+    if (appRoot) appRoot.inert = true;
+    return () => {
+      if (appRoot) appRoot.inert = previousInert;
+    };
+  }, []);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -216,6 +228,25 @@ export const MermaidDiagramViewer = ({
     );
   };
 
+  const wrapToolbarFocus = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Tab') return;
+
+    const buttons = Array.from(
+      toolbarRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? [],
+    );
+    const firstButton = buttons[0];
+    const lastButton = buttons.at(-1);
+    if (!firstButton || !lastButton) return;
+
+    if (event.shiftKey && document.activeElement === firstButton) {
+      event.preventDefault();
+      lastButton.focus();
+    } else if (!event.shiftKey && document.activeElement === lastButton) {
+      event.preventDefault();
+      firstButton.focus();
+    }
+  };
+
   return createPortal(
     <div
       className="mermaid-viewer-backdrop"
@@ -236,12 +267,13 @@ export const MermaidDiagramViewer = ({
             interactionMethodRef.current = 'keyboard';
             setSuppressInitialFocusRing(false);
           }
+          wrapToolbarFocus(event);
         }}
         onPointerDownCapture={() => {
           interactionMethodRef.current = 'pointer';
         }}
       >
-        <div className="mermaid-viewer-toolbar" aria-label="图表缩放控件">
+        <div ref={toolbarRef} className="mermaid-viewer-toolbar" aria-label="图表缩放控件">
           <button
             type="button"
             aria-label="缩小图表"

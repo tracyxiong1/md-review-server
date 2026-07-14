@@ -121,6 +121,68 @@ describe('MermaidDiagramViewer', () => {
     });
   });
 
+  it('makes the application root inert while the modal is open and restores it on unmount', () => {
+    const appRoot = document.createElement('div');
+    appRoot.id = 'root';
+    document.body.append(appRoot);
+
+    const { unmount } = render(
+      <MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={vi.fn()} />,
+    );
+
+    expect(appRoot.inert).toBe(true);
+    unmount();
+    expect(appRoot.inert).toBe(false);
+    appRoot.remove();
+  });
+
+  it('preserves a pre-existing inert application root when the modal unmounts', () => {
+    const appRoot = document.createElement('div');
+    appRoot.id = 'root';
+    appRoot.inert = true;
+    document.body.append(appRoot);
+
+    const { unmount } = render(
+      <MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={vi.fn()} />,
+    );
+
+    unmount();
+    expect(appRoot.inert).toBe(true);
+    appRoot.remove();
+  });
+
+  it('wraps forward focus from the close button to the first enabled toolbar control', () => {
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={vi.fn()} />);
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+
+    fireEvent.keyDown(closeButton, { key: 'Tab' });
+
+    expect(screen.getByRole('button', { name: '缩小图表' })).toHaveFocus();
+  });
+
+  it('wraps backward focus from the first enabled toolbar control to close', () => {
+    render(<MermaidDiagramViewer svg={svg} initialFocusMethod="keyboard" onClose={vi.fn()} />);
+    const zoomOutButton = screen.getByRole('button', { name: '缩小图表' });
+    act(() => zoomOutButton.focus());
+
+    fireEvent.keyDown(zoomOutButton, { key: 'Tab', shiftKey: true });
+
+    expect(screen.getByRole('button', { name: '关闭大图' })).toHaveFocus();
+  });
+
+  it('skips disabled controls when wrapping modal focus', () => {
+    const oversizedSvg = '<svg viewBox="0 0 4000 3000"><text>diagram</text></svg>';
+    render(
+      <MermaidDiagramViewer svg={oversizedSvg} initialFocusMethod="keyboard" onClose={vi.fn()} />,
+    );
+    const closeButton = screen.getByRole('button', { name: '关闭大图' });
+    expect(screen.getByRole('button', { name: '缩小图表' })).toBeDisabled();
+
+    fireEvent.keyDown(closeButton, { key: 'Tab' });
+
+    expect(screen.getByRole('button', { name: '当前比例，点击适应窗口' })).toHaveFocus();
+  });
+
   it('suppresses pointer-opened initial focus ring until keyboard input reaches the dialog', () => {
     render(<MermaidDiagramViewer svg={svg} initialFocusMethod="pointer" onClose={vi.fn()} />);
     const closeButton = screen.getByRole('button', { name: '关闭大图' });
