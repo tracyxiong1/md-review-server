@@ -1,0 +1,23 @@
+design-drafts/archive/2026-07-15-document-minimap/DECISION.md
+  s_1be0948b979c38::t_815530c3f62d13 11
+docs/superpowers/specs/2026-07-15-document-outline-design.md
+  s_1be0948b979c38::t_c1c4d1c3132f42 101-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0e4ccd5d5e18d2473c7f911ca01594e423618c85",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
