@@ -1,0 +1,41 @@
+design-drafts/runtime-baseline/cases.json
+  s_1be0948b979c38::t_436f39a7abdda4 17-30,33,39-49,93-106,109,115-125,188-201,204,216-217,225-226,234-235,238-248,311-324,327,339-340,348-349,357-358,361-371,374,381,440-453,456,468-469,477-478,486-487,490-500,503,510,538-551,554,560-570,599-642,645-647,663-706,709-711
+design-drafts/runtime-baseline/fragments/07-dark-color-compatibility.root.html
+  s_1be0948b979c38::t_8b8d8b6b552c50 1,3-7,15,19
+design-drafts/runtime-baseline/fragments/08-light-color-compatibility.root.html
+  s_1be0948b979c38::t_224a179d26bcb2 1,3-7,15,19
+design-drafts/runtime-baseline/html/01-dark-collapsed-comments-closed-empty.html
+  s_1be0948b979c38::t_bcf92e0792a3b1 1447,2485-2495,2499-2500,2512-2677
+design-drafts/runtime-baseline/html/02-dark-collapsed-comments-open-empty.html
+  s_1be0948b979c38::t_2fd22c2536fd50 1447,2485-2495,2499-2500,2512-2677
+design-drafts/runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+  s_1be0948b979c38::t_84f8b0e59d1107 1447,2485-2495,2499-2500,2512-2677
+design-drafts/runtime-baseline/html/04-dark-expanded-comments-open-with-comments.html
+  s_1be0948b979c38::t_8222c05387bb32 1447,2485-2495,2499-2500,2512-2677
+design-drafts/runtime-baseline/html/05-light-expanded-comments-open-with-comments.html
+  s_1be0948b979c38::t_af968b090b2735 1447,2485-2495,2499-2500,2512-2677
+design-drafts/runtime-baseline/html/06-light-collapsed-comments-closed-empty.html
+  s_1be0948b979c38::t_6a09bcf650ed46 1447,2485-2495,2499-2500,2512-2677
+design-drafts/runtime-baseline/html/07-dark-color-compatibility.html
+  s_1be0948b979c38::t_59ec2516cf16d9 9,16,142,510,627,893,900-1059,1082-1083,1087,1096-1125,2547,2553,2558-2561,2770,2773,2801,2804,2873,3112,3114-3118,3126,3130-3132,3134
+design-drafts/runtime-baseline/html/08-light-color-compatibility.html
+  s_1be0948b979c38::t_5308f2b827a2c8 3,9,16,142,510,627,893,900-1059,1082-1083,1087,1096-1125,2547,2553,2558-2561,2770,2773,2801,2804,2873,3112,3114-3118,3126,3130-3132,3134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "082600c2fbc1ebb8cf55cae51007ef0ce474a9d2",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
