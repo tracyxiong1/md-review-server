@@ -343,7 +343,7 @@ describe('MarkdownPreview', () => {
     const frameCallbacks: FrameRequestCallback[] = [];
     const observe = vi.fn();
     const disconnect = vi.fn();
-    let resizeObserverCallback: ResizeObserverCallback | undefined;
+    const resizeObserverCallbacks: ResizeObserverCallback[] = [];
     const originalResizeObserver = globalThis.ResizeObserver;
     const requestAnimationFrameSpy = vi
       .spyOn(window, 'requestAnimationFrame')
@@ -354,7 +354,7 @@ describe('MarkdownPreview', () => {
 
     class MockResizeObserver {
       constructor(callback: ResizeObserverCallback) {
-        resizeObserverCallback = callback;
+        resizeObserverCallbacks.push(callback);
       }
 
       observe = observe;
@@ -407,7 +407,9 @@ describe('MarkdownPreview', () => {
       );
 
       detailsTop = 60;
-      act(() => resizeObserverCallback?.([], {} as ResizeObserver));
+      act(() => {
+        resizeObserverCallbacks.forEach((callback) => callback([], {} as ResizeObserver));
+      });
       act(() => frameCallbacks.shift()?.(16));
 
       expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
@@ -416,7 +418,7 @@ describe('MarkdownPreview', () => {
       );
 
       await user.click(screen.getByRole('button', { name: 'Show diff' }));
-      expect(disconnect).toHaveBeenCalledTimes(1);
+      expect(disconnect).toHaveBeenCalledTimes(resizeObserverCallbacks.length);
     } finally {
       detailsRectSpy.mockRestore();
       overviewRectSpy.mockRestore();

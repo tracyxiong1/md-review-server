@@ -22,6 +22,7 @@ const TOOLTIP_MAX_HEIGHT = 96;
 const TOOLTIP_MAX_WIDTH = 280;
 const TOOLTIP_MIN_HEIGHT = 44;
 const TOOLTIP_MIN_WIDTH = 120;
+const TICK_WIDTHS = [0, 18, 15, 12, 10, 8, 6] as const;
 
 export const DocumentOutline = ({
   headings,
@@ -33,6 +34,7 @@ export const DocumentOutline = ({
   const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
   const positionFrameRef = useRef<number | null>(null);
   const tooltipId = useId();
+  const [isCompact, setIsCompact] = useState<boolean | null>(null);
   const [focusedHeadingId, setFocusedHeadingId] = useState<string | null>(null);
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition | null>(null);
@@ -104,8 +106,19 @@ export const DocumentOutline = ({
   }, [tooltipHeadingId]);
 
   useEffect(() => {
-    if (!tooltipHeadingId) return;
-
+    const target = tooltipHeadingId ? linkRefs.current.get(tooltipHeadingId) : null;
+    const card =
+      target?.closest<HTMLElement>('.markdown-content') ??
+      outlineRef.current?.closest<HTMLElement>('.markdown-content');
+    const preview = target?.closest<HTMLElement>('.markdown-container');
+    const comments = preview
+      ?.closest('.markdown-with-comments')
+      ?.querySelector<HTMLElement>('.comments-sidebar:not(.comments-sidebar-collapsed)');
+    const updateCompactMode = () => {
+      if (!card) return;
+      const cardWidth = card.clientWidth || card.getBoundingClientRect().width;
+      setIsCompact(cardWidth < COMPACT_OUTLINE_WIDTH);
+    };
     const schedulePositionUpdate = () => {
       if (positionFrameRef.current !== null) return;
       positionFrameRef.current = window.requestAnimationFrame(() => {
@@ -113,27 +126,26 @@ export const DocumentOutline = ({
         updateTooltipPosition();
       });
     };
-    const target = linkRefs.current.get(tooltipHeadingId);
-    const card = target?.closest<HTMLElement>('.markdown-content');
-    const preview = target?.closest<HTMLElement>('.markdown-container');
-    const comments = preview
-      ?.closest('.markdown-with-comments')
-      ?.querySelector<HTMLElement>('.comments-sidebar:not(.comments-sidebar-collapsed)');
+    const handleResize = () => {
+      updateCompactMode();
+      if (tooltipHeadingId) schedulePositionUpdate();
+    };
     const resizeObserver =
-      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedulePositionUpdate) : null;
+      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(handleResize) : null;
 
     if (target) resizeObserver?.observe(target);
     if (card) resizeObserver?.observe(card);
     if (preview) resizeObserver?.observe(preview);
     if (outlineRef.current) resizeObserver?.observe(outlineRef.current);
     if (comments) resizeObserver?.observe(comments);
-    window.addEventListener('scroll', schedulePositionUpdate, true);
-    window.addEventListener('resize', schedulePositionUpdate);
-    schedulePositionUpdate();
+    if (tooltipHeadingId) window.addEventListener('scroll', schedulePositionUpdate, true);
+    window.addEventListener('resize', handleResize);
+    updateCompactMode();
+    if (tooltipHeadingId) schedulePositionUpdate();
 
     return () => {
       window.removeEventListener('scroll', schedulePositionUpdate, true);
-      window.removeEventListener('resize', schedulePositionUpdate);
+      window.removeEventListener('resize', handleResize);
       resizeObserver?.disconnect();
       if (positionFrameRef.current !== null) {
         window.cancelAnimationFrame(positionFrameRef.current);
@@ -177,6 +189,7 @@ export const DocumentOutline = ({
                   }}
                   className={isActive ? 'document-outline-link active' : 'document-outline-link'}
                   href={`#${heading.id}`}
+                  title={isCompact === false ? heading.text : undefined}
                   data-level={heading.level}
                   aria-label={heading.text}
                   aria-current={isActive ? 'location' : undefined}
@@ -194,7 +207,11 @@ export const DocumentOutline = ({
                   }}
                 >
                   <span className="document-outline-label">{heading.text}</span>
-                  <span className="document-outline-tick" aria-hidden="true" />
+                  <span
+                    className="document-outline-tick"
+                    aria-hidden="true"
+                    style={{ width: `${TICK_WIDTHS[heading.level]}px` }}
+                  />
                 </a>
               </li>
             );

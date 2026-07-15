@@ -410,31 +410,10 @@
 
   .document-outline-tick {
     display: block;
-    width: 22px;
     height: 2px;
     flex: 0 0 auto;
     border-radius: 999px;
     background: var(--text-tertiary);
-  }
-
-  .document-outline-link[data-level='2'] .document-outline-tick {
-    width: 19px;
-  }
-
-  .document-outline-link[data-level='3'] .document-outline-tick {
-    width: 16px;
-  }
-
-  .document-outline-link[data-level='4'] .document-outline-tick {
-    width: 13px;
-  }
-
-  .document-outline-link[data-level='5'] .document-outline-tick {
-    width: 10px;
-  }
-
-  .document-outline-link[data-level='6'] .document-outline-tick {
-    width: 7px;
   }
 
   .markdown-content .document-outline-link.active::before {

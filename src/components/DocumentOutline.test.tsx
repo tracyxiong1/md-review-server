@@ -110,6 +110,7 @@ describe('DocumentOutline', () => {
     expect(overview).toHaveStyle({ paddingInlineStart: '8px' });
     expect(overview).toHaveAttribute('aria-current', 'location');
     expect(overview).toHaveClass('active');
+    expect(overview.querySelector('.document-outline-tick')).toHaveStyle({ width: '18px' });
 
     expect(implementation).toHaveAttribute('href', '#markdown-heading-3');
     expect(implementation).toHaveAttribute('data-level', '3');
@@ -123,9 +124,61 @@ describe('DocumentOutline', () => {
       'aria-hidden',
       'true',
     );
+    expect(implementation.querySelector('.document-outline-tick')).toHaveStyle({ width: '12px' });
     expect(implementation).not.toHaveAttribute('aria-current');
     expect(implementation).not.toHaveClass('active');
     expect(implementation.tabIndex).toBe(0);
+  });
+
+  it('keeps native titles only in the full outline and updates them across the breakpoint', () => {
+    let resizeObserverCallback: ResizeObserverCallback | undefined;
+    let cardWidth = 600;
+    const originalResizeObserver = globalThis.ResizeObserver;
+
+    class MockResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        resizeObserverCallback = callback;
+      }
+
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    }
+
+    Object.defineProperty(globalThis, 'ResizeObserver', {
+      configurable: true,
+      writable: true,
+      value: MockResizeObserver,
+    });
+
+    try {
+      const { card, implementation } = renderCompactOutline();
+      Object.defineProperty(card, 'clientWidth', {
+        configurable: true,
+        get: () => cardWidth,
+      });
+
+      act(() => resizeObserverCallback?.([], {} as ResizeObserver));
+      expect(implementation).toHaveAttribute('title', 'A very long implementation section');
+
+      cardWidth = 240;
+      act(() => resizeObserverCallback?.([], {} as ResizeObserver));
+      expect(implementation).not.toHaveAttribute('title');
+
+      cardWidth = 520;
+      act(() => resizeObserverCallback?.([], {} as ResizeObserver));
+      expect(implementation).toHaveAttribute('title', 'A very long implementation section');
+    } finally {
+      if (originalResizeObserver) {
+        Object.defineProperty(globalThis, 'ResizeObserver', {
+          configurable: true,
+          writable: true,
+          value: originalResizeObserver,
+        });
+      } else {
+        Reflect.deleteProperty(globalThis, 'ResizeObserver');
+      }
+    }
   });
 
   it('shows the heading level and full title in a constrained tooltip on hover', async () => {
@@ -197,7 +250,6 @@ describe('DocumentOutline', () => {
     vi.spyOn(implementation, 'getBoundingClientRect').mockImplementation(() =>
       domRect({ left: 104, right: 128, top: implementationTop, bottom: implementationTop + 20 }),
     );
-
     await user.hover(implementation);
     act(() => frameCallbacks.shift()?.(0));
     expect(screen.getByRole('tooltip')).toHaveStyle({ top: '92px' });
