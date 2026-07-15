@@ -1,0 +1,41 @@
+design-drafts/runtime-baseline/fragments/01-dark-collapsed-comments-closed-empty.root.html
+  s_1be0948b979c38::t_3f3287b45514f0 1
+design-drafts/runtime-baseline/fragments/02-dark-collapsed-comments-open-empty.root.html
+  s_1be0948b979c38::t_18533c75ae03fa 1
+design-drafts/runtime-baseline/fragments/03-dark-collapsed-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_1db4c17f20988c 1
+design-drafts/runtime-baseline/fragments/04-dark-expanded-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_600972b62838dc 1,8
+design-drafts/runtime-baseline/fragments/05-light-expanded-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_c334adea61c3d5 1,8
+docs/superpowers/specs/2026-07-15-document-outline-design.md
+  s_1be0948b979c38::t_7c535ba9910dd7 17,46,136,172
+src/components/DocumentOutline.test.tsx
+  s_1be0948b979c38::t_73e9147bd7c878 4,89-97,146,175,179
+src/components/DocumentOutline.tsx
+  s_1be0948b979c38::t_052f1f1189016b 18
+src/components/MarkdownPreview.test.tsx
+  s_1be0948b979c38::t_a941e2fc486856 237,244,279-351
+src/components/MarkdownPreview.tsx
+  s_1be0948b979c38::t_01dc50dc5823d1 54-63,395-397,595-598,629-656,667-670,675-680,683-686,757-760,767-769,835
+src/styles/markdown.css
+  s_1be0948b979c38::t_9951ac9dcc5487 392,395,456-457,461,470-499,1967,1998
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a1f43f5cecd3768fc0ff15dcbf766fe068fe4af0",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
