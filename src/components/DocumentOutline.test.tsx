@@ -47,11 +47,105 @@ describe('DocumentOutline', () => {
 
     expect(implementation).toHaveAttribute('href', '#markdown-heading-3');
     expect(implementation).toHaveAttribute('data-level', '3');
+    expect(implementation).toHaveAttribute('aria-label', 'A very long implementation section');
     expect(implementation).toHaveStyle({ paddingInlineStart: '28px' });
     expect(implementation).toHaveAttribute('title', 'A very long implementation section');
+    expect(implementation.querySelector('.document-outline-label')).toHaveTextContent(
+      'A very long implementation section',
+    );
+    expect(implementation.querySelector('.document-outline-tick')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
     expect(implementation).not.toHaveAttribute('aria-current');
     expect(implementation).not.toHaveClass('active');
     expect(implementation.tabIndex).toBe(0);
+  });
+
+  it('shows the heading level and full title in a constrained tooltip on hover', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <div className="markdown-content">
+        <DocumentOutline
+          headings={headings}
+          activeHeadingId="markdown-heading-1"
+          onNavigate={vi.fn()}
+        />
+      </div>,
+    );
+    const card = container.querySelector('.markdown-content');
+    const column = container.querySelector('.document-outline-column');
+    const implementation = screen.getByRole('link', {
+      name: 'A very long implementation section',
+    });
+
+    vi.spyOn(card!, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      right: 340,
+      top: 50,
+      bottom: 650,
+      width: 240,
+      height: 600,
+      x: 100,
+      y: 50,
+      toJSON: () => ({}),
+    });
+    vi.spyOn(column!, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      right: 132,
+      top: 50,
+      bottom: 650,
+      width: 32,
+      height: 600,
+      x: 100,
+      y: 50,
+      toJSON: () => ({}),
+    });
+    vi.spyOn(implementation, 'getBoundingClientRect').mockReturnValue({
+      left: 104,
+      right: 128,
+      top: 100,
+      bottom: 120,
+      width: 24,
+      height: 20,
+      x: 104,
+      y: 100,
+      toJSON: () => ({}),
+    });
+
+    await user.hover(implementation);
+
+    const tooltip = screen.getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('H3');
+    expect(tooltip).toHaveTextContent('A very long implementation section');
+    expect(tooltip).toHaveStyle({ top: '42px', width: '188px', maxHeight: '96px' });
+    expect(implementation).toHaveAttribute('aria-describedby', tooltip.id);
+
+    await user.unhover(implementation);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('shows and hides the full-title tooltip with keyboard focus', async () => {
+    const user = userEvent.setup();
+    render(
+      <div className="markdown-content">
+        <DocumentOutline
+          headings={headings}
+          activeHeadingId="markdown-heading-1"
+          onNavigate={vi.fn()}
+        />
+      </div>,
+    );
+
+    await user.tab();
+
+    expect(screen.getByRole('tooltip')).toHaveTextContent('H1Overview');
+
+    await user.tab();
+    expect(screen.getByRole('tooltip')).toHaveTextContent('H3A very long implementation section');
+
+    await user.tab();
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
   it('navigates without changing the URL hash', async () => {

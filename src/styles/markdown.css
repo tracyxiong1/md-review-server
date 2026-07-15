@@ -272,8 +272,10 @@
 }
 
 .markdown-content.with-document-outline {
+  container-name: document-outline-card;
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .markdown-document-body {
@@ -283,6 +285,8 @@
 }
 
 .document-outline-column {
+  position: relative;
+  width: 160px;
   min-width: 0;
   border-right: 1px solid var(--border-secondary);
 }
@@ -320,6 +324,17 @@
   white-space: nowrap;
 }
 
+.document-outline-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.document-outline-tick,
+.document-outline-tooltip {
+  display: none;
+}
+
 .markdown-content .document-outline-link:hover {
   color: var(--text-secondary);
   background: transparent;
@@ -344,6 +359,100 @@
 .markdown-content .document-outline-link:focus-visible {
   outline: 2px solid var(--link-color);
   outline-offset: 1px;
+}
+
+@container document-outline-card (width < 520px) {
+  .document-outline-column {
+    width: 32px;
+  }
+
+  .document-outline {
+    padding: 24px 4px;
+  }
+
+  .markdown-content .document-outline-link {
+    display: flex;
+    min-height: 20px;
+    align-items: center;
+    padding: 4px 2px !important;
+  }
+
+  .document-outline-label {
+    display: none;
+  }
+
+  .document-outline-tick {
+    display: block;
+    width: 22px;
+    height: 2px;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--text-tertiary);
+  }
+
+  .document-outline-link[data-level='2'] .document-outline-tick {
+    width: 19px;
+  }
+
+  .document-outline-link[data-level='3'] .document-outline-tick {
+    width: 16px;
+  }
+
+  .document-outline-link[data-level='4'] .document-outline-tick {
+    width: 13px;
+  }
+
+  .document-outline-link[data-level='5'] .document-outline-tick {
+    width: 10px;
+  }
+
+  .document-outline-link[data-level='6'] .document-outline-tick {
+    width: 7px;
+  }
+
+  .markdown-content .document-outline-link.active::before {
+    display: none;
+  }
+
+  .markdown-content .document-outline-link:hover .document-outline-tick {
+    background: var(--text-secondary);
+  }
+
+  .markdown-content .document-outline-link.active .document-outline-tick {
+    background: var(--link-color);
+  }
+
+  .document-outline-tooltip {
+    position: absolute;
+    left: calc(100% + 8px);
+    z-index: 20;
+    display: block;
+    min-width: 0;
+    overflow: auto;
+    padding: 10px 12px;
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    box-shadow: var(--shadow-floating);
+    font-size: 12px;
+    line-height: 1.45;
+    pointer-events: none;
+  }
+
+  .document-outline-tooltip-level {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--text-tertiary);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .document-outline-tooltip-title {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--text-primary);
+  }
 }
 
 .document-meta {
