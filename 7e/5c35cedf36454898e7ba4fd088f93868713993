@@ -1,0 +1,27 @@
+package.json
+  s_0e4d0f020e59bb::t_65dc9920c59264 79,90-92,101
+pnpm-lock.yaml
+  s_0e4d0f020e59bb::t_5aa98687c41e00 26-28,59-67,87-89,3133-3134,5904,5916,6394,6435,6976
+src/lib/extractDocumentHeadings.test.ts
+  s_0e4d0f020e59bb::t_19a5610e6f3797 1-44
+src/lib/extractDocumentHeadings.ts
+  s_0e4d0f020e59bb::t_61e85013c8ed92 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7e5c35cedf36454898e7ba4fd088f93868713993",
+  "prompts": {},
+  "sessions": {
+    "s_0e4d0f020e59bb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f65ad-b51d-7e82-8609-cfda48179587",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
