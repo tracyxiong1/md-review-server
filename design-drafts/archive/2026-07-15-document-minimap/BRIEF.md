@@ -43,9 +43,10 @@ Add a compact document minimap on the left side of the Markdown preview so users
 | Existing component tests cover sidebar state and line navigation patterns.                       | `src/components/MarkdownPreview.test.tsx`, `src/components/CommentList.test.tsx` | High       |
 | The product favors quiet, compact, document-first navigation.                                    | `PRODUCT.md`, `DESIGN.md`                                                        | High       |
 
-## Open questions
+## Resolved decisions
 
 - The feature is a structural heading outline covering `H1` through `H6`.
 - The first version is always visible when headings exist and does not support manual collapse.
 - The outline lives inside the document card and is shared by CLI and directory browsing modes.
-- Diff mode hides the outline. Responsive hiding is deferred until the first runtime version is reviewed.
+- Diff mode hides the outline.
+- At `520px` and above, the card shows the full `160px` outline. Below `520px`, it switches to a `32px` heading rail with level ticks and a bounded `Hn + full title` tooltip.

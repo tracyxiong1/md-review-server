@@ -43,6 +43,7 @@ Start here for Codex handoff:
 ### Archived Decisions
 
 - [`archive/2026-07-06-comment-replies/`](./archive/2026-07-06-comment-replies/): shipped multi-round comment replies with flat `Codex` / `你` threads, open-tab default, and gutter-centered review markers.
+- [`archive/2026-07-15-document-minimap/`](./archive/2026-07-15-document-minimap/): shipped H1-H6 document outline with a `160px` full mode and a `32px` compact rail below the `520px` card breakpoint.
 
 ### Superseded Static Drafts
 
