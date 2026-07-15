@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.7.0](https://github.com/tracyxiong1/md-review-server/compare/v0.6.2...v0.7.0) (2026-07-15)
+
+
+### Features
+
+* add responsive document outline navigation ([#13](https://github.com/tracyxiong1/md-review-server/issues/13)) ([89fe839](https://github.com/tracyxiong1/md-review-server/commit/89fe839e30ec37e834e149c03515331c8a4b039a))
+
 ## [0.6.2](https://github.com/tracyxiong1/md-review-server/compare/v0.6.1...v0.6.2) (2026-07-14)
 
 
