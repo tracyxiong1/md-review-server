@@ -28,7 +28,7 @@ export const DocumentOutline = ({
     } else if (itemBottom > outline.scrollTop + outline.clientHeight) {
       outline.scrollTop = itemBottom - outline.clientHeight;
     }
-  }, [activeHeadingId]);
+  }, [activeHeadingId, headings]);
 
   return (
     <aside className="document-outline-column">

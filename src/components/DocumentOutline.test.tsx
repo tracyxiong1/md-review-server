@@ -153,4 +153,43 @@ describe('DocumentOutline', () => {
     );
     expect(outline.scrollTop).toBe(40);
   });
+
+  it('restores active item visibility when headings change but the active ID stays the same', () => {
+    const { rerender } = render(
+      <DocumentOutline
+        headings={headings}
+        activeHeadingId="markdown-heading-1"
+        onNavigate={vi.fn()}
+      />,
+    );
+    const outline = screen.getByRole('navigation', { name: 'Document outline' });
+    Object.defineProperties(outline, {
+      clientHeight: { configurable: true, value: 80 },
+      scrollTop: { configurable: true, writable: true, value: 120 },
+    });
+
+    const activeItem = screen.getByRole('link', { name: 'Overview' });
+    Object.defineProperties(activeItem, {
+      offsetTop: { configurable: true, value: 16 },
+      offsetHeight: { configurable: true, value: 24 },
+    });
+
+    const replacementHeadings = [
+      {
+        id: 'markdown-heading-1',
+        text: 'Replacement overview',
+        level: 1 as const,
+        line: 1,
+      },
+    ];
+    rerender(
+      <DocumentOutline
+        headings={replacementHeadings}
+        activeHeadingId="markdown-heading-1"
+        onNavigate={vi.fn()}
+      />,
+    );
+
+    expect(outline.scrollTop).toBe(16);
+  });
 });
