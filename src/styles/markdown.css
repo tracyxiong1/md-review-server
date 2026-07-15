@@ -264,11 +264,86 @@
   line-height: 1.76;
   color: var(--text-secondary);
   position: relative;
-  padding: 34px 42px 48px;
+  padding: 0;
   background: var(--bg-panel);
   border: 1px solid var(--border-secondary);
   border-radius: 12px;
   overflow-wrap: break-word;
+}
+
+.markdown-content.with-document-outline {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+}
+
+.markdown-document-body {
+  position: relative;
+  min-width: 0;
+  padding: 34px 42px 48px;
+}
+
+.document-outline-column {
+  min-width: 0;
+  border-right: 1px solid var(--border-secondary);
+}
+
+.document-outline {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 100px);
+  padding: 24px 12px;
+  overflow-y: auto;
+  /* stylelint-disable-next-line plugin/use-baseline -- Native thin scrollbars are a progressive enhancement. */
+  scrollbar-width: thin;
+}
+
+.markdown-content .document-outline-list,
+.markdown-content .document-outline-item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.markdown-content .document-outline-link {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding-block: 6px;
+  padding-inline-end: 5px;
+  color: var(--text-tertiary);
+  background: transparent;
+  border-radius: 5px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.markdown-content .document-outline-link:hover {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.markdown-content .document-outline-link.active {
+  color: var(--link-color);
+  font-weight: 500;
+}
+
+.markdown-content .document-outline-link.active::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2px;
+  height: 14px;
+  background: var(--link-color);
+  content: '';
+  transform: translateY(-50%);
+}
+
+.markdown-content .document-outline-link:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 1px;
 }
 
 .document-meta {
@@ -1952,7 +2027,7 @@
     padding: 22px 24px 64px;
   }
 
-  .markdown-content {
+  .markdown-document-body {
     padding: 30px 34px 42px;
   }
 
@@ -1983,7 +2058,7 @@
     padding: 18px 16px 56px;
   }
 
-  .markdown-content {
+  .markdown-document-body {
     padding: 26px 24px 36px;
   }
 

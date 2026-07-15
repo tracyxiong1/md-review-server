@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarkdownPreview } from './MarkdownPreview';
@@ -243,12 +243,15 @@ describe('MarkdownPreview', () => {
     const detailsHeading = screen.getByRole('heading', { name: 'Details' });
     const markdownContent = container.querySelector('.markdown-content');
     const documentBody = container.querySelector('.markdown-document-body');
+    const outline = screen.getByRole('navigation', { name: 'Document outline' });
 
     expect(overviewHeading).toHaveAttribute('id', 'markdown-heading-1');
     expect(detailsHeading).toHaveAttribute('id', 'markdown-heading-3');
     expect(markdownContent).toHaveClass('with-document-outline');
     expect(documentBody).toBeInTheDocument();
+    expect(markdownContent).toContainElement(outline);
     expect(markdownContent).toContainElement(documentBody as HTMLElement);
+    expect(documentBody).not.toContainElement(outline);
     expect(documentBody).toContainElement(overviewHeading);
     expect(documentBody).toContainElement(detailsHeading);
   });
@@ -277,6 +280,62 @@ describe('MarkdownPreview', () => {
       'location',
     );
     expect(window.location.hash).toBe('#existing');
+  });
+
+  it('tracks the active outline heading while the document scrolls', () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      });
+
+    const { container } = render(
+      <MarkdownPreview
+        content={'# Overview\n\n## Details\n\nBody'}
+        filename="guide.md"
+        comments={[]}
+      />,
+    );
+    const reader = container.querySelector<HTMLElement>('.markdown-reader-scroll');
+    const overviewHeading = screen.getByRole('heading', { name: 'Overview' });
+    const detailsHeading = screen.getByRole('heading', { name: 'Details' });
+    let detailsTop = 140;
+
+    expect(reader).not.toBeNull();
+
+    const readerRectSpy = vi
+      .spyOn(reader!, 'getBoundingClientRect')
+      .mockReturnValue({ top: 0 } as DOMRect);
+    const overviewRectSpy = vi
+      .spyOn(overviewHeading, 'getBoundingClientRect')
+      .mockReturnValue({ top: 20 } as DOMRect);
+    const detailsRectSpy = vi
+      .spyOn(detailsHeading, 'getBoundingClientRect')
+      .mockImplementation(() => ({ top: detailsTop }) as DOMRect);
+
+    try {
+      act(() => frameCallbacks.shift()?.(0));
+      expect(screen.getByRole('link', { name: 'Overview' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+
+      detailsTop = 60;
+      fireEvent.scroll(reader!);
+      act(() => frameCallbacks.shift()?.(16));
+
+      expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+    } finally {
+      detailsRectSpy.mockRestore();
+      overviewRectSpy.mockRestore();
+      readerRectSpy.mockRestore();
+      requestAnimationFrameSpy.mockRestore();
+    }
   });
 
   it('uses immediate scrolling when reduced motion is requested', async () => {
@@ -639,7 +698,7 @@ describe('MarkdownPreview', () => {
       },
     ];
 
-    render(
+    const { container } = render(
       <MarkdownPreview
         content={'# Guide\n\n- exactly once delivery'}
         filename="guide.v4.md"
@@ -649,9 +708,12 @@ describe('MarkdownPreview', () => {
     );
 
     const marker = await screen.findByTestId('review-marker-c001');
+    const markerLayer = marker.closest('.processed-comment-marker-layer');
+    const documentBody = container.querySelector('.markdown-document-body');
 
     expect(marker.closest('li')).toBeNull();
-    expect(marker.closest('.processed-comment-marker-layer')).toBeInTheDocument();
+    expect(markerLayer).toBeInTheDocument();
+    expect(documentBody).toContainElement(markerLayer as HTMLElement);
   });
 
   it('positions markers relative to the marker layer containing block', async () => {

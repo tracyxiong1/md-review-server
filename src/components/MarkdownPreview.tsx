@@ -574,6 +574,63 @@ export const MarkdownPreview = ({
     };
   }, [body, markerGroups, showDiff]);
 
+  useLayoutEffect(() => {
+    if (!showOutline) {
+      return;
+    }
+
+    const reader = readerScrollRef.current;
+    const contentElement = contentRef.current;
+    if (!reader || !contentElement) {
+      return;
+    }
+
+    let frameId = 0;
+
+    const updateActiveHeading = () => {
+      const threshold = reader.getBoundingClientRect().top + 96;
+      let nextActiveHeadingId = headings[0].id;
+
+      for (const heading of headings) {
+        const element = contentElement.querySelector<HTMLElement>(`#${heading.id}`);
+        if (!element) {
+          continue;
+        }
+        if (element.getBoundingClientRect().top > threshold) {
+          break;
+        }
+        nextActiveHeadingId = heading.id;
+      }
+
+      setOutlineState((currentState) => {
+        if (
+          currentState.documentKey !== documentKey ||
+          currentState.headings !== headings ||
+          currentState.activeHeadingId === nextActiveHeadingId
+        ) {
+          return currentState;
+        }
+
+        return { ...currentState, activeHeadingId: nextActiveHeadingId };
+      });
+    };
+
+    const scheduleActiveHeadingUpdate = () => {
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(updateActiveHeading);
+    };
+
+    scheduleActiveHeadingUpdate();
+    reader.addEventListener('scroll', scheduleActiveHeadingUpdate, { passive: true });
+    window.addEventListener('resize', scheduleActiveHeadingUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      reader.removeEventListener('scroll', scheduleActiveHeadingUpdate);
+      window.removeEventListener('resize', scheduleActiveHeadingUpdate);
+    };
+  }, [documentKey, headings, showOutline]);
+
   const handleSubmitComment = (
     comment: string,
     selectedText: string,
