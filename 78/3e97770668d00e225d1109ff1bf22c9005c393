@@ -1,0 +1,25 @@
+src/components/DocumentOutline.test.tsx
+  s_e6877effb77822::t_7d92ca7bd89255 1,16-80,82,87,118,133,137,140-147,156,160,163-165,171-244
+src/components/DocumentOutline.tsx
+  s_e6877effb77822::t_0f114c0c8f0fc8 1-2,11-12,18,23-24,33-34,36-40,42-54,58-73,75-101,103-143,161,170-177,183-185,187-190,204-217
+src/styles/markdown.css
+  s_e6877effb77822::t_2df1ee2a60d0cf 332,362-390
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "783e97770668d00e225d1109ff1bf22c9005c393",
+  "prompts": {},
+  "sessions": {
+    "s_e6877effb77822": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f663f-1f22-7bd3-92c4-848a9887b14b",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
