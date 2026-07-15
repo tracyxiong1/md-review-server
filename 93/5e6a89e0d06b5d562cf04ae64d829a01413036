@@ -1,0 +1,23 @@
+src/components/DocumentOutline.test.tsx
+  s_eeb7b642159852::t_6938cd24af1756 1-156
+src/components/DocumentOutline.tsx
+  s_eeb7b642159852::t_fcb8ae802ed21a 1-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "935e6a89e0d06b5d562cf04ae64d829a01413036",
+  "prompts": {},
+  "sessions": {
+    "s_eeb7b642159852": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f65b6-5803-7142-91db-2144056a04e6",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
