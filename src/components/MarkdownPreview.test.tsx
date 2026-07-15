@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarkdownPreview } from './MarkdownPreview';
@@ -11,6 +11,18 @@ vi.mock('./MermaidBlock', () => ({
 const diffViewerMock = vi.hoisted(() => vi.fn());
 const darkModeMock = vi.hoisted(() => ({ isDark: false }));
 const diffViewerState = vi.hoisted(() => ({ nextMountId: 0 }));
+
+const createMediaQueryList = (query: string, matches = false): MediaQueryList =>
+  ({
+    matches,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }) as MediaQueryList;
 
 vi.mock('../hooks/useDarkMode', () => ({
   useDarkMode: () => ({ isDark: darkModeMock.isDark }),
@@ -52,6 +64,9 @@ describe('MarkdownPreview', () => {
     darkModeMock.isDark = false;
     diffViewerState.nextMountId = 0;
     diffViewerMock.mockClear();
+    vi.mocked(window.matchMedia).mockReset();
+    vi.mocked(window.matchMedia).mockImplementation((query) => createMediaQueryList(query));
+    window.history.replaceState(null, '', window.location.pathname);
   });
 
   it('does not depend on toggling bundled highlight theme link elements', () => {
@@ -207,6 +222,152 @@ describe('MarkdownPreview', () => {
     expect(screen.getByText('date: 2026-06-26')).toBeInTheDocument();
     expect(screen.getByText('author: ryo-manba')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Body' })).toBeInTheDocument();
+  });
+
+  it('renders the outline beside the document body with matching heading IDs', () => {
+    const { container } = render(
+      <MarkdownPreview
+        content={'# Overview\n\n## Details\n\nBody'}
+        filename="guide.md"
+        comments={[]}
+      />,
+    );
+
+    expect(screen.getByRole('navigation', { name: 'Document outline' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Overview' })).toHaveAttribute(
+      'href',
+      '#markdown-heading-1',
+    );
+
+    const overviewHeading = screen.getByRole('heading', { name: 'Overview' });
+    const detailsHeading = screen.getByRole('heading', { name: 'Details' });
+    const markdownContent = container.querySelector('.markdown-content');
+    const documentBody = container.querySelector('.markdown-document-body');
+
+    expect(overviewHeading).toHaveAttribute('id', 'markdown-heading-1');
+    expect(detailsHeading).toHaveAttribute('id', 'markdown-heading-3');
+    expect(markdownContent).toHaveClass('with-document-outline');
+    expect(documentBody).toBeInTheDocument();
+    expect(markdownContent).toContainElement(documentBody as HTMLElement);
+    expect(documentBody).toContainElement(overviewHeading);
+    expect(documentBody).toContainElement(detailsHeading);
+  });
+
+  it('scrolls to a selected outline heading without changing the hash', async () => {
+    const user = userEvent.setup();
+    const scrollIntoView = vi.fn();
+    window.history.replaceState(null, '', `${window.location.pathname}#existing`);
+
+    render(
+      <MarkdownPreview content={'# Overview\n\n## Details'} filename="guide.md" comments={[]} />,
+    );
+    Object.defineProperty(screen.getByRole('heading', { name: 'Details' }), 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    await user.click(screen.getByRole('link', { name: 'Details' }));
+
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
+    expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+    expect(window.location.hash).toBe('#existing');
+  });
+
+  it('uses immediate scrolling when reduced motion is requested', async () => {
+    const user = userEvent.setup();
+    const scrollIntoView = vi.fn();
+    vi.mocked(window.matchMedia).mockImplementation((query) =>
+      createMediaQueryList(query, query === '(prefers-reduced-motion: reduce)'),
+    );
+
+    render(<MarkdownPreview content="# Overview" filename="guide.md" comments={[]} />);
+    Object.defineProperty(screen.getByRole('heading', { name: 'Overview' }), 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    await user.click(screen.getByRole('link', { name: 'Overview' }));
+
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'auto',
+      block: 'start',
+    });
+  });
+
+  it('does not render an empty outline for heading-free content', () => {
+    const { container } = render(
+      <MarkdownPreview content="Plain body" filename="plain.md" comments={[]} />,
+    );
+
+    expect(screen.queryByRole('navigation', { name: 'Document outline' })).not.toBeInTheDocument();
+    expect(container.querySelector('.markdown-content')).not.toHaveClass('with-document-outline');
+  });
+
+  it('hides the outline in diff mode and restores it in preview mode', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MarkdownPreview
+        content={'# Guide\n\nNew text'}
+        filename="guide.v2.md"
+        comments={[]}
+        compareFilename="guide.v1.md"
+        compareContent={'# Guide\n\nOld text'}
+      />,
+    );
+
+    expect(screen.getByRole('navigation', { name: 'Document outline' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Show diff' }));
+    expect(screen.queryByRole('navigation', { name: 'Document outline' })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Show preview' }));
+    expect(screen.getByRole('navigation', { name: 'Document outline' })).toBeInTheDocument();
+  });
+
+  it('resets the active outline heading when the current document is replaced', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <MarkdownPreview
+        content={'# Overview\n\n## Details'}
+        filename="guide.v1.md"
+        filePath="docs/guide.v1.md"
+        comments={[]}
+      />,
+    );
+    Object.defineProperty(screen.getByRole('heading', { name: 'Details' }), 'scrollIntoView', {
+      configurable: true,
+      value: vi.fn(),
+    });
+
+    await user.click(screen.getByRole('link', { name: 'Details' }));
+    expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+
+    rerender(
+      <MarkdownPreview
+        content={'# Replacement\n\n## New details'}
+        filename="guide.v2.md"
+        filePath="docs/guide.v2.md"
+        comments={[]}
+      />,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: 'Replacement' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      ),
+    );
+    expect(screen.getByRole('link', { name: 'New details' })).not.toHaveAttribute('aria-current');
   });
 
   it('shows processed comment markers on target lines', async () => {

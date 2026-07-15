@@ -17,9 +17,11 @@ import 'highlight.js/styles/github.css';
 import '../styles/markdown.css';
 import { SelectionPopover } from './SelectionPopover';
 import { CommentList, Comment } from './CommentList';
+import { DocumentOutline } from './DocumentOutline';
 import { MermaidBlock } from './MermaidBlock';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { useResizable } from '../hooks/useResizable';
+import { extractDocumentHeadings, getDocumentHeadingId } from '../lib/extractDocumentHeadings';
 import { parseMdContent } from '../lib/parseMdContent';
 import { CreateCommentInput } from '../types/review';
 
@@ -300,9 +302,17 @@ const createComponentsWithLinePosition = (markerLines: Set<number>): Components 
     const className = [props.className, hasMarker ? 'markdown-line-with-processed-comment' : null]
       .filter(Boolean)
       .join(' ');
+    const isHeadingTag = typeof Tag === 'string' && /^h[1-6]$/.test(Tag);
+    const headingId =
+      isHeadingTag && typeof line === 'number' ? getDocumentHeadingId(line) : undefined;
 
     return (
-      <Tag {...props} data-line-start={line} className={className || undefined}>
+      <Tag
+        {...props}
+        id={headingId || props.id}
+        data-line-start={line}
+        className={className || undefined}
+      >
         {children}
       </Tag>
     );
@@ -379,15 +389,20 @@ export const MarkdownPreview = ({
   onAddCommentReply,
 }: MarkdownPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const readerScrollRef = useRef<HTMLDivElement>(null);
   const [activeDiffKey, setActiveDiffKey] = useState<string | null>(null);
   const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
   const [markerPositions, setMarkerPositions] = useState<Record<number, number>>({});
+  const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
   const { isDark } = useDarkMode();
   const { frontmatter, body, bodyLineOffset } = parseMdContent(content, filename);
+  const documentKey = filePath || filename;
+  const headings = useMemo(() => extractDocumentHeadings(body), [body]);
   const frontmatterEntries = Object.entries(frontmatter);
   const canCompare = Boolean(compareFilename && typeof compareContent === 'string');
   const diffKey = canCompare ? `${compareFilename}->${filename}` : null;
   const showDiff = Boolean(diffKey && activeDiffKey === diffKey);
+  const showOutline = !showDiff && headings.length > 0;
   const targetCommentsByLine = useMemo(() => {
     const next = new Map<number, Comment[]>();
 
@@ -450,7 +465,6 @@ export const MarkdownPreview = ({
     [comments],
   );
   const previousOpenCommentCountRef = useRef(openCommentCount);
-  const documentKey = filePath || filename;
   const documentMeta = 'Markdown preview · local review';
   const {
     width: commentsSidebarWidth,
@@ -469,6 +483,10 @@ export const MarkdownPreview = ({
     collapseThreshold: 70,
     initialCollapsed: openCommentCount === 0,
   });
+
+  useEffect(() => {
+    setActiveHeadingId(headings[0]?.id || null);
+  }, [documentKey, headings]);
 
   useEffect(() => {
     const previousOpenCommentCount = previousOpenCommentCountRef.current;
@@ -597,6 +615,18 @@ export const MarkdownPreview = ({
     }
   };
 
+  const handleOutlineNavigate = (headingId: string) => {
+    const heading = contentRef.current?.querySelector<HTMLElement>(`#${headingId}`);
+    if (!heading) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    heading.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    setActiveHeadingId(headingId);
+  };
+
   return (
     <div
       className={`markdown-with-comments ${isResizing ? 'resizing' : ''} ${isCollapsed ? 'comments-collapsed' : ''}`}
@@ -659,7 +689,7 @@ export const MarkdownPreview = ({
             )}
           </div>
         </header>
-        <div className="markdown-reader-scroll">
+        <div className="markdown-reader-scroll" ref={readerScrollRef}>
           <section className="markdown-reader">
             {showDiff && canCompare ? (
               <div className="markdown-diff-view">
@@ -677,42 +707,51 @@ export const MarkdownPreview = ({
                 />
               </div>
             ) : (
-              <div className="markdown-content" ref={contentRef}>
-                <div className="document-meta">
-                  <span>{documentMeta}</span>
-                  {frontmatterEntries.map(([key, value]) => (
-                    <span key={key} className="document-meta-item">
-                      {key}: {value}
-                    </span>
-                  ))}
-                </div>
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm, remarkBreaks]}
-                  rehypePlugins={[rehypeHighlight]}
-                  components={componentsWithLinePosition}
-                >
-                  {body}
-                </ReactMarkdown>
-                {markerGroups.length > 0 && (
-                  <div className="processed-comment-marker-layer">
-                    {markerGroups.map((group) => {
-                      const top = markerPositions[group.line];
-                      if (typeof top !== 'number') {
-                        return null;
-                      }
-
-                      return (
-                        <ProcessedCommentMarker
-                          key={group.line}
-                          line={group.line}
-                          comments={group.comments}
-                          label={group.label}
-                          top={top}
-                        />
-                      );
-                    })}
-                  </div>
+              <div className={`markdown-content ${showOutline ? 'with-document-outline' : ''}`}>
+                {showOutline && (
+                  <DocumentOutline
+                    headings={headings}
+                    activeHeadingId={activeHeadingId}
+                    onNavigate={handleOutlineNavigate}
+                  />
                 )}
+                <div className="markdown-document-body" ref={contentRef}>
+                  <div className="document-meta">
+                    <span>{documentMeta}</span>
+                    {frontmatterEntries.map(([key, value]) => (
+                      <span key={key} className="document-meta-item">
+                        {key}: {value}
+                      </span>
+                    ))}
+                  </div>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={componentsWithLinePosition}
+                  >
+                    {body}
+                  </ReactMarkdown>
+                  {markerGroups.length > 0 && (
+                    <div className="processed-comment-marker-layer">
+                      {markerGroups.map((group) => {
+                        const top = markerPositions[group.line];
+                        if (typeof top !== 'number') {
+                          return null;
+                        }
+
+                        return (
+                          <ProcessedCommentMarker
+                            key={group.line}
+                            line={group.line}
+                            comments={group.comments}
+                            label={group.label}
+                            top={top}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {!showDiff && !readonly && (
