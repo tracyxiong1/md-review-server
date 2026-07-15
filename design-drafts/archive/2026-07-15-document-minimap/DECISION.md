@@ -8,7 +8,7 @@ Markdown Preview now includes heading navigation inside the document card in bot
 - Use a `160px` full-text outline when the card is at least `520px` wide.
 - Below `520px`, use a `32px` tick rail with decreasing `H1` through `H6` lengths.
 - Mark the active section in blue, keep it visible inside the independently scrolling outline, and support click and keyboard navigation.
-- In compact mode, show a bounded `Hn + full title` tooltip on hover or focus. Keep it inside the visible preview and outside the comments panel.
+- In compact mode, show a bounded `Hn + full title` tooltip on hover or focus. Keep it inside the visible preview and outside the comments panel; allow pointer entry and scrolling for very long titles, with `Escape` dismissal.
 - Hide the outline for no-heading documents and Diff mode. Do not add manual collapse or persistence.
 
 ## Why
