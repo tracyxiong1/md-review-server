@@ -1,0 +1,65 @@
+DESIGN.md
+  s_1be0948b979c38::t_e86181785bab87 241
+design-drafts/README.md
+  s_1be0948b979c38::t_8751bd0a6ed217 46
+design-drafts/archive/2026-07-15-document-minimap/BRIEF.md
+  s_1be0948b979c38::t_f4ba87e4db5a55 46,51-52
+design-drafts/archive/2026-07-15-document-minimap/DECISION.md
+  s_1be0948b979c38::t_2bf571ffe10e18 1-38
+design-drafts/runtime-baseline/README.md
+  s_1be0948b979c38::t_7e59f995e64448 53-54
+design-drafts/runtime-baseline/cases.json
+  s_1be0948b979c38::t_b9335f69cd09c9 17-30,33,39-49,93-106,109,115-125,188-201,204,216-217,225-226,234-235,238-248,311-324,327,339-340,348-349,357-358,361-371,374,381,440-453,456,468-469,477-478,486-487,490-500,503,510,538-551,554,560-570,599-642,645-647,663-706,709-711
+design-drafts/runtime-baseline/fragments/01-dark-collapsed-comments-closed-empty.root.html
+  s_1be0948b979c38::t_9f25e17b00845b 1,3,5,7-8
+design-drafts/runtime-baseline/fragments/02-dark-collapsed-comments-open-empty.root.html
+  s_1be0948b979c38::t_07d9c7f6535c01 1,3,5,7-8
+design-drafts/runtime-baseline/fragments/03-dark-collapsed-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_cecb1c48e9295f 1,3,5,7-8
+design-drafts/runtime-baseline/fragments/04-dark-expanded-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_eb257d7dfeed6c 1,3,5,7-8
+design-drafts/runtime-baseline/fragments/05-light-expanded-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_c8bdeca778c224 1,3,5,7-8
+design-drafts/runtime-baseline/fragments/06-light-collapsed-comments-closed-empty.root.html
+  s_1be0948b979c38::t_9e2265d323101a 1,3,5,7-8
+design-drafts/runtime-baseline/fragments/07-dark-color-compatibility.root.html
+  s_1be0948b979c38::t_f1286d2c3731da 1,3-7,15,17,19
+design-drafts/runtime-baseline/fragments/08-light-color-compatibility.root.html
+  s_1be0948b979c38::t_b0409b484917ae 1,3-7,15,17,19
+design-drafts/runtime-baseline/html/01-dark-collapsed-comments-closed-empty.html
+  s_1be0948b979c38::t_7a84bf9dd748f6 11-13,15,141,509,626,892,899-1056,1435-1606,2561,2592,2661,2900,2902,2904,2906-2907,2911
+design-drafts/runtime-baseline/html/02-dark-collapsed-comments-open-empty.html
+  s_1be0948b979c38::t_060a88006ea840 11-13,15,141,509,626,892,899-1056,1435-1606,2561,2592,2661,2900,2902,2904,2906-2907,2911
+design-drafts/runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+  s_1be0948b979c38::t_4df434b3488a75 11-13,15,141,509,626,892,899-1056,1435-1606,2561,2592,2661,2900,2902,2904,2906-2907,2911
+design-drafts/runtime-baseline/html/04-dark-expanded-comments-open-with-comments.html
+  s_1be0948b979c38::t_5314823c309b5f 11-13,15,141,509,626,892,899-1056,1435-1606,2561,2592,2661,2900,2902,2904,2906-2907,2911
+design-drafts/runtime-baseline/html/05-light-expanded-comments-open-with-comments.html
+  s_1be0948b979c38::t_3d6965ff5d40b1 11-13,15,141,509,626,892,899-1056,1435-1606,2561,2592,2661,2900,2902,2904,2906-2907,2911
+design-drafts/runtime-baseline/html/06-light-collapsed-comments-closed-empty.html
+  s_1be0948b979c38::t_85729cd0c08528 11-13,15,141,509,626,892,899-1056,1435-1606,2561,2592,2661,2900,2902,2904,2906-2907,2911
+design-drafts/runtime-baseline/html/07-dark-color-compatibility.html
+  s_1be0948b979c38::t_50cac0642d90b0 15,141,509,626,892,899-1056,1437,1495,1605,2561,2592,2661,2900,2902-2906,2914,2916,2918,2922
+design-drafts/runtime-baseline/html/08-light-color-compatibility.html
+  s_1be0948b979c38::t_66f60ec285a3ce 3,15,141,509,626,892,899-1056,1437,1495,1605,2561,2592,2661,2900,2902-2906,2914,2916,2918,2922
+docs/superpowers/specs/2026-07-15-document-outline-design.md
+  s_1be0948b979c38::t_5024e4ad36bbe1 16-18,35,46,99-104,133-134,157,170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b14856138628b65636614df6aa532d74c20b7a3e",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
