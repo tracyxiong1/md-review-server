@@ -368,6 +368,46 @@ describe('MarkdownPreview', () => {
     expect(screen.getByRole('link', { name: 'New details' })).not.toHaveAttribute('aria-current');
   });
 
+  it('does not restore a stale outline selection when returning to unchanged content', async () => {
+    const user = userEvent.setup();
+    const documentA = {
+      content: '# A overview\n\n## A details',
+      filename: 'a.md',
+      filePath: 'docs/a.md',
+    };
+    const { rerender } = render(<MarkdownPreview {...documentA} comments={[]} />);
+    Object.defineProperty(screen.getByRole('heading', { name: 'A details' }), 'scrollIntoView', {
+      configurable: true,
+      value: vi.fn(),
+    });
+
+    await user.click(screen.getByRole('link', { name: 'A details' }));
+    expect(screen.getByRole('link', { name: 'A details' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+
+    rerender(
+      <MarkdownPreview
+        content={'# B overview\n\n## B details'}
+        filename="b.md"
+        filePath="docs/b.md"
+        comments={[]}
+      />,
+    );
+    expect(screen.getByRole('link', { name: 'B overview' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+
+    rerender(<MarkdownPreview {...documentA} comments={[]} />);
+    expect(screen.getByRole('link', { name: 'A overview' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+    expect(screen.getByRole('link', { name: 'A details' })).not.toHaveAttribute('aria-current');
+  });
+
   it('shows processed comment markers on target lines', async () => {
     const user = userEvent.setup();
     const targetComments: Comment[] = [

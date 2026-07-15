@@ -398,16 +398,29 @@ export const MarkdownPreview = ({
   const { frontmatter, body, bodyLineOffset } = parseMdContent(content, filename);
   const documentKey = filePath || filename;
   const headings = useMemo(() => extractDocumentHeadings(body), [body]);
-  const [outlineNavigation, setOutlineNavigation] = useState<{
+  const [outlineState, setOutlineState] = useState<{
     documentKey: string;
-    body: string;
-    headingId: string;
-  } | null>(null);
+    headings: typeof headings;
+    activeHeadingId: string | null;
+  }>(() => ({
+    documentKey,
+    headings,
+    activeHeadingId: headings[0]?.id || null,
+  }));
+  const outlineStateIsCurrent =
+    outlineState.documentKey === documentKey && outlineState.headings === headings;
+
+  if (!outlineStateIsCurrent) {
+    setOutlineState({
+      documentKey,
+      headings,
+      activeHeadingId: headings[0]?.id || null,
+    });
+  }
+
   const activeHeadingId =
-    outlineNavigation?.documentKey === documentKey &&
-    outlineNavigation.body === body &&
-    headings.some((heading) => heading.id === outlineNavigation.headingId)
-      ? outlineNavigation.headingId
+    outlineStateIsCurrent && headings.some((heading) => heading.id === outlineState.activeHeadingId)
+      ? outlineState.activeHeadingId
       : headings[0]?.id || null;
   const frontmatterEntries = Object.entries(frontmatter);
   const canCompare = Boolean(compareFilename && typeof compareContent === 'string');
@@ -632,7 +645,7 @@ export const MarkdownPreview = ({
       behavior: reduceMotion ? 'auto' : 'smooth',
       block: 'start',
     });
-    setOutlineNavigation({ documentKey, body, headingId });
+    setOutlineState({ documentKey, headings, activeHeadingId: headingId });
   };
 
   return (
