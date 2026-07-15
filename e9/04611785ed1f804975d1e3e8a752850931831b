@@ -1,0 +1,23 @@
+src/components/MarkdownPreview.test.tsx
+  s_f496cd7b72f94a::t_5fc50db6a765a9 333-429
+src/components/MarkdownPreview.tsx
+  s_f496cd7b72f94a::t_a5db6e7417b239 615-620,626
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e904611785ed1f804975d1e3e8a752850931831b",
+  "prompts": {},
+  "sessions": {
+    "s_f496cd7b72f94a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f6633-67d2-7363-8374-384b3badb4f9",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
