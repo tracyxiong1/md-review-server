@@ -1,0 +1,31 @@
+src/components/MarkdownPreview.test.tsx
+  s_31c438253f7965::t_52838950812526 363-402
+src/components/MarkdownPreview.tsx
+  s_1be0948b979c38::t_20065586182928 392,394-411,413-414,639
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5a614612d857d4bfe6749c2013a4e0c8e050190d",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    },
+    "s_31c438253f7965": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f65c2-36ee-7f50-86f4-824ad18b4edd",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
