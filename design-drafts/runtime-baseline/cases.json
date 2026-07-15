@@ -14,14 +14,39 @@
       "commentItems": [],
       "comments": null,
       "commentsTop": null,
+      "documentBody": {
+        "h": 560,
+        "text": "Markdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current flow Users selec",
+        "w": 663,
+        "x": 79,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 562,
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making ",
+        "w": 697,
+        "x": 46,
+        "y": 70
+      },
       "main": {
         "h": 994,
-        "text": "no-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current fl",
+        "text": "no-comments.mdCodex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis w",
         "w": 739,
         "x": 46,
         "y": 0
       },
       "markers": [],
+      "outline": {
+        "active": "Codex handoff review",
+        "h": 560,
+        "headings": 4,
+        "mode": "compact",
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure state",
+        "tickWidths": [18, 15, 15, 15],
+        "w": 32,
+        "x": 47,
+        "y": 71
+      },
       "sidebar": {
         "h": 994,
         "text": "Light",
@@ -65,14 +90,39 @@
         "x": 506,
         "y": 0
       },
+      "documentBody": {
+        "h": 638,
+        "text": "Markdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current flow Users selec",
+        "w": 425,
+        "x": 79,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 640,
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making ",
+        "w": 459,
+        "x": 46,
+        "y": 70
+      },
       "main": {
         "h": 994,
-        "text": "no-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current fl",
+        "text": "no-comments.mdCodex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis w",
         "w": 739,
         "x": 46,
         "y": 0
       },
       "markers": [],
+      "outline": {
+        "active": "Codex handoff review",
+        "h": 638,
+        "headings": 4,
+        "mode": "compact",
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure state",
+        "tickWidths": [18, 15, 15, 15],
+        "w": 32,
+        "x": 47,
+        "y": 71
+      },
       "sidebar": {
         "h": 994,
         "text": "Light",
@@ -135,9 +185,23 @@
         "x": 506,
         "y": 0
       },
+      "documentBody": {
+        "h": 638,
+        "text": "Markdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current flow Users selec",
+        "w": 425,
+        "x": 79,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 640,
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making ",
+        "w": 459,
+        "x": 46,
+        "y": 70
+      },
       "main": {
         "h": 994,
-        "text": "with-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current ",
+        "text": "with-comments.mdCodex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis",
         "w": 739,
         "x": 46,
         "y": 0
@@ -149,8 +213,8 @@
           "text": "",
           "title": "Review comments on line 3",
           "w": 16,
-          "x": 55,
-          "y": 229
+          "x": 71,
+          "y": 228
         },
         {
           "cls": "processed-comment-marker-button status-open",
@@ -158,8 +222,8 @@
           "text": "",
           "title": "Review comments on line 9",
           "w": 16,
-          "x": 55,
-          "y": 429
+          "x": 71,
+          "y": 428
         },
         {
           "cls": "processed-comment-marker-button status-resolved",
@@ -167,10 +231,21 @@
           "text": "",
           "title": "Review comments on line 13",
           "w": 16,
-          "x": 55,
-          "y": 571
+          "x": 71,
+          "y": 570
         }
       ],
+      "outline": {
+        "active": "Codex handoff review",
+        "h": 638,
+        "headings": 4,
+        "mode": "compact",
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure state",
+        "tickWidths": [18, 15, 15, 15],
+        "w": 32,
+        "x": 47,
+        "y": 71
+      },
       "sidebar": {
         "h": 994,
         "text": "Light",
@@ -233,9 +308,23 @@
         "x": 506,
         "y": 0
       },
+      "documentBody": {
+        "h": 927,
+        "text": "Markdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current flow Users selec",
+        "w": 231,
+        "x": 273,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 929,
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making ",
+        "w": 265,
+        "x": 240,
+        "y": 70
+      },
       "main": {
         "h": 994,
-        "text": "with-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current ",
+        "text": "with-comments.mdCodex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis",
         "w": 545,
         "x": 240,
         "y": 0
@@ -247,8 +336,8 @@
           "text": "",
           "title": "Review comments on line 3",
           "w": 16,
-          "x": 249,
-          "y": 311
+          "x": 265,
+          "y": 310
         },
         {
           "cls": "processed-comment-marker-button status-open",
@@ -256,8 +345,8 @@
           "text": "",
           "title": "Review comments on line 9",
           "w": 16,
-          "x": 249,
-          "y": 615
+          "x": 265,
+          "y": 614
         },
         {
           "cls": "processed-comment-marker-button status-resolved",
@@ -265,20 +354,31 @@
           "text": "",
           "title": "Review comments on line 13",
           "w": 16,
-          "x": 249,
-          "y": 808
+          "x": 265,
+          "y": 807
         }
       ],
+      "outline": {
+        "active": "Codex handoff review",
+        "h": 927,
+        "headings": 4,
+        "mode": "compact",
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure state",
+        "tickWidths": [18, 15, 15, 15],
+        "w": 32,
+        "x": 241,
+        "y": 71
+      },
       "sidebar": {
         "h": 994,
-        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Light",
+        "text": "md-review-serverFilesdocs3color-compatibility.mdno-comments.mdwith-comments.md2Versionsdraftcurrent2Light",
         "w": 240,
         "x": 0,
         "y": 0
       },
       "sidebarContent": {
         "h": 994,
-        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Light",
+        "text": "md-review-serverFilesdocs3color-compatibility.mdno-comments.mdwith-comments.md2Versionsdraftcurrent2Light",
         "w": 239,
         "x": 0,
         "y": 0
@@ -337,9 +437,23 @@
         "x": 506,
         "y": 0
       },
+      "documentBody": {
+        "h": 927,
+        "text": "Markdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current flow Users selec",
+        "w": 231,
+        "x": 273,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 929,
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making ",
+        "w": 265,
+        "x": 240,
+        "y": 70
+      },
       "main": {
         "h": 994,
-        "text": "with-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current ",
+        "text": "with-comments.mdCodex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis",
         "w": 545,
         "x": 240,
         "y": 0
@@ -351,8 +465,8 @@
           "text": "",
           "title": "Review comments on line 3",
           "w": 16,
-          "x": 249,
-          "y": 311
+          "x": 265,
+          "y": 310
         },
         {
           "cls": "processed-comment-marker-button status-open",
@@ -360,8 +474,8 @@
           "text": "",
           "title": "Review comments on line 9",
           "w": 16,
-          "x": 249,
-          "y": 615
+          "x": 265,
+          "y": 614
         },
         {
           "cls": "processed-comment-marker-button status-resolved",
@@ -369,20 +483,31 @@
           "text": "",
           "title": "Review comments on line 13",
           "w": 16,
-          "x": 249,
-          "y": 808
+          "x": 265,
+          "y": 807
         }
       ],
+      "outline": {
+        "active": "Codex handoff review",
+        "h": 927,
+        "headings": 4,
+        "mode": "compact",
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure state",
+        "tickWidths": [18, 15, 15, 15],
+        "w": 32,
+        "x": 241,
+        "y": 71
+      },
       "sidebar": {
         "h": 994,
-        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Dark",
+        "text": "md-review-serverFilesdocs3color-compatibility.mdno-comments.mdwith-comments.md2Versionsdraftcurrent2Dark",
         "w": 240,
         "x": 0,
         "y": 0
       },
       "sidebarContent": {
         "h": 994,
-        "text": "md-review-serverFilesdocs2no-comments.mdwith-comments.md2Versionsdraftcurrent2Dark",
+        "text": "md-review-serverFilesdocs3color-compatibility.mdno-comments.mdwith-comments.md2Versionsdraftcurrent2Dark",
         "w": 239,
         "x": 0,
         "y": 0
@@ -410,14 +535,39 @@
       "commentItems": [],
       "comments": null,
       "commentsTop": null,
+      "documentBody": {
+        "h": 560,
+        "text": "Markdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current flow Users selec",
+        "w": 663,
+        "x": 79,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 562,
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making ",
+        "w": 697,
+        "x": 46,
+        "y": 70
+      },
       "main": {
         "h": 994,
-        "text": "no-comments.mdMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis without making the user return to chat manually. Current fl",
+        "text": "no-comments.mdCodex handoff reviewCurrent flowProposed flowFailure stateMarkdown preview · local reviewCodex handoff review The review page collects comments on selected Markdown text. Codex should read open comments and continue analysis w",
         "w": 739,
         "x": 46,
         "y": 0
       },
       "markers": [],
+      "outline": {
+        "active": "Codex handoff review",
+        "h": 560,
+        "headings": 4,
+        "mode": "compact",
+        "text": "Codex handoff reviewCurrent flowProposed flowFailure state",
+        "tickWidths": [18, 15, 15, 15],
+        "w": 32,
+        "x": 47,
+        "y": 71
+      },
       "sidebar": {
         "h": 994,
         "text": "Dark",
@@ -446,43 +596,55 @@
     "fragment": "fragments/07-dark-color-compatibility.root.html",
     "metrics": {
       "app": "dev-container sidebar-closed ",
+      "commentItems": [],
+      "comments": null,
+      "commentsTop": null,
+      "documentBody": {
+        "h": 1127,
+        "text": "Markdown preview · local reviewColor compatibility baseline This fixture validates Mermaid and syntax highlighting against the app's light and dark themes. Sequence diagram Collab ClientLocal Y.DocCanvasDataSdkReact / CanvasActionsCollab Cl",
+        "w": 663,
+        "x": 79,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 1129,
+        "text": "Color compatibility baselineSequence diagramFlowchartJSONTypeScriptMarkdown preview · local reviewColor compatibility baseline This fixture validates Mermaid and syntax highlighting against the app's light and dark themes. Sequence diagram ",
+        "w": 697,
+        "x": 46,
+        "y": 70
+      },
+      "main": {
+        "h": 994,
+        "text": "color-compatibility.mdColor compatibility baselineSequence diagramFlowchartJSONTypeScriptMarkdown preview · local reviewColor compatibility baseline This fixture validates Mermaid and syntax highlighting against the app's light and dark the",
+        "w": 739,
+        "x": 46,
+        "y": 0
+      },
+      "markers": [],
+      "outline": {
+        "active": "Color compatibility baseline",
+        "h": 1127,
+        "headings": 5,
+        "mode": "compact",
+        "text": "Color compatibility baselineSequence diagramFlowchartJSONTypeScript",
+        "tickWidths": [18, 15, 15, 15, 15],
+        "w": 32,
+        "x": 47,
+        "y": 71
+      },
+      "sidebar": {
+        "h": 994,
+        "text": "Light",
+        "w": 46,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": null,
       "theme": "dark",
       "url": "http://127.0.0.1:6160/?file=docs%2Fcolor-compatibility.md",
-      "viewport": { "h": 720, "w": 1280 },
-      "main": { "h": 720, "w": 1192, "x": 46, "y": 0 },
-      "comments": { "h": 720, "w": 42, "x": 1238, "y": 0 },
-      "mermaids": [
-        {
-          "h": 295.5,
-          "w": 700,
-          "x": 292,
-          "y": 324.7421875,
-          "viewBox": "-50 -10 948 395",
-          "actorText": "rgb(242, 242, 242)",
-          "messageText": "rgb(214, 214, 211)",
-          "nodeText": null
-        },
-        {
-          "h": 152.875,
-          "w": 700,
-          "x": 292,
-          "y": 713.1875,
-          "viewBox": "0 0 859.1796875 174",
-          "actorText": null,
-          "messageText": null,
-          "nodeText": "rgb(238, 238, 236)"
-        }
-      ],
-      "code": {
-        "background": "rgb(34, 34, 34)",
-        "tokens": [
-          { "cls": "hljs-punctuation", "color": "rgb(214, 214, 211)" },
-          { "cls": "hljs-attr", "color": "rgb(159, 199, 234)" },
-          { "cls": "hljs-number", "color": "rgb(227, 188, 114)" },
-          { "cls": "hljs-string", "color": "rgb(149, 204, 186)" },
-          { "cls": "hljs-literal", "color": "rgb(201, 177, 229)" },
-          { "cls": "hljs-keyword", "color": "rgb(240, 160, 170)" }
-        ]
+      "viewport": {
+        "h": 994,
+        "w": 785
       }
     }
   },
@@ -498,43 +660,55 @@
     "fragment": "fragments/08-light-color-compatibility.root.html",
     "metrics": {
       "app": "dev-container sidebar-closed ",
+      "commentItems": [],
+      "comments": null,
+      "commentsTop": null,
+      "documentBody": {
+        "h": 1127,
+        "text": "Markdown preview · local reviewColor compatibility baseline This fixture validates Mermaid and syntax highlighting against the app's light and dark themes. Sequence diagram Collab ClientLocal Y.DocCanvasDataSdkReact / CanvasActionsCollab Cl",
+        "w": 663,
+        "x": 79,
+        "y": 71
+      },
+      "documentCard": {
+        "h": 1129,
+        "text": "Color compatibility baselineSequence diagramFlowchartJSONTypeScriptMarkdown preview · local reviewColor compatibility baseline This fixture validates Mermaid and syntax highlighting against the app's light and dark themes. Sequence diagram ",
+        "w": 697,
+        "x": 46,
+        "y": 70
+      },
+      "main": {
+        "h": 994,
+        "text": "color-compatibility.mdColor compatibility baselineSequence diagramFlowchartJSONTypeScriptMarkdown preview · local reviewColor compatibility baseline This fixture validates Mermaid and syntax highlighting against the app's light and dark the",
+        "w": 739,
+        "x": 46,
+        "y": 0
+      },
+      "markers": [],
+      "outline": {
+        "active": "Color compatibility baseline",
+        "h": 1127,
+        "headings": 5,
+        "mode": "compact",
+        "text": "Color compatibility baselineSequence diagramFlowchartJSONTypeScript",
+        "tickWidths": [18, 15, 15, 15, 15],
+        "w": 32,
+        "x": 47,
+        "y": 71
+      },
+      "sidebar": {
+        "h": 994,
+        "text": "Dark",
+        "w": 46,
+        "x": 0,
+        "y": 0
+      },
+      "sidebarContent": null,
       "theme": "light",
       "url": "http://127.0.0.1:6160/?file=docs%2Fcolor-compatibility.md",
-      "viewport": { "h": 720, "w": 1280 },
-      "main": { "h": 720, "w": 1192, "x": 46, "y": 0 },
-      "comments": { "h": 720, "w": 42, "x": 1238, "y": 0 },
-      "mermaids": [
-        {
-          "h": 295.5,
-          "w": 700,
-          "x": 292,
-          "y": 324.7421875,
-          "viewBox": "-50 -10 948 395",
-          "actorText": "rgb(36, 36, 36)",
-          "messageText": "rgb(63, 63, 60)",
-          "nodeText": null
-        },
-        {
-          "h": 152.875,
-          "w": 700,
-          "x": 292,
-          "y": 713.1875,
-          "viewBox": "0 0 859.1796875 174",
-          "actorText": null,
-          "messageText": null,
-          "nodeText": "rgb(36, 36, 36)"
-        }
-      ],
-      "code": {
-        "background": "rgb(238, 238, 236)",
-        "tokens": [
-          { "cls": "hljs-punctuation", "color": "rgb(63, 63, 60)" },
-          { "cls": "hljs-attr", "color": "rgb(36, 82, 122)" },
-          { "cls": "hljs-number", "color": "rgb(138, 75, 14)" },
-          { "cls": "hljs-string", "color": "rgb(31, 107, 91)" },
-          { "cls": "hljs-literal", "color": "rgb(107, 73, 120)" },
-          { "cls": "hljs-keyword", "color": "rgb(122, 46, 58)" }
-        ]
+      "viewport": {
+        "h": 994,
+        "w": 785
       }
     }
   }
