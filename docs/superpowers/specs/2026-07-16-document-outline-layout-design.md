@@ -35,7 +35,8 @@ Below the detached-outline threshold:
 ### Constrained Preview
 
 - The preview scroll area keeps its existing vertical padding but removes fixed horizontal padding, so the document uses the full space between application side panels.
-- The existing document-card container query remains authoritative: below `520px`, the outline becomes the `32px` compact tick rail.
+- The document-card container query remains authoritative: below `760px`, the outline becomes the `32px` compact tick rail so reading width takes priority.
+- The compact tick rail has no right divider. Spacing separates it from the body, while the blue active tick remains the location cue. The integrated full-outline state keeps its existing divider.
 - Compact tooltip boundaries, hierarchy ticks, click targets, and keyboard behavior remain unchanged.
 
 ## Navigation State Decision
@@ -48,7 +49,7 @@ When an outline item is activated:
 2. Set the clicked heading active immediately.
 3. Start the existing reduced-motion-aware `scrollIntoView` behavior.
 4. While the programmatic scroll is moving, ignore intermediate active-heading calculations.
-5. When scrolling settles, clear the pending navigation and run one final position calculation.
+5. When scrolling settles, clear the pending navigation without replacing the clicked active item. The next ordinary scroll event resumes position tracking.
 
 Wheel, touch, pointer, or scrolling-key input from the user cancels the pending programmatic navigation so ordinary scroll tracking resumes without waiting for the animation to finish.
 
@@ -84,7 +85,8 @@ Runtime verification must cover:
 - Wide-screen outline placement does not reduce the document card's width.
 - The outline is visibly separated from the document and aligned near the preview's left edge on wide screens.
 - Constrained previews do not reserve the previous `30px` left and right gutters.
-- Compact mode still activates below a `520px` document-card width.
+- Compact mode activates below a `760px` document-card width.
+- Compact mode has no gray divider between the tick rail and body; full integrated mode retains its divider.
 - Clicking a heading produces one stable active state, not a sequence of intermediate active headings.
 - Manual scrolling continues to update the active heading.
 - Existing tests, build, lint, and formatting checks pass.
