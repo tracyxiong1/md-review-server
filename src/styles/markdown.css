@@ -389,9 +389,10 @@
   color: var(--text-primary);
 }
 
-@container document-outline-card (width < 520px) {
+@container document-outline-card (width < 760px) {
   .document-outline-column {
     width: 32px;
+    border-right: 0;
   }
 
   .document-outline {
@@ -452,16 +453,48 @@
 }
 
 .markdown-reader-scroll {
+  container-name: markdown-preview;
+  container-type: inline-size;
   min-height: 0;
   flex: 1;
   overflow: auto;
-  padding: 24px 30px 72px;
+  padding: 24px 0 72px;
 }
 
 .markdown-reader {
   position: relative;
   width: min(820px, 100%);
   margin: 0 auto;
+}
+
+.markdown-reader.with-document-outline {
+  width: min(980px, 100%);
+}
+
+@container markdown-preview (width >= 1240px) {
+  .markdown-reader.with-document-outline {
+    width: 100%;
+  }
+
+  .markdown-reader.with-document-outline .markdown-content.with-document-outline {
+    display: block;
+    position: static;
+    width: min(820px, 100%);
+    margin-inline: auto;
+  }
+
+  .markdown-reader.with-document-outline .document-outline-column {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 24px;
+    width: 160px;
+    border-right: 0;
+  }
+
+  .markdown-reader.with-document-outline .document-outline {
+    padding-inline: 0;
+  }
 }
 
 .markdown-container.diff-active .markdown-reader {
@@ -2108,7 +2141,7 @@
   }
 
   .markdown-reader-scroll {
-    padding: 22px 24px 64px;
+    padding: 22px 0 64px;
   }
 
   .markdown-document-body {
@@ -2139,7 +2172,7 @@
   }
 
   .markdown-reader-scroll {
-    padding: 18px 16px 56px;
+    padding: 18px 0 56px;
   }
 
   .markdown-document-body {

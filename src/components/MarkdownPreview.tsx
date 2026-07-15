@@ -51,6 +51,16 @@ interface ProcessedCommentMarkerProps {
 }
 
 const EMPTY_COMMENTS: Comment[] = [];
+const OUTLINE_SCROLL_SETTLE_DELAY = 120;
+const OUTLINE_SCROLL_KEYS = new Set([
+  'ArrowDown',
+  'ArrowUp',
+  'End',
+  'Home',
+  'PageDown',
+  'PageUp',
+  ' ',
+]);
 
 const getCommentText = (comment: Comment) => comment.comment || comment.text || '';
 
@@ -391,6 +401,9 @@ export const MarkdownPreview = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const readerScrollRef = useRef<HTMLDivElement>(null);
   const markerLayerRef = useRef<HTMLDivElement>(null);
+  const pendingOutlineNavigationRef = useRef<string | null>(null);
+  const outlineScrollSettleTimerRef = useRef<number | null>(null);
+  const finishOutlineNavigationRef = useRef<() => void>(() => undefined);
   const [activeDiffKey, setActiveDiffKey] = useState<string | null>(null);
   const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
   const [markerPositions, setMarkerPositions] = useState<Record<number, number>>({});
@@ -588,6 +601,10 @@ export const MarkdownPreview = ({
     let frameId = 0;
 
     const updateActiveHeading = () => {
+      if (pendingOutlineNavigationRef.current) {
+        return;
+      }
+
       const threshold = reader.getBoundingClientRect().top + 96;
       let nextActiveHeadingId = headings[0].id;
 
@@ -618,6 +635,34 @@ export const MarkdownPreview = ({
     const scheduleActiveHeadingUpdate = () => {
       window.cancelAnimationFrame(frameId);
       frameId = window.requestAnimationFrame(updateActiveHeading);
+
+      if (pendingOutlineNavigationRef.current) {
+        if (outlineScrollSettleTimerRef.current !== null) {
+          window.clearTimeout(outlineScrollSettleTimerRef.current);
+        }
+        outlineScrollSettleTimerRef.current = window.setTimeout(() => {
+          finishOutlineNavigationRef.current();
+        }, OUTLINE_SCROLL_SETTLE_DELAY);
+      }
+    };
+
+    const finishOutlineNavigation = () => {
+      pendingOutlineNavigationRef.current = null;
+      outlineScrollSettleTimerRef.current = null;
+    };
+    finishOutlineNavigationRef.current = finishOutlineNavigation;
+
+    const cancelOutlineNavigation = () => {
+      pendingOutlineNavigationRef.current = null;
+      if (outlineScrollSettleTimerRef.current !== null) {
+        window.clearTimeout(outlineScrollSettleTimerRef.current);
+        outlineScrollSettleTimerRef.current = null;
+      }
+    };
+    const handleNavigationKeyDown = (event: KeyboardEvent) => {
+      if (OUTLINE_SCROLL_KEYS.has(event.key)) {
+        cancelOutlineNavigation();
+      }
     };
 
     scheduleActiveHeadingUpdate();
@@ -628,12 +673,26 @@ export const MarkdownPreview = ({
     resizeObserver?.observe(reader);
     resizeObserver?.observe(contentElement);
     reader.addEventListener('scroll', scheduleActiveHeadingUpdate, { passive: true });
+    reader.addEventListener('wheel', cancelOutlineNavigation, { passive: true });
+    reader.addEventListener('touchstart', cancelOutlineNavigation, { passive: true });
+    reader.addEventListener('pointerdown', cancelOutlineNavigation, { passive: true });
+    window.addEventListener('keydown', handleNavigationKeyDown);
     window.addEventListener('resize', scheduleActiveHeadingUpdate);
 
     return () => {
       window.cancelAnimationFrame(frameId);
+      if (outlineScrollSettleTimerRef.current !== null) {
+        window.clearTimeout(outlineScrollSettleTimerRef.current);
+        outlineScrollSettleTimerRef.current = null;
+      }
+      pendingOutlineNavigationRef.current = null;
+      finishOutlineNavigationRef.current = () => undefined;
       resizeObserver?.disconnect();
       reader.removeEventListener('scroll', scheduleActiveHeadingUpdate);
+      reader.removeEventListener('wheel', cancelOutlineNavigation);
+      reader.removeEventListener('touchstart', cancelOutlineNavigation);
+      reader.removeEventListener('pointerdown', cancelOutlineNavigation);
+      window.removeEventListener('keydown', handleNavigationKeyDown);
       window.removeEventListener('resize', scheduleActiveHeadingUpdate);
     };
   }, [documentKey, headings, showOutline]);
@@ -704,12 +763,19 @@ export const MarkdownPreview = ({
     const heading = contentRef.current?.querySelector<HTMLElement>(`#${headingId}`);
     if (!heading) return;
 
+    pendingOutlineNavigationRef.current = headingId;
+    if (outlineScrollSettleTimerRef.current !== null) {
+      window.clearTimeout(outlineScrollSettleTimerRef.current);
+    }
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     heading.scrollIntoView({
       behavior: reduceMotion ? 'auto' : 'smooth',
       block: 'start',
     });
     setOutlineState({ documentKey, headings, activeHeadingId: headingId });
+    outlineScrollSettleTimerRef.current = window.setTimeout(() => {
+      finishOutlineNavigationRef.current();
+    }, OUTLINE_SCROLL_SETTLE_DELAY);
   };
 
   return (
@@ -775,7 +841,7 @@ export const MarkdownPreview = ({
           </div>
         </header>
         <div className="markdown-reader-scroll" ref={readerScrollRef}>
-          <section className="markdown-reader">
+          <section className={`markdown-reader ${showOutline ? 'with-document-outline' : ''}`}>
             {showDiff && canCompare ? (
               <div className="markdown-diff-view">
                 <ReactDiffViewer

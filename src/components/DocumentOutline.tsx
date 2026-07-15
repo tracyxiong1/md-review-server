@@ -15,7 +15,7 @@ interface TooltipPosition {
   width: number;
 }
 
-const COMPACT_OUTLINE_WIDTH = 520;
+const COMPACT_OUTLINE_WIDTH = 760;
 const TOOLTIP_BORDER_TOTAL = 2;
 const TOOLTIP_CLOSE_DELAY = 80;
 const TOOLTIP_GAP = 8;

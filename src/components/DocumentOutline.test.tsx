@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import markdownStyles from '../styles/markdown.css?raw';
 import { DocumentOutline } from './DocumentOutline';
 
 const headings = [
@@ -85,6 +86,15 @@ afterEach(() => {
 });
 
 describe('DocumentOutline', () => {
+  it('removes the divider only from the compact outline rail', () => {
+    expect(markdownStyles).toMatch(
+      /\.document-outline-column\s*{[^}]*border-right:\s*1px solid var\(--border-secondary\)/,
+    );
+    expect(markdownStyles).toMatch(
+      /@container document-outline-card \(width < 760px\)\s*{\s*\.document-outline-column\s*{\s*width:\s*32px;\s*border-right:\s*0;/,
+    );
+  });
+
   it('renders a semantic outline with hierarchy, active state, and full-text labels', () => {
     const { container } = render(
       <DocumentOutline
@@ -133,7 +143,7 @@ describe('DocumentOutline', () => {
 
   it('keeps native titles only in the full outline and updates them across the breakpoint', () => {
     let resizeObserverCallback: ResizeObserverCallback | undefined;
-    let cardWidth = 600;
+    let cardWidth = 760;
     const originalResizeObserver = globalThis.ResizeObserver;
 
     class MockResizeObserver {
@@ -162,11 +172,11 @@ describe('DocumentOutline', () => {
       act(() => resizeObserverCallback?.([], {} as ResizeObserver));
       expect(implementation).toHaveAttribute('title', 'A very long implementation section');
 
-      cardWidth = 240;
+      cardWidth = 759;
       act(() => resizeObserverCallback?.([], {} as ResizeObserver));
       expect(implementation).not.toHaveAttribute('title');
 
-      cardWidth = 520;
+      cardWidth = 760;
       act(() => resizeObserverCallback?.([], {} as ResizeObserver));
       expect(implementation).toHaveAttribute('title', 'A very long implementation section');
     } finally {

@@ -50,8 +50,8 @@ Detailed DOM measurements are stored in [cases.json](./cases.json).
 
 - Comments panel width is about `300px`.
 - Collapsed sidebar width is about `46px`.
-- Heading navigation is `160px` when the document card is at least `520px` wide and a `32px` tick rail below that threshold.
-- At the `785px` baseline viewport, card widths are `665px` with both side panels collapsed, `427px` with comments open, and `233px` with both file and comments panels open.
+- Heading navigation is `160px` when the document card is at least `760px` wide and a divider-free `32px` tick rail below that threshold.
+- At the `785px` baseline viewport, card widths are `697px` with both side panels collapsed, `459px` with comments open, and `265px` with both file and comments panels open. Each case uses the compact rail so reading width takes priority.
 - Comments header without actions is about `113px` high.
 - Comments header with `Copy All` and `Clear` actions is about `143px` high.
 - Comment markers are compact `16px` buttons anchored in the document gutter.

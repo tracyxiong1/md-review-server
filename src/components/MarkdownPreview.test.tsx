@@ -242,12 +242,14 @@ describe('MarkdownPreview', () => {
     const overviewHeading = screen.getByRole('heading', { name: 'Overview' });
     const detailsHeading = screen.getByRole('heading', { name: 'Details' });
     const markdownContent = container.querySelector('.markdown-content');
+    const markdownReader = container.querySelector('.markdown-reader');
     const documentBody = container.querySelector('.markdown-document-body');
     const outline = screen.getByRole('navigation', { name: 'Document outline' });
 
     expect(overviewHeading).toHaveAttribute('id', 'markdown-heading-1');
     expect(detailsHeading).toHaveAttribute('id', 'markdown-heading-3');
     expect(markdownContent).toHaveClass('with-document-outline');
+    expect(markdownReader).toHaveClass('with-document-outline');
     expect(documentBody).toBeInTheDocument();
     expect(markdownContent).toContainElement(outline);
     expect(markdownContent).toContainElement(documentBody as HTMLElement);
@@ -280,6 +282,79 @@ describe('MarkdownPreview', () => {
       'location',
     );
     expect(window.location.hash).toBe('#existing');
+  });
+
+  it('keeps the selected outline heading active during smooth navigation', async () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      });
+
+    const { container } = render(
+      <MarkdownPreview
+        content={'# Overview\n\n## Middle\n\n## Target'}
+        filename="guide.md"
+        comments={[]}
+      />,
+    );
+    const reader = container.querySelector<HTMLElement>('.markdown-reader-scroll');
+    const overviewHeading = screen.getByRole('heading', { name: 'Overview' });
+    const middleHeading = screen.getByRole('heading', { name: 'Middle' });
+    const targetHeading = screen.getByRole('heading', { name: 'Target' });
+
+    expect(reader).not.toBeNull();
+
+    const readerRectSpy = vi
+      .spyOn(reader!, 'getBoundingClientRect')
+      .mockReturnValue({ top: 0 } as DOMRect);
+    const overviewRectSpy = vi
+      .spyOn(overviewHeading, 'getBoundingClientRect')
+      .mockReturnValue({ top: 20 } as DOMRect);
+    const middleRectSpy = vi
+      .spyOn(middleHeading, 'getBoundingClientRect')
+      .mockReturnValue({ top: 60 } as DOMRect);
+    const targetRectSpy = vi
+      .spyOn(targetHeading, 'getBoundingClientRect')
+      .mockReturnValue({ top: 140 } as DOMRect);
+    Object.defineProperty(targetHeading, 'scrollIntoView', {
+      configurable: true,
+      value: vi.fn(),
+    });
+
+    try {
+      fireEvent.click(screen.getByRole('link', { name: 'Target, H2' }));
+      expect(screen.getByRole('link', { name: 'Target, H2' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+
+      fireEvent.scroll(reader!);
+      act(() => frameCallbacks.shift()?.(16));
+
+      expect(screen.getByRole('link', { name: 'Target, H2' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+
+      await act(async () => {
+        await new Promise((resolve) => window.setTimeout(resolve, 140));
+      });
+
+      expect(screen.getByRole('link', { name: 'Target, H2' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+    } finally {
+      Reflect.deleteProperty(targetHeading, 'scrollIntoView');
+      targetRectSpy.mockRestore();
+      middleRectSpy.mockRestore();
+      overviewRectSpy.mockRestore();
+      readerRectSpy.mockRestore();
+      requestAnimationFrameSpy.mockRestore();
+    }
   });
 
   it('tracks the active outline heading while the document scrolls', () => {

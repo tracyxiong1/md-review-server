@@ -27,7 +27,8 @@ Refine the shipped document outline so it uses wide-screen whitespace instead of
 - On wide previews, place the full outline near the preview's left edge instead of attaching it to the document card.
 - Do not add a separate outline card, toolbar, or collapse control.
 - Remove the preview's unused horizontal gutter when space is constrained.
-- Preserve the `520px` compact-outline threshold and existing tooltip behavior.
+- Use a `760px` compact-outline threshold and preserve the existing tooltip behavior.
+- Remove the compact rail's right divider while retaining the integrated full-outline divider and blue active tick.
 - Keep comments about `300px` wide and do not change server APIs.
 - A clicked outline item must remain active throughout programmatic smooth scrolling.
 
