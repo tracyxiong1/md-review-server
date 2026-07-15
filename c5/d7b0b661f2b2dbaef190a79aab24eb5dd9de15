@@ -1,0 +1,23 @@
+design-drafts/active/2026-07-16-document-outline-layout/BRIEF.md
+  s_1be0948b979c38::t_a508c10a06b3c2 1-36
+docs/superpowers/specs/2026-07-16-document-outline-layout-design.md
+  s_1be0948b979c38::t_d72ffdc81d9e8c 1-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c5d7b0b661f2b2dbaef190a79aab24eb5dd9de15",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
