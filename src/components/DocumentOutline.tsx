@@ -16,6 +16,7 @@ interface TooltipPosition {
 }
 
 const COMPACT_OUTLINE_WIDTH = 520;
+const TOOLTIP_BORDER_TOTAL = 2;
 const TOOLTIP_CLOSE_DELAY = 80;
 const TOOLTIP_GAP = 8;
 const TOOLTIP_INSET = 12;
@@ -34,6 +35,7 @@ export const DocumentOutline = ({
   const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
   const hoverCloseTimerRef = useRef<number | null>(null);
   const positionFrameRef = useRef<number | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
   const [isCompact, setIsCompact] = useState<boolean | null>(null);
   const [isTooltipDismissed, setIsTooltipDismissed] = useState(false);
@@ -53,6 +55,7 @@ export const DocumentOutline = ({
     clearHoverCloseTimer();
     hoverCloseTimerRef.current = window.setTimeout(() => {
       hoverCloseTimerRef.current = null;
+      setTooltipPosition(null);
       setHoveredHeadingId(null);
     }, TOOLTIP_CLOSE_DELAY);
   }, [clearHoverCloseTimer]);
@@ -174,13 +177,51 @@ export const DocumentOutline = ({
     if (!tooltipHeadingId) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      clearHoverCloseTimer();
-      setIsTooltipDismissed(true);
+      if (event.key === 'Escape') {
+        clearHoverCloseTimer();
+        setTooltipPosition(null);
+        setIsTooltipDismissed(true);
+        return;
+      }
+
+      const focusedLink = focusedHeadingId ? linkRefs.current.get(focusedHeadingId) : null;
+      if (!focusedLink || document.activeElement !== focusedLink) return;
+
+      const tooltip = tooltipRef.current;
+      if (!tooltip) return;
+
+      const maxScrollTop = Math.max(0, tooltip.scrollHeight - tooltip.clientHeight);
+      let nextScrollTop: number;
+
+      switch (event.key) {
+        case 'ArrowDown':
+          nextScrollTop = tooltip.scrollTop + 40;
+          break;
+        case 'ArrowUp':
+          nextScrollTop = tooltip.scrollTop - 40;
+          break;
+        case 'PageDown':
+          nextScrollTop = tooltip.scrollTop + tooltip.clientHeight;
+          break;
+        case 'PageUp':
+          nextScrollTop = tooltip.scrollTop - tooltip.clientHeight;
+          break;
+        case 'Home':
+          nextScrollTop = 0;
+          break;
+        case 'End':
+          nextScrollTop = maxScrollTop;
+          break;
+        default:
+          return;
+      }
+
+      event.preventDefault();
+      tooltip.scrollTop = Math.min(maxScrollTop, Math.max(0, nextScrollTop));
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [clearHoverCloseTimer, tooltipHeadingId]);
+  }, [clearHoverCloseTimer, focusedHeadingId, tooltipHeadingId]);
 
   useEffect(() => () => clearHoverCloseTimer(), [clearHoverCloseTimer]);
 
@@ -229,15 +270,20 @@ export const DocumentOutline = ({
                   style={{ paddingInlineStart: `${8 + (heading.level - 1) * 10}px` }}
                   onMouseEnter={() => {
                     clearHoverCloseTimer();
+                    if (tooltipHeadingId !== heading.id) setTooltipPosition(null);
                     setIsTooltipDismissed(false);
                     setHoveredHeadingId(heading.id);
                   }}
                   onMouseLeave={scheduleHoverClose}
                   onFocus={() => {
+                    if (tooltipHeadingId !== heading.id) setTooltipPosition(null);
                     setIsTooltipDismissed(false);
                     setFocusedHeadingId(heading.id);
                   }}
-                  onBlur={() => setFocusedHeadingId(null)}
+                  onBlur={() => {
+                    if (!hoveredHeadingId) setTooltipPosition(null);
+                    setFocusedHeadingId(null);
+                  }}
                   onClick={(event) => {
                     event.preventDefault();
                     onNavigate(heading.id);
@@ -264,15 +310,35 @@ export const DocumentOutline = ({
             role="tooltip"
             style={{
               position: 'fixed',
-              overflow: 'auto',
               pointerEvents: 'auto',
               ...tooltipPosition,
             }}
             onMouseEnter={clearHoverCloseTimer}
             onMouseLeave={scheduleHoverClose}
           >
-            <span className="document-outline-tooltip-level">H{tooltipHeading.level}</span>
-            <span className="document-outline-tooltip-title">{tooltipHeading.text}</span>
+            <span
+              className="document-outline-tooltip-bridge"
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: '100%',
+                width: `${TOOLTIP_GAP}px`,
+                height: '100%',
+              }}
+              onMouseEnter={clearHoverCloseTimer}
+            />
+            <div
+              ref={tooltipRef}
+              className="document-outline-tooltip-scroll"
+              style={{
+                overflow: 'auto',
+                maxHeight: Math.max(0, tooltipPosition.maxHeight - TOOLTIP_BORDER_TOTAL),
+              }}
+            >
+              <span className="document-outline-tooltip-level">H{tooltipHeading.level}</span>
+              <span className="document-outline-tooltip-title">{tooltipHeading.text}</span>
+            </div>
           </div>,
           document.body,
         )}

@@ -79,6 +79,7 @@ const renderCompactOutline = () => {
 };
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.restoreAllMocks();
   window.history.replaceState(null, '', window.location.pathname);
 });
@@ -197,7 +198,19 @@ describe('DocumentOutline', () => {
       width: '192px',
       maxHeight: '546px',
     });
-    expect(tooltip).toHaveStyle({ overflow: 'auto', pointerEvents: 'auto' });
+    expect(tooltip).toHaveStyle({ pointerEvents: 'auto' });
+    expect(tooltip).not.toHaveAttribute('tabindex');
+    const bridge = tooltip.querySelector('.document-outline-tooltip-bridge');
+    expect(bridge).toHaveStyle({
+      position: 'absolute',
+      right: '100%',
+      width: '8px',
+      height: '100%',
+    });
+    expect(tooltip.querySelector('.document-outline-tooltip-scroll')).toHaveStyle({
+      overflow: 'auto',
+      maxHeight: '544px',
+    });
     expect(container).not.toContainElement(tooltip);
     expect(implementation).toHaveAttribute('aria-describedby', tooltip.id);
 
@@ -206,27 +219,69 @@ describe('DocumentOutline', () => {
   });
 
   it('keeps the tooltip open while the pointer moves into it and closes after leaving', async () => {
-    const closeCallbacks: Array<() => void> = [];
     const { implementation } = renderCompactOutline();
 
     fireEvent.mouseEnter(implementation);
     const tooltip = await screen.findByRole('tooltip');
-    const setTimeoutSpy = vi.spyOn(window, 'setTimeout').mockImplementation((handler) => {
-      if (typeof handler === 'function') closeCallbacks.push(() => handler());
-      return closeCallbacks.length as unknown as ReturnType<typeof window.setTimeout>;
-    });
-    const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
+    const bridge = tooltip.querySelector('.document-outline-tooltip-bridge')!;
+    vi.useFakeTimers();
 
     fireEvent.mouseLeave(implementation);
-    expect(setTimeoutSpy).toHaveBeenCalled();
-    fireEvent.mouseEnter(tooltip);
+    fireEvent.mouseEnter(bridge);
+    act(() => vi.advanceTimersByTime(100));
 
-    expect(clearTimeoutSpy).toHaveBeenCalledWith(1);
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    fireEvent.mouseEnter(tooltip);
+    act(() => vi.advanceTimersByTime(100));
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
 
     fireEvent.mouseLeave(tooltip);
-    act(() => closeCallbacks.at(-1)?.());
+    act(() => vi.advanceTimersByTime(100));
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('scrolls the open tooltip from the focused outline link', async () => {
+    const user = userEvent.setup();
+    renderCompactOutline();
+
+    await user.tab();
+    const tooltip = await screen.findByRole('tooltip');
+    const scroller = tooltip.querySelector<HTMLElement>('.document-outline-tooltip-scroll')!;
+    Object.defineProperties(scroller, {
+      clientHeight: { configurable: true, value: 50 },
+      scrollHeight: { configurable: true, value: 300 },
+      scrollTop: { configurable: true, writable: true, value: 0 },
+    });
+
+    expect(fireEvent.keyDown(document, { key: 'ArrowDown' })).toBe(false);
+    expect(scroller.scrollTop).toBe(40);
+    expect(fireEvent.keyDown(document, { key: 'PageDown' })).toBe(false);
+    expect(scroller.scrollTop).toBe(90);
+    expect(fireEvent.keyDown(document, { key: 'End' })).toBe(false);
+    expect(scroller.scrollTop).toBe(250);
+    expect(fireEvent.keyDown(document, { key: 'PageUp' })).toBe(false);
+    expect(scroller.scrollTop).toBe(200);
+    expect(fireEvent.keyDown(document, { key: 'Home' })).toBe(false);
+    expect(scroller.scrollTop).toBe(0);
+    expect(fireEvent.keyDown(document, { key: 'ArrowUp' })).toBe(false);
+    expect(scroller.scrollTop).toBe(0);
+  });
+
+  it('does not consume page scrolling keys for a pointer-opened tooltip', async () => {
+    const { implementation } = renderCompactOutline();
+
+    fireEvent.mouseEnter(implementation);
+    const tooltip = await screen.findByRole('tooltip');
+    const scroller = tooltip.querySelector<HTMLElement>('.document-outline-tooltip-scroll')!;
+    Object.defineProperties(scroller, {
+      clientHeight: { configurable: true, value: 50 },
+      scrollHeight: { configurable: true, value: 300 },
+      scrollTop: { configurable: true, writable: true, value: 0 },
+    });
+
+    expect(fireEvent.keyDown(document, { key: 'ArrowDown' })).toBe(true);
+    expect(scroller.scrollTop).toBe(0);
   });
 
   it('dismisses on Escape without moving focus and reopens after refocus', async () => {
@@ -271,7 +326,9 @@ describe('DocumentOutline', () => {
     expect(await screen.findByRole('tooltip')).toHaveTextContent('H1Overview');
 
     await user.hover(implementation);
-    expect(screen.getByRole('tooltip')).toHaveTextContent('H3A very long implementation section');
+    await waitFor(() =>
+      expect(screen.getByRole('tooltip')).toHaveTextContent('H3A very long implementation section'),
+    );
 
     await user.unhover(implementation);
     await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('H1Overview'));
@@ -307,6 +364,25 @@ describe('DocumentOutline', () => {
     expect(screen.getByRole('tooltip')).toHaveStyle({ top: '192px' });
 
     requestAnimationFrameSpy.mockRestore();
+  });
+
+  it('clears the old position before showing a different heading tooltip', async () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frameCallbacks.push(callback);
+      return frameCallbacks.length;
+    });
+    const { implementation, overview } = renderCompactOutline();
+
+    fireEvent.mouseEnter(implementation);
+    act(() => frameCallbacks.shift()?.(0));
+    expect(screen.getByRole('tooltip')).toHaveTextContent('H3A very long implementation section');
+
+    fireEvent.mouseEnter(overview);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+    act(() => frameCallbacks.shift()?.(16));
+    expect(screen.getByRole('tooltip')).toHaveTextContent('H1Overview');
   });
 
   it('clamps to the visible preview and hides when the visible area is too small', async () => {

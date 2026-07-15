@@ -362,7 +362,6 @@
 .document-outline-tooltip {
   z-index: 1000;
   min-width: 0;
-  padding: 10px 12px;
   color: var(--text-secondary);
   background: var(--bg-elevated);
   border: 1px solid var(--border-primary);
@@ -370,6 +369,10 @@
   box-shadow: var(--shadow-floating);
   font-size: 12px;
   line-height: 1.45;
+}
+
+.document-outline-tooltip-scroll {
+  padding: 10px 12px;
 }
 
 .document-outline-tooltip-level {
