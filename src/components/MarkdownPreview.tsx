@@ -390,14 +390,25 @@ export const MarkdownPreview = ({
 }: MarkdownPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const readerScrollRef = useRef<HTMLDivElement>(null);
+  const markerLayerRef = useRef<HTMLDivElement>(null);
   const [activeDiffKey, setActiveDiffKey] = useState<string | null>(null);
   const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
   const [markerPositions, setMarkerPositions] = useState<Record<number, number>>({});
-  const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
   const { isDark } = useDarkMode();
   const { frontmatter, body, bodyLineOffset } = parseMdContent(content, filename);
   const documentKey = filePath || filename;
   const headings = useMemo(() => extractDocumentHeadings(body), [body]);
+  const [outlineNavigation, setOutlineNavigation] = useState<{
+    documentKey: string;
+    body: string;
+    headingId: string;
+  } | null>(null);
+  const activeHeadingId =
+    outlineNavigation?.documentKey === documentKey &&
+    outlineNavigation.body === body &&
+    headings.some((heading) => heading.id === outlineNavigation.headingId)
+      ? outlineNavigation.headingId
+      : headings[0]?.id || null;
   const frontmatterEntries = Object.entries(frontmatter);
   const canCompare = Boolean(compareFilename && typeof compareContent === 'string');
   const diffKey = canCompare ? `${compareFilename}->${filename}` : null;
@@ -485,10 +496,6 @@ export const MarkdownPreview = ({
   });
 
   useEffect(() => {
-    setActiveHeadingId(headings[0]?.id || null);
-  }, [documentKey, headings]);
-
-  useEffect(() => {
     const previousOpenCommentCount = previousOpenCommentCountRef.current;
     previousOpenCommentCountRef.current = openCommentCount;
 
@@ -512,7 +519,8 @@ export const MarkdownPreview = ({
     let frameId = 0;
 
     const updateMarkerPositions = () => {
-      const contentRect = contentElement.getBoundingClientRect();
+      const markerContainer = markerLayerRef.current?.offsetParent as HTMLElement | null;
+      const containerRect = (markerContainer || contentElement).getBoundingClientRect();
       const nextPositions: Record<number, number> = {};
 
       for (const group of markerGroups) {
@@ -524,7 +532,7 @@ export const MarkdownPreview = ({
         }
 
         const lineRect = lineElement.getBoundingClientRect();
-        nextPositions[group.line] = lineRect.top - contentRect.top + lineRect.height / 2;
+        nextPositions[group.line] = lineRect.top - containerRect.top + lineRect.height / 2;
       }
 
       setMarkerPositions((currentPositions) =>
@@ -624,7 +632,7 @@ export const MarkdownPreview = ({
       behavior: reduceMotion ? 'auto' : 'smooth',
       block: 'start',
     });
-    setActiveHeadingId(headingId);
+    setOutlineNavigation({ documentKey, body, headingId });
   };
 
   return (
@@ -732,7 +740,7 @@ export const MarkdownPreview = ({
                     {body}
                   </ReactMarkdown>
                   {markerGroups.length > 0 && (
-                    <div className="processed-comment-marker-layer">
+                    <div className="processed-comment-marker-layer" ref={markerLayerRef}>
                       {markerGroups.map((group) => {
                         const top = markerPositions[group.line];
                         if (typeof top !== 'number') {

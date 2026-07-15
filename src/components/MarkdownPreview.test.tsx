@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarkdownPreview } from './MarkdownPreview';
@@ -361,11 +361,9 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    await waitFor(() =>
-      expect(screen.getByRole('link', { name: 'Replacement' })).toHaveAttribute(
-        'aria-current',
-        'location',
-      ),
+    expect(screen.getByRole('link', { name: 'Replacement' })).toHaveAttribute(
+      'aria-current',
+      'location',
     );
     expect(screen.getByRole('link', { name: 'New details' })).not.toHaveAttribute('aria-current');
   });
@@ -614,6 +612,56 @@ describe('MarkdownPreview', () => {
 
     expect(marker.closest('li')).toBeNull();
     expect(marker.closest('.processed-comment-marker-layer')).toBeInTheDocument();
+  });
+
+  it('positions markers relative to the marker layer containing block', async () => {
+    const targetComments: Comment[] = [
+      {
+        id: 'c001',
+        file: 'guide.v3.md',
+        text: 'Keep this marker aligned',
+        selectedText: 'Body',
+        startLine: 2,
+        endLine: 2,
+        status: 'resolved',
+        targetFile: 'guide.v4.md',
+        targetStartLine: 3,
+        resolution: 'Done.',
+        createdAt: new Date('2026-06-30T00:00:00Z'),
+      },
+    ];
+    const { container } = render(
+      <MarkdownPreview
+        content={'# Guide\n\nBody'}
+        filename="guide.v4.md"
+        comments={[]}
+        targetComments={targetComments}
+      />,
+    );
+    const card = container.querySelector<HTMLElement>('.markdown-content');
+    const body = container.querySelector<HTMLElement>('.markdown-document-body');
+    const markerLayer = container.querySelector<HTMLElement>('.processed-comment-marker-layer');
+    const line = container.querySelector<HTMLElement>('[data-line-start="3"]');
+
+    expect(card).not.toBeNull();
+    expect(body).not.toBeNull();
+    expect(markerLayer).not.toBeNull();
+    expect(line).not.toBeNull();
+
+    vi.spyOn(card!, 'getBoundingClientRect').mockReturnValue({ top: 20 } as DOMRect);
+    vi.spyOn(body!, 'getBoundingClientRect').mockReturnValue({ top: 100 } as DOMRect);
+    vi.spyOn(line!, 'getBoundingClientRect').mockReturnValue({ top: 220, height: 20 } as DOMRect);
+    Object.defineProperty(markerLayer, 'offsetParent', {
+      configurable: true,
+      value: card,
+    });
+
+    fireEvent(window, new Event('resize'));
+
+    const marker = await screen.findByTestId('review-marker-c001');
+    await waitFor(() =>
+      expect(marker.closest('.processed-comment-marker')).toHaveStyle({ top: '210px' }),
+    );
   });
 
   it('shows open comment markers on source lines', async () => {
