@@ -234,7 +234,7 @@ describe('MarkdownPreview', () => {
     );
 
     expect(screen.getByRole('navigation', { name: 'Document outline' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Overview, H1' })).toHaveAttribute(
       'href',
       '#markdown-heading-1',
     );
@@ -269,13 +269,13 @@ describe('MarkdownPreview', () => {
       value: scrollIntoView,
     });
 
-    await user.click(screen.getByRole('link', { name: 'Details' }));
+    await user.click(screen.getByRole('link', { name: 'Details, H2' }));
 
     expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: 'start',
     });
-    expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Details, H2' })).toHaveAttribute(
       'aria-current',
       'location',
     );
@@ -317,7 +317,7 @@ describe('MarkdownPreview', () => {
 
     try {
       act(() => frameCallbacks.shift()?.(0));
-      expect(screen.getByRole('link', { name: 'Overview' })).toHaveAttribute(
+      expect(screen.getByRole('link', { name: 'Overview, H1' })).toHaveAttribute(
         'aria-current',
         'location',
       );
@@ -326,7 +326,7 @@ describe('MarkdownPreview', () => {
       fireEvent.scroll(reader!);
       act(() => frameCallbacks.shift()?.(16));
 
-      expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+      expect(screen.getByRole('link', { name: 'Details, H2' })).toHaveAttribute(
         'aria-current',
         'location',
       );
@@ -401,7 +401,7 @@ describe('MarkdownPreview', () => {
       expect(observe).toHaveBeenCalledWith(documentBody);
 
       act(() => frameCallbacks.shift()?.(0));
-      expect(screen.getByRole('link', { name: 'Overview' })).toHaveAttribute(
+      expect(screen.getByRole('link', { name: 'Overview, H1' })).toHaveAttribute(
         'aria-current',
         'location',
       );
@@ -412,7 +412,7 @@ describe('MarkdownPreview', () => {
       });
       act(() => frameCallbacks.shift()?.(16));
 
-      expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+      expect(screen.getByRole('link', { name: 'Details, H2' })).toHaveAttribute(
         'aria-current',
         'location',
       );
@@ -450,7 +450,7 @@ describe('MarkdownPreview', () => {
       value: scrollIntoView,
     });
 
-    await user.click(screen.getByRole('link', { name: 'Overview' }));
+    await user.click(screen.getByRole('link', { name: 'Overview, H1' }));
 
     expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: 'auto',
@@ -504,8 +504,8 @@ describe('MarkdownPreview', () => {
       value: vi.fn(),
     });
 
-    await user.click(screen.getByRole('link', { name: 'Details' }));
-    expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+    await user.click(screen.getByRole('link', { name: 'Details, H2' }));
+    expect(screen.getByRole('link', { name: 'Details, H2' })).toHaveAttribute(
       'aria-current',
       'location',
     );
@@ -519,11 +519,13 @@ describe('MarkdownPreview', () => {
       />,
     );
 
-    expect(screen.getByRole('link', { name: 'Replacement' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Replacement, H1' })).toHaveAttribute(
       'aria-current',
       'location',
     );
-    expect(screen.getByRole('link', { name: 'New details' })).not.toHaveAttribute('aria-current');
+    expect(screen.getByRole('link', { name: 'New details, H2' })).not.toHaveAttribute(
+      'aria-current',
+    );
   });
 
   it('does not restore a stale outline selection when returning to unchanged content', async () => {
@@ -539,8 +541,8 @@ describe('MarkdownPreview', () => {
       value: vi.fn(),
     });
 
-    await user.click(screen.getByRole('link', { name: 'A details' }));
-    expect(screen.getByRole('link', { name: 'A details' })).toHaveAttribute(
+    await user.click(screen.getByRole('link', { name: 'A details, H2' }));
+    expect(screen.getByRole('link', { name: 'A details, H2' })).toHaveAttribute(
       'aria-current',
       'location',
     );
@@ -553,17 +555,17 @@ describe('MarkdownPreview', () => {
         comments={[]}
       />,
     );
-    expect(screen.getByRole('link', { name: 'B overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'B overview, H1' })).toHaveAttribute(
       'aria-current',
       'location',
     );
 
     rerender(<MarkdownPreview {...documentA} comments={[]} />);
-    expect(screen.getByRole('link', { name: 'A overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'A overview, H1' })).toHaveAttribute(
       'aria-current',
       'location',
     );
-    expect(screen.getByRole('link', { name: 'A details' })).not.toHaveAttribute('aria-current');
+    expect(screen.getByRole('link', { name: 'A details, H2' })).not.toHaveAttribute('aria-current');
   });
 
   it('shows processed comment markers on target lines', async () => {

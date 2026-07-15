@@ -54,9 +54,9 @@ const renderCompactOutline = () => {
   const reader = result.container.querySelector<HTMLElement>('.markdown-reader-scroll')!;
   const card = result.container.querySelector<HTMLElement>('.markdown-content')!;
   const outline = screen.getByRole('navigation', { name: 'Document outline' });
-  const overview = screen.getByRole('link', { name: 'Overview' });
+  const overview = screen.getByRole('link', { name: 'Overview, H1' });
   const implementation = screen.getByRole('link', {
-    name: 'A very long implementation section',
+    name: 'A very long implementation section, H3',
   });
 
   vi.spyOn(preview, 'getBoundingClientRect').mockReturnValue(
@@ -95,9 +95,9 @@ describe('DocumentOutline', () => {
 
     const column = container.querySelector('.document-outline-column');
     const outline = screen.getByRole('navigation', { name: 'Document outline' });
-    const overview = screen.getByRole('link', { name: 'Overview' });
+    const overview = screen.getByRole('link', { name: 'Overview, H1' });
     const implementation = screen.getByRole('link', {
-      name: 'A very long implementation section',
+      name: 'A very long implementation section, H3',
     });
 
     expect(column).toContainElement(outline);
@@ -114,7 +114,7 @@ describe('DocumentOutline', () => {
 
     expect(implementation).toHaveAttribute('href', '#markdown-heading-3');
     expect(implementation).toHaveAttribute('data-level', '3');
-    expect(implementation).toHaveAttribute('aria-label', 'A very long implementation section');
+    expect(implementation).toHaveAccessibleName('A very long implementation section, H3');
     expect(implementation).toHaveStyle({ paddingInlineStart: '28px' });
     expect(implementation).not.toHaveAttribute('title');
     expect(implementation.querySelector('.document-outline-label')).toHaveTextContent(
@@ -195,13 +195,55 @@ describe('DocumentOutline', () => {
       left: '136px',
       top: '92px',
       width: '192px',
-      maxHeight: '96px',
+      maxHeight: '546px',
     });
+    expect(tooltip).toHaveStyle({ overflow: 'auto', pointerEvents: 'auto' });
     expect(container).not.toContainElement(tooltip);
     expect(implementation).toHaveAttribute('aria-describedby', tooltip.id);
 
     await user.unhover(implementation);
+    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+  });
+
+  it('keeps the tooltip open while the pointer moves into it and closes after leaving', async () => {
+    const closeCallbacks: Array<() => void> = [];
+    const { implementation } = renderCompactOutline();
+
+    fireEvent.mouseEnter(implementation);
+    const tooltip = await screen.findByRole('tooltip');
+    const setTimeoutSpy = vi.spyOn(window, 'setTimeout').mockImplementation((handler) => {
+      if (typeof handler === 'function') closeCallbacks.push(() => handler());
+      return closeCallbacks.length as unknown as ReturnType<typeof window.setTimeout>;
+    });
+    const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
+
+    fireEvent.mouseLeave(implementation);
+    expect(setTimeoutSpy).toHaveBeenCalled();
+    fireEvent.mouseEnter(tooltip);
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(1);
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    fireEvent.mouseLeave(tooltip);
+    act(() => closeCallbacks.at(-1)?.());
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('dismisses on Escape without moving focus and reopens after refocus', async () => {
+    const user = userEvent.setup();
+    const { overview } = renderCompactOutline();
+
+    await user.tab();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(overview).toHaveFocus();
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+    await user.tab();
+    await user.tab({ shift: true });
+    expect(overview).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
   });
 
   it('shows and hides the full-title tooltip with keyboard focus', async () => {
@@ -307,7 +349,7 @@ describe('DocumentOutline', () => {
       />,
     );
 
-    await user.click(screen.getByRole('link', { name: 'A very long implementation section' }));
+    await user.click(screen.getByRole('link', { name: 'A very long implementation section, H3' }));
 
     expect(onNavigate).toHaveBeenCalledTimes(1);
     expect(onNavigate).toHaveBeenCalledWith('markdown-heading-3');
@@ -329,7 +371,7 @@ describe('DocumentOutline', () => {
     });
 
     const next = screen.getByRole('link', {
-      name: 'A very long implementation section',
+      name: 'A very long implementation section, H3',
     });
     const scrollIntoView = vi.fn();
     Object.defineProperties(next, {
@@ -360,7 +402,7 @@ describe('DocumentOutline', () => {
       scrollTop: { configurable: true, writable: true, value: 100 },
     });
 
-    const overview = screen.getByRole('link', { name: 'Overview' });
+    const overview = screen.getByRole('link', { name: 'Overview, H1' });
     Object.defineProperties(overview, {
       offsetTop: { configurable: true, value: 40 },
       offsetHeight: { configurable: true, value: 24 },
@@ -376,7 +418,7 @@ describe('DocumentOutline', () => {
     expect(outline.scrollTop).toBe(40);
 
     const implementation = screen.getByRole('link', {
-      name: 'A very long implementation section',
+      name: 'A very long implementation section, H3',
     });
     Object.defineProperties(implementation, {
       offsetTop: { configurable: true, value: 50 },
@@ -408,7 +450,7 @@ describe('DocumentOutline', () => {
       scrollTop: { configurable: true, writable: true, value: 120 },
     });
 
-    const activeItem = screen.getByRole('link', { name: 'Overview' });
+    const activeItem = screen.getByRole('link', { name: 'Overview, H1' });
     Object.defineProperties(activeItem, {
       offsetTop: { configurable: true, value: 16 },
       offsetHeight: { configurable: true, value: 24 },

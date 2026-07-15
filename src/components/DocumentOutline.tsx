@@ -16,9 +16,9 @@ interface TooltipPosition {
 }
 
 const COMPACT_OUTLINE_WIDTH = 520;
+const TOOLTIP_CLOSE_DELAY = 80;
 const TOOLTIP_GAP = 8;
 const TOOLTIP_INSET = 12;
-const TOOLTIP_MAX_HEIGHT = 96;
 const TOOLTIP_MAX_WIDTH = 280;
 const TOOLTIP_MIN_HEIGHT = 44;
 const TOOLTIP_MIN_WIDTH = 120;
@@ -32,14 +32,30 @@ export const DocumentOutline = ({
   const outlineRef = useRef<HTMLElement>(null);
   const activeItemRef = useRef<HTMLAnchorElement>(null);
   const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
+  const hoverCloseTimerRef = useRef<number | null>(null);
   const positionFrameRef = useRef<number | null>(null);
   const tooltipId = useId();
   const [isCompact, setIsCompact] = useState<boolean | null>(null);
+  const [isTooltipDismissed, setIsTooltipDismissed] = useState(false);
   const [focusedHeadingId, setFocusedHeadingId] = useState<string | null>(null);
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition | null>(null);
-  const tooltipHeadingId = hoveredHeadingId ?? focusedHeadingId;
+  const tooltipHeadingId = isTooltipDismissed ? null : (hoveredHeadingId ?? focusedHeadingId);
   const tooltipHeading = headings.find((heading) => heading.id === tooltipHeadingId) ?? null;
+
+  const clearHoverCloseTimer = useCallback(() => {
+    if (hoverCloseTimerRef.current === null) return;
+    window.clearTimeout(hoverCloseTimerRef.current);
+    hoverCloseTimerRef.current = null;
+  }, []);
+
+  const scheduleHoverClose = useCallback(() => {
+    clearHoverCloseTimer();
+    hoverCloseTimerRef.current = window.setTimeout(() => {
+      hoverCloseTimerRef.current = null;
+      setHoveredHeadingId(null);
+    }, TOOLTIP_CLOSE_DELAY);
+  }, [clearHoverCloseTimer]);
 
   const updateTooltipPosition = useCallback(() => {
     if (!tooltipHeadingId) {
@@ -98,9 +114,9 @@ export const DocumentOutline = ({
     const fitsBesideRail = availableRight >= TOOLTIP_MIN_WIDTH;
     const width = Math.min(TOOLTIP_MAX_WIDTH, fitsBesideRail ? availableRight : availableWidth);
     const left = fitsBesideRail ? desiredLeft : leftBound;
-    const maxHeight = Math.min(TOOLTIP_MAX_HEIGHT, availableHeight);
-    const maxTop = bottomBound - maxHeight;
+    const maxTop = bottomBound - TOOLTIP_MIN_HEIGHT;
     const top = Math.min(maxTop, Math.max(topBound, targetRect.top - TOOLTIP_GAP));
+    const maxHeight = bottomBound - top;
 
     setTooltipPosition({ left, maxHeight, top, width });
   }, [tooltipHeadingId]);
@@ -155,6 +171,20 @@ export const DocumentOutline = ({
   }, [tooltipHeadingId, updateTooltipPosition]);
 
   useEffect(() => {
+    if (!tooltipHeadingId) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      clearHoverCloseTimer();
+      setIsTooltipDismissed(true);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [clearHoverCloseTimer, tooltipHeadingId]);
+
+  useEffect(() => () => clearHoverCloseTimer(), [clearHoverCloseTimer]);
+
+  useEffect(() => {
     const outline = outlineRef.current;
     const activeItem = activeItemRef.current;
     if (!outline || !activeItem) return;
@@ -191,15 +221,22 @@ export const DocumentOutline = ({
                   href={`#${heading.id}`}
                   title={isCompact === false ? heading.text : undefined}
                   data-level={heading.level}
-                  aria-label={heading.text}
+                  aria-label={`${heading.text}, H${heading.level}`}
                   aria-current={isActive ? 'location' : undefined}
                   aria-describedby={
                     tooltipPosition && tooltipHeadingId === heading.id ? tooltipId : undefined
                   }
                   style={{ paddingInlineStart: `${8 + (heading.level - 1) * 10}px` }}
-                  onMouseEnter={() => setHoveredHeadingId(heading.id)}
-                  onMouseLeave={() => setHoveredHeadingId(null)}
-                  onFocus={() => setFocusedHeadingId(heading.id)}
+                  onMouseEnter={() => {
+                    clearHoverCloseTimer();
+                    setIsTooltipDismissed(false);
+                    setHoveredHeadingId(heading.id);
+                  }}
+                  onMouseLeave={scheduleHoverClose}
+                  onFocus={() => {
+                    setIsTooltipDismissed(false);
+                    setFocusedHeadingId(heading.id);
+                  }}
                   onBlur={() => setFocusedHeadingId(null)}
                   onClick={(event) => {
                     event.preventDefault();
@@ -225,7 +262,14 @@ export const DocumentOutline = ({
             id={tooltipId}
             className="document-outline-tooltip"
             role="tooltip"
-            style={{ position: 'fixed', ...tooltipPosition }}
+            style={{
+              position: 'fixed',
+              overflow: 'auto',
+              pointerEvents: 'auto',
+              ...tooltipPosition,
+            }}
+            onMouseEnter={clearHoverCloseTimer}
+            onMouseLeave={scheduleHoverClose}
           >
             <span className="document-outline-tooltip-level">H{tooltipHeading.level}</span>
             <span className="document-outline-tooltip-title">{tooltipHeading.text}</span>
