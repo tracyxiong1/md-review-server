@@ -338,6 +338,103 @@ describe('MarkdownPreview', () => {
     }
   });
 
+  it('tracks the active outline heading after internal layout reflow', async () => {
+    const user = userEvent.setup();
+    const frameCallbacks: FrameRequestCallback[] = [];
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    let resizeObserverCallback: ResizeObserverCallback | undefined;
+    const originalResizeObserver = globalThis.ResizeObserver;
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      });
+
+    class MockResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        resizeObserverCallback = callback;
+      }
+
+      observe = observe;
+      unobserve = vi.fn();
+      disconnect = disconnect;
+    }
+
+    Object.defineProperty(globalThis, 'ResizeObserver', {
+      configurable: true,
+      writable: true,
+      value: MockResizeObserver,
+    });
+
+    const { container } = render(
+      <MarkdownPreview
+        content={'# Overview\n\n## Details\n\nBody'}
+        filename="guide.md"
+        comments={[]}
+        compareFilename="guide.previous.md"
+        compareContent={'# Overview\n\nOld body'}
+      />,
+    );
+    const reader = container.querySelector<HTMLElement>('.markdown-reader-scroll');
+    const documentBody = container.querySelector<HTMLElement>('.markdown-document-body');
+    const overviewHeading = screen.getByRole('heading', { name: 'Overview' });
+    const detailsHeading = screen.getByRole('heading', { name: 'Details' });
+    let detailsTop = 140;
+
+    expect(reader).not.toBeNull();
+    expect(documentBody).not.toBeNull();
+
+    const readerRectSpy = vi
+      .spyOn(reader!, 'getBoundingClientRect')
+      .mockReturnValue({ top: 0 } as DOMRect);
+    const overviewRectSpy = vi
+      .spyOn(overviewHeading, 'getBoundingClientRect')
+      .mockReturnValue({ top: 20 } as DOMRect);
+    const detailsRectSpy = vi
+      .spyOn(detailsHeading, 'getBoundingClientRect')
+      .mockImplementation(() => ({ top: detailsTop }) as DOMRect);
+
+    try {
+      expect(observe).toHaveBeenCalledWith(reader);
+      expect(observe).toHaveBeenCalledWith(documentBody);
+
+      act(() => frameCallbacks.shift()?.(0));
+      expect(screen.getByRole('link', { name: 'Overview' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+
+      detailsTop = 60;
+      act(() => resizeObserverCallback?.([], {} as ResizeObserver));
+      act(() => frameCallbacks.shift()?.(16));
+
+      expect(screen.getByRole('link', { name: 'Details' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Show diff' }));
+      expect(disconnect).toHaveBeenCalledTimes(1);
+    } finally {
+      detailsRectSpy.mockRestore();
+      overviewRectSpy.mockRestore();
+      readerRectSpy.mockRestore();
+      requestAnimationFrameSpy.mockRestore();
+
+      if (originalResizeObserver) {
+        Object.defineProperty(globalThis, 'ResizeObserver', {
+          configurable: true,
+          writable: true,
+          value: originalResizeObserver,
+        });
+      } else {
+        Reflect.deleteProperty(globalThis, 'ResizeObserver');
+      }
+    }
+  });
+
   it('uses immediate scrolling when reduced motion is requested', async () => {
     const user = userEvent.setup();
     const scrollIntoView = vi.fn();

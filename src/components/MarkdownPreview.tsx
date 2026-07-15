@@ -621,11 +621,18 @@ export const MarkdownPreview = ({
     };
 
     scheduleActiveHeadingUpdate();
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(scheduleActiveHeadingUpdate)
+        : null;
+    resizeObserver?.observe(reader);
+    resizeObserver?.observe(contentElement);
     reader.addEventListener('scroll', scheduleActiveHeadingUpdate, { passive: true });
     window.addEventListener('resize', scheduleActiveHeadingUpdate);
 
     return () => {
       window.cancelAnimationFrame(frameId);
+      resizeObserver?.disconnect();
       reader.removeEventListener('scroll', scheduleActiveHeadingUpdate);
       window.removeEventListener('resize', scheduleActiveHeadingUpdate);
     };
