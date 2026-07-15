@@ -43,6 +43,8 @@ Start here for Codex handoff:
 ### Archived Decisions
 
 - [`archive/2026-07-06-comment-replies/`](./archive/2026-07-06-comment-replies/): shipped multi-round comment replies with flat `Codex` / `你` threads, open-tab default, and gutter-centered review markers.
+- [`archive/2026-07-15-document-minimap/`](./archive/2026-07-15-document-minimap/): initial shipped H1-H6 document outline with a `160px` full mode and a `32px` compact rail below the original `520px` card breakpoint.
+- [`archive/2026-07-16-document-outline-layout/`](./archive/2026-07-16-document-outline-layout/): current wide, integrated, and compact outline layout with a `760px` compact threshold and stable smooth-scroll navigation.
 
 ### Superseded Static Drafts
 

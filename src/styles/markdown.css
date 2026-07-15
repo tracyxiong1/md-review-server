@@ -264,11 +264,171 @@
   line-height: 1.76;
   color: var(--text-secondary);
   position: relative;
-  padding: 34px 42px 48px;
+  padding: 0;
   background: var(--bg-panel);
   border: 1px solid var(--border-secondary);
   border-radius: 12px;
   overflow-wrap: break-word;
+}
+
+.markdown-content.with-document-outline {
+  container-name: document-outline-card;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.markdown-document-body {
+  position: relative;
+  min-width: 0;
+  padding: 34px 42px 48px;
+}
+
+.document-outline-column {
+  width: 160px;
+  min-width: 0;
+  border-right: 1px solid var(--border-secondary);
+}
+
+.document-outline {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 100px);
+  padding: 24px 12px;
+  overflow-y: auto;
+  /* stylelint-disable-next-line plugin/use-baseline -- Native thin scrollbars are a progressive enhancement. */
+  scrollbar-width: thin;
+}
+
+.markdown-content .document-outline-list,
+.markdown-content .document-outline-item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.markdown-content .document-outline-link {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding-block: 6px;
+  padding-inline-end: 5px;
+  color: var(--text-tertiary);
+  background: transparent;
+  border-radius: 5px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-outline-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.document-outline-tick {
+  display: none;
+}
+
+.markdown-content .document-outline-link:hover {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.markdown-content .document-outline-link.active {
+  color: var(--link-color);
+  font-weight: 500;
+}
+
+.markdown-content .document-outline-link.active::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2px;
+  height: 14px;
+  background: var(--link-color);
+  content: '';
+  transform: translateY(-50%);
+}
+
+.markdown-content .document-outline-link:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 1px;
+}
+
+.document-outline-tooltip {
+  z-index: 1000;
+  min-width: 0;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  box-shadow: var(--shadow-floating);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.document-outline-tooltip-scroll {
+  padding: 10px 12px;
+}
+
+.document-outline-tooltip-level {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.document-outline-tooltip-title {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+}
+
+@container document-outline-card (width < 760px) {
+  .document-outline-column {
+    width: 32px;
+    border-right: 0;
+  }
+
+  .document-outline {
+    padding: 24px 4px;
+  }
+
+  .markdown-content .document-outline-link {
+    display: flex;
+    min-height: 20px;
+    align-items: center;
+    padding: 4px 2px !important;
+  }
+
+  .document-outline-label {
+    display: none;
+  }
+
+  .document-outline-tick {
+    display: block;
+    height: 2px;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--text-tertiary);
+  }
+
+  .markdown-content .document-outline-link.active::before {
+    display: none;
+  }
+
+  .markdown-content .document-outline-link:hover .document-outline-tick {
+    background: var(--text-secondary);
+  }
+
+  .markdown-content .document-outline-link.active .document-outline-tick {
+    background: var(--link-color);
+  }
 }
 
 .document-meta {
@@ -293,16 +453,48 @@
 }
 
 .markdown-reader-scroll {
+  container-name: markdown-preview;
+  container-type: inline-size;
   min-height: 0;
   flex: 1;
   overflow: auto;
-  padding: 24px 30px 72px;
+  padding: 24px 0 72px;
 }
 
 .markdown-reader {
   position: relative;
   width: min(820px, 100%);
   margin: 0 auto;
+}
+
+.markdown-reader.with-document-outline {
+  width: min(980px, 100%);
+}
+
+@container markdown-preview (width >= 1240px) {
+  .markdown-reader.with-document-outline {
+    width: 100%;
+  }
+
+  .markdown-reader.with-document-outline .markdown-content.with-document-outline {
+    display: block;
+    position: static;
+    width: min(820px, 100%);
+    margin-inline: auto;
+  }
+
+  .markdown-reader.with-document-outline .document-outline-column {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 24px;
+    width: 160px;
+    border-right: 0;
+  }
+
+  .markdown-reader.with-document-outline .document-outline {
+    padding-inline: 0;
+  }
 }
 
 .markdown-container.diff-active .markdown-reader {
@@ -1949,10 +2141,10 @@
   }
 
   .markdown-reader-scroll {
-    padding: 22px 24px 64px;
+    padding: 22px 0 64px;
   }
 
-  .markdown-content {
+  .markdown-document-body {
     padding: 30px 34px 42px;
   }
 
@@ -1980,10 +2172,10 @@
   }
 
   .markdown-reader-scroll {
-    padding: 18px 16px 56px;
+    padding: 18px 0 56px;
   }
 
-  .markdown-content {
+  .markdown-document-body {
     padding: 26px 24px 36px;
   }
 

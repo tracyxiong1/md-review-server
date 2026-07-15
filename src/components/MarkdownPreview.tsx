@@ -17,9 +17,11 @@ import 'highlight.js/styles/github.css';
 import '../styles/markdown.css';
 import { SelectionPopover } from './SelectionPopover';
 import { CommentList, Comment } from './CommentList';
+import { DocumentOutline } from './DocumentOutline';
 import { MermaidBlock } from './MermaidBlock';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { useResizable } from '../hooks/useResizable';
+import { extractDocumentHeadings, getDocumentHeadingId } from '../lib/extractDocumentHeadings';
 import { parseMdContent } from '../lib/parseMdContent';
 import { CreateCommentInput } from '../types/review';
 
@@ -49,6 +51,16 @@ interface ProcessedCommentMarkerProps {
 }
 
 const EMPTY_COMMENTS: Comment[] = [];
+const OUTLINE_SCROLL_SETTLE_DELAY = 120;
+const OUTLINE_SCROLL_KEYS = new Set([
+  'ArrowDown',
+  'ArrowUp',
+  'End',
+  'Home',
+  'PageDown',
+  'PageUp',
+  ' ',
+]);
 
 const getCommentText = (comment: Comment) => comment.comment || comment.text || '';
 
@@ -300,9 +312,17 @@ const createComponentsWithLinePosition = (markerLines: Set<number>): Components 
     const className = [props.className, hasMarker ? 'markdown-line-with-processed-comment' : null]
       .filter(Boolean)
       .join(' ');
+    const isHeadingTag = typeof Tag === 'string' && /^h[1-6]$/.test(Tag);
+    const headingId =
+      isHeadingTag && typeof line === 'number' ? getDocumentHeadingId(line) : undefined;
 
     return (
-      <Tag {...props} data-line-start={line} className={className || undefined}>
+      <Tag
+        {...props}
+        id={headingId || props.id}
+        data-line-start={line}
+        className={className || undefined}
+      >
         {children}
       </Tag>
     );
@@ -379,15 +399,47 @@ export const MarkdownPreview = ({
   onAddCommentReply,
 }: MarkdownPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const readerScrollRef = useRef<HTMLDivElement>(null);
+  const markerLayerRef = useRef<HTMLDivElement>(null);
+  const pendingOutlineNavigationRef = useRef<string | null>(null);
+  const outlineScrollSettleTimerRef = useRef<number | null>(null);
+  const finishOutlineNavigationRef = useRef<() => void>(() => undefined);
   const [activeDiffKey, setActiveDiffKey] = useState<string | null>(null);
   const [diffViewMode, setDiffViewMode] = useState<'split' | 'unified'>('unified');
   const [markerPositions, setMarkerPositions] = useState<Record<number, number>>({});
   const { isDark } = useDarkMode();
   const { frontmatter, body, bodyLineOffset } = parseMdContent(content, filename);
+  const documentKey = filePath || filename;
+  const headings = useMemo(() => extractDocumentHeadings(body), [body]);
+  const [outlineState, setOutlineState] = useState<{
+    documentKey: string;
+    headings: typeof headings;
+    activeHeadingId: string | null;
+  }>(() => ({
+    documentKey,
+    headings,
+    activeHeadingId: headings[0]?.id || null,
+  }));
+  const outlineStateIsCurrent =
+    outlineState.documentKey === documentKey && outlineState.headings === headings;
+
+  if (!outlineStateIsCurrent) {
+    setOutlineState({
+      documentKey,
+      headings,
+      activeHeadingId: headings[0]?.id || null,
+    });
+  }
+
+  const activeHeadingId =
+    outlineStateIsCurrent && headings.some((heading) => heading.id === outlineState.activeHeadingId)
+      ? outlineState.activeHeadingId
+      : headings[0]?.id || null;
   const frontmatterEntries = Object.entries(frontmatter);
   const canCompare = Boolean(compareFilename && typeof compareContent === 'string');
   const diffKey = canCompare ? `${compareFilename}->${filename}` : null;
   const showDiff = Boolean(diffKey && activeDiffKey === diffKey);
+  const showOutline = !showDiff && headings.length > 0;
   const targetCommentsByLine = useMemo(() => {
     const next = new Map<number, Comment[]>();
 
@@ -450,7 +502,6 @@ export const MarkdownPreview = ({
     [comments],
   );
   const previousOpenCommentCountRef = useRef(openCommentCount);
-  const documentKey = filePath || filename;
   const documentMeta = 'Markdown preview · local review';
   const {
     width: commentsSidebarWidth,
@@ -494,7 +545,8 @@ export const MarkdownPreview = ({
     let frameId = 0;
 
     const updateMarkerPositions = () => {
-      const contentRect = contentElement.getBoundingClientRect();
+      const markerContainer = markerLayerRef.current?.offsetParent as HTMLElement | null;
+      const containerRect = (markerContainer || contentElement).getBoundingClientRect();
       const nextPositions: Record<number, number> = {};
 
       for (const group of markerGroups) {
@@ -506,7 +558,7 @@ export const MarkdownPreview = ({
         }
 
         const lineRect = lineElement.getBoundingClientRect();
-        nextPositions[group.line] = lineRect.top - contentRect.top + lineRect.height / 2;
+        nextPositions[group.line] = lineRect.top - containerRect.top + lineRect.height / 2;
       }
 
       setMarkerPositions((currentPositions) =>
@@ -534,6 +586,116 @@ export const MarkdownPreview = ({
       window.removeEventListener('resize', scheduleMarkerPositionUpdate);
     };
   }, [body, markerGroups, showDiff]);
+
+  useLayoutEffect(() => {
+    if (!showOutline) {
+      return;
+    }
+
+    const reader = readerScrollRef.current;
+    const contentElement = contentRef.current;
+    if (!reader || !contentElement) {
+      return;
+    }
+
+    let frameId = 0;
+
+    const updateActiveHeading = () => {
+      if (pendingOutlineNavigationRef.current) {
+        return;
+      }
+
+      const threshold = reader.getBoundingClientRect().top + 96;
+      let nextActiveHeadingId = headings[0].id;
+
+      for (const heading of headings) {
+        const element = contentElement.querySelector<HTMLElement>(`#${heading.id}`);
+        if (!element) {
+          continue;
+        }
+        if (element.getBoundingClientRect().top > threshold) {
+          break;
+        }
+        nextActiveHeadingId = heading.id;
+      }
+
+      setOutlineState((currentState) => {
+        if (
+          currentState.documentKey !== documentKey ||
+          currentState.headings !== headings ||
+          currentState.activeHeadingId === nextActiveHeadingId
+        ) {
+          return currentState;
+        }
+
+        return { ...currentState, activeHeadingId: nextActiveHeadingId };
+      });
+    };
+
+    const scheduleActiveHeadingUpdate = () => {
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(updateActiveHeading);
+
+      if (pendingOutlineNavigationRef.current) {
+        if (outlineScrollSettleTimerRef.current !== null) {
+          window.clearTimeout(outlineScrollSettleTimerRef.current);
+        }
+        outlineScrollSettleTimerRef.current = window.setTimeout(() => {
+          finishOutlineNavigationRef.current();
+        }, OUTLINE_SCROLL_SETTLE_DELAY);
+      }
+    };
+
+    const finishOutlineNavigation = () => {
+      pendingOutlineNavigationRef.current = null;
+      outlineScrollSettleTimerRef.current = null;
+    };
+    finishOutlineNavigationRef.current = finishOutlineNavigation;
+
+    const cancelOutlineNavigation = () => {
+      pendingOutlineNavigationRef.current = null;
+      if (outlineScrollSettleTimerRef.current !== null) {
+        window.clearTimeout(outlineScrollSettleTimerRef.current);
+        outlineScrollSettleTimerRef.current = null;
+      }
+    };
+    const handleNavigationKeyDown = (event: KeyboardEvent) => {
+      if (OUTLINE_SCROLL_KEYS.has(event.key)) {
+        cancelOutlineNavigation();
+      }
+    };
+
+    scheduleActiveHeadingUpdate();
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(scheduleActiveHeadingUpdate)
+        : null;
+    resizeObserver?.observe(reader);
+    resizeObserver?.observe(contentElement);
+    reader.addEventListener('scroll', scheduleActiveHeadingUpdate, { passive: true });
+    reader.addEventListener('wheel', cancelOutlineNavigation, { passive: true });
+    reader.addEventListener('touchstart', cancelOutlineNavigation, { passive: true });
+    reader.addEventListener('pointerdown', cancelOutlineNavigation, { passive: true });
+    window.addEventListener('keydown', handleNavigationKeyDown);
+    window.addEventListener('resize', scheduleActiveHeadingUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (outlineScrollSettleTimerRef.current !== null) {
+        window.clearTimeout(outlineScrollSettleTimerRef.current);
+        outlineScrollSettleTimerRef.current = null;
+      }
+      pendingOutlineNavigationRef.current = null;
+      finishOutlineNavigationRef.current = () => undefined;
+      resizeObserver?.disconnect();
+      reader.removeEventListener('scroll', scheduleActiveHeadingUpdate);
+      reader.removeEventListener('wheel', cancelOutlineNavigation);
+      reader.removeEventListener('touchstart', cancelOutlineNavigation);
+      reader.removeEventListener('pointerdown', cancelOutlineNavigation);
+      window.removeEventListener('keydown', handleNavigationKeyDown);
+      window.removeEventListener('resize', scheduleActiveHeadingUpdate);
+    };
+  }, [documentKey, headings, showOutline]);
 
   const handleSubmitComment = (
     comment: string,
@@ -595,6 +757,25 @@ export const MarkdownPreview = ({
         element.classList.remove('highlight-line');
       }, 2000);
     }
+  };
+
+  const handleOutlineNavigate = (headingId: string) => {
+    const heading = contentRef.current?.querySelector<HTMLElement>(`#${headingId}`);
+    if (!heading) return;
+
+    pendingOutlineNavigationRef.current = headingId;
+    if (outlineScrollSettleTimerRef.current !== null) {
+      window.clearTimeout(outlineScrollSettleTimerRef.current);
+    }
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    heading.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    setOutlineState({ documentKey, headings, activeHeadingId: headingId });
+    outlineScrollSettleTimerRef.current = window.setTimeout(() => {
+      finishOutlineNavigationRef.current();
+    }, OUTLINE_SCROLL_SETTLE_DELAY);
   };
 
   return (
@@ -659,8 +840,8 @@ export const MarkdownPreview = ({
             )}
           </div>
         </header>
-        <div className="markdown-reader-scroll">
-          <section className="markdown-reader">
+        <div className="markdown-reader-scroll" ref={readerScrollRef}>
+          <section className={`markdown-reader ${showOutline ? 'with-document-outline' : ''}`}>
             {showDiff && canCompare ? (
               <div className="markdown-diff-view">
                 <ReactDiffViewer
@@ -677,42 +858,51 @@ export const MarkdownPreview = ({
                 />
               </div>
             ) : (
-              <div className="markdown-content" ref={contentRef}>
-                <div className="document-meta">
-                  <span>{documentMeta}</span>
-                  {frontmatterEntries.map(([key, value]) => (
-                    <span key={key} className="document-meta-item">
-                      {key}: {value}
-                    </span>
-                  ))}
-                </div>
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm, remarkBreaks]}
-                  rehypePlugins={[rehypeHighlight]}
-                  components={componentsWithLinePosition}
-                >
-                  {body}
-                </ReactMarkdown>
-                {markerGroups.length > 0 && (
-                  <div className="processed-comment-marker-layer">
-                    {markerGroups.map((group) => {
-                      const top = markerPositions[group.line];
-                      if (typeof top !== 'number') {
-                        return null;
-                      }
-
-                      return (
-                        <ProcessedCommentMarker
-                          key={group.line}
-                          line={group.line}
-                          comments={group.comments}
-                          label={group.label}
-                          top={top}
-                        />
-                      );
-                    })}
-                  </div>
+              <div className={`markdown-content ${showOutline ? 'with-document-outline' : ''}`}>
+                {showOutline && (
+                  <DocumentOutline
+                    headings={headings}
+                    activeHeadingId={activeHeadingId}
+                    onNavigate={handleOutlineNavigate}
+                  />
                 )}
+                <div className="markdown-document-body" ref={contentRef}>
+                  <div className="document-meta">
+                    <span>{documentMeta}</span>
+                    {frontmatterEntries.map(([key, value]) => (
+                      <span key={key} className="document-meta-item">
+                        {key}: {value}
+                      </span>
+                    ))}
+                  </div>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={componentsWithLinePosition}
+                  >
+                    {body}
+                  </ReactMarkdown>
+                  {markerGroups.length > 0 && (
+                    <div className="processed-comment-marker-layer" ref={markerLayerRef}>
+                      {markerGroups.map((group) => {
+                        const top = markerPositions[group.line];
+                        if (typeof top !== 'number') {
+                          return null;
+                        }
+
+                        return (
+                          <ProcessedCommentMarker
+                            key={group.line}
+                            line={group.line}
+                            comments={group.comments}
+                            label={group.label}
+                            top={top}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {!showDiff && !readonly && (
