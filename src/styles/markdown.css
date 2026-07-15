@@ -285,7 +285,6 @@
 }
 
 .document-outline-column {
-  position: relative;
   width: 160px;
   min-width: 0;
   border-right: 1px solid var(--border-secondary);
@@ -330,8 +329,7 @@
   text-overflow: ellipsis;
 }
 
-.document-outline-tick,
-.document-outline-tooltip {
+.document-outline-tick {
   display: none;
 }
 
@@ -359,6 +357,35 @@
 .markdown-content .document-outline-link:focus-visible {
   outline: 2px solid var(--link-color);
   outline-offset: 1px;
+}
+
+.document-outline-tooltip {
+  z-index: 1000;
+  min-width: 0;
+  overflow: auto;
+  padding: 10px 12px;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  box-shadow: var(--shadow-floating);
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+
+.document-outline-tooltip-level {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.document-outline-tooltip-title {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
 }
 
 @container document-outline-card (width < 520px) {
@@ -420,38 +447,6 @@
 
   .markdown-content .document-outline-link.active .document-outline-tick {
     background: var(--link-color);
-  }
-
-  .document-outline-tooltip {
-    position: absolute;
-    left: calc(100% + 8px);
-    z-index: 20;
-    display: block;
-    min-width: 0;
-    overflow: auto;
-    padding: 10px 12px;
-    color: var(--text-secondary);
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-primary);
-    border-radius: 10px;
-    box-shadow: var(--shadow-floating);
-    font-size: 12px;
-    line-height: 1.45;
-    pointer-events: none;
-  }
-
-  .document-outline-tooltip-level {
-    display: block;
-    margin-bottom: 3px;
-    color: var(--text-tertiary);
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .document-outline-tooltip-title {
-    display: block;
-    overflow-wrap: anywhere;
-    color: var(--text-primary);
   }
 }
 

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DocumentOutline } from './DocumentOutline';
@@ -13,12 +13,78 @@ const headings = [
   },
 ];
 
+const domRect = ({
+  bottom,
+  left,
+  right,
+  top,
+}: {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
+}): DOMRect =>
+  ({
+    bottom,
+    height: bottom - top,
+    left,
+    right,
+    top,
+    width: right - left,
+    x: left,
+    y: top,
+    toJSON: () => ({}),
+  }) as DOMRect;
+
+const renderCompactOutline = () => {
+  const result = render(
+    <div className="markdown-container">
+      <div className="markdown-reader-scroll">
+        <div className="markdown-content">
+          <DocumentOutline
+            headings={headings}
+            activeHeadingId="markdown-heading-1"
+            onNavigate={vi.fn()}
+          />
+        </div>
+      </div>
+    </div>,
+  );
+  const preview = result.container.querySelector<HTMLElement>('.markdown-container')!;
+  const reader = result.container.querySelector<HTMLElement>('.markdown-reader-scroll')!;
+  const card = result.container.querySelector<HTMLElement>('.markdown-content')!;
+  const outline = screen.getByRole('navigation', { name: 'Document outline' });
+  const overview = screen.getByRole('link', { name: 'Overview' });
+  const implementation = screen.getByRole('link', {
+    name: 'A very long implementation section',
+  });
+
+  vi.spyOn(preview, 'getBoundingClientRect').mockReturnValue(
+    domRect({ left: 100, right: 340, top: 50, bottom: 650 }),
+  );
+  vi.spyOn(card, 'getBoundingClientRect').mockReturnValue(
+    domRect({ left: 100, right: 340, top: 50, bottom: 900 }),
+  );
+  vi.spyOn(outline, 'getBoundingClientRect').mockReturnValue(
+    domRect({ left: 100, right: 132, top: 50, bottom: 650 }),
+  );
+  vi.spyOn(overview, 'getBoundingClientRect').mockReturnValue(
+    domRect({ left: 104, right: 128, top: 72, bottom: 92 }),
+  );
+  vi.spyOn(implementation, 'getBoundingClientRect').mockReturnValue(
+    domRect({ left: 104, right: 128, top: 100, bottom: 120 }),
+  );
+
+  return { ...result, card, implementation, outline, overview, preview, reader };
+};
+
 afterEach(() => {
+  vi.restoreAllMocks();
   window.history.replaceState(null, '', window.location.pathname);
 });
 
 describe('DocumentOutline', () => {
-  it('renders a semantic outline with hierarchy, active state, and full-text titles', () => {
+  it('renders a semantic outline with hierarchy, active state, and full-text labels', () => {
     const { container } = render(
       <DocumentOutline
         headings={headings}
@@ -49,7 +115,7 @@ describe('DocumentOutline', () => {
     expect(implementation).toHaveAttribute('data-level', '3');
     expect(implementation).toHaveAttribute('aria-label', 'A very long implementation section');
     expect(implementation).toHaveStyle({ paddingInlineStart: '28px' });
-    expect(implementation).toHaveAttribute('title', 'A very long implementation section');
+    expect(implementation).not.toHaveAttribute('title');
     expect(implementation.querySelector('.document-outline-label')).toHaveTextContent(
       'A very long implementation section',
     );
@@ -64,61 +130,21 @@ describe('DocumentOutline', () => {
 
   it('shows the heading level and full title in a constrained tooltip on hover', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <div className="markdown-content">
-        <DocumentOutline
-          headings={headings}
-          activeHeadingId="markdown-heading-1"
-          onNavigate={vi.fn()}
-        />
-      </div>,
-    );
-    const card = container.querySelector('.markdown-content');
-    const column = container.querySelector('.document-outline-column');
-    const implementation = screen.getByRole('link', {
-      name: 'A very long implementation section',
-    });
-
-    vi.spyOn(card!, 'getBoundingClientRect').mockReturnValue({
-      left: 100,
-      right: 340,
-      top: 50,
-      bottom: 650,
-      width: 240,
-      height: 600,
-      x: 100,
-      y: 50,
-      toJSON: () => ({}),
-    });
-    vi.spyOn(column!, 'getBoundingClientRect').mockReturnValue({
-      left: 100,
-      right: 132,
-      top: 50,
-      bottom: 650,
-      width: 32,
-      height: 600,
-      x: 100,
-      y: 50,
-      toJSON: () => ({}),
-    });
-    vi.spyOn(implementation, 'getBoundingClientRect').mockReturnValue({
-      left: 104,
-      right: 128,
-      top: 100,
-      bottom: 120,
-      width: 24,
-      height: 20,
-      x: 104,
-      y: 100,
-      toJSON: () => ({}),
-    });
+    const { implementation, container } = renderCompactOutline();
 
     await user.hover(implementation);
 
-    const tooltip = screen.getByRole('tooltip');
+    const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toHaveTextContent('H3');
     expect(tooltip).toHaveTextContent('A very long implementation section');
-    expect(tooltip).toHaveStyle({ top: '42px', width: '188px', maxHeight: '96px' });
+    expect(tooltip).toHaveStyle({
+      position: 'fixed',
+      left: '136px',
+      top: '92px',
+      width: '192px',
+      maxHeight: '96px',
+    });
+    expect(container).not.toContainElement(tooltip);
     expect(implementation).toHaveAttribute('aria-describedby', tooltip.id);
 
     await user.unhover(implementation);
@@ -127,25 +153,93 @@ describe('DocumentOutline', () => {
 
   it('shows and hides the full-title tooltip with keyboard focus', async () => {
     const user = userEvent.setup();
-    render(
-      <div className="markdown-content">
-        <DocumentOutline
-          headings={headings}
-          activeHeadingId="markdown-heading-1"
-          onNavigate={vi.fn()}
-        />
-      </div>,
+    renderCompactOutline();
+
+    await user.tab();
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('H1Overview');
+
+    await user.tab();
+    await waitFor(() =>
+      expect(screen.getByRole('tooltip')).toHaveTextContent('H3A very long implementation section'),
     );
 
     await user.tab();
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
 
-    expect(screen.getByRole('tooltip')).toHaveTextContent('H1Overview');
+  it('falls back to the focused heading after a hovered heading is left', async () => {
+    const user = userEvent.setup();
+    const { implementation, overview } = renderCompactOutline();
 
     await user.tab();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('H1Overview');
+
+    await user.hover(implementation);
     expect(screen.getByRole('tooltip')).toHaveTextContent('H3A very long implementation section');
 
-    await user.tab();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    await user.unhover(implementation);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('H1Overview'));
+    expect(overview).toHaveAttribute('aria-describedby', screen.getByRole('tooltip').id);
+  });
+
+  it('repositions the fixed tooltip after scroll and resize', async () => {
+    const user = userEvent.setup();
+    const frameCallbacks: FrameRequestCallback[] = [];
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      });
+    const { implementation, reader } = renderCompactOutline();
+    let implementationTop = 100;
+    vi.spyOn(implementation, 'getBoundingClientRect').mockImplementation(() =>
+      domRect({ left: 104, right: 128, top: implementationTop, bottom: implementationTop + 20 }),
+    );
+
+    await user.hover(implementation);
+    act(() => frameCallbacks.shift()?.(0));
+    expect(screen.getByRole('tooltip')).toHaveStyle({ top: '92px' });
+
+    implementationTop = 160;
+    fireEvent.scroll(reader);
+    act(() => frameCallbacks.shift()?.(16));
+    expect(screen.getByRole('tooltip')).toHaveStyle({ top: '152px' });
+
+    implementationTop = 200;
+    fireEvent(window, new Event('resize'));
+    act(() => frameCallbacks.shift()?.(32));
+    expect(screen.getByRole('tooltip')).toHaveStyle({ top: '192px' });
+
+    requestAnimationFrameSpy.mockRestore();
+  });
+
+  it('clamps to the visible preview and hides when the visible area is too small', async () => {
+    const user = userEvent.setup();
+    const { implementation, preview } = renderCompactOutline();
+    vi.spyOn(preview, 'getBoundingClientRect').mockReturnValue(
+      domRect({ left: -40, right: 180, top: -200, bottom: 90 }),
+    );
+    vi.spyOn(implementation, 'getBoundingClientRect').mockReturnValue(
+      domRect({ left: 4, right: 28, top: 20, bottom: 40 }),
+    );
+
+    await user.hover(implementation);
+
+    expect(await screen.findByRole('tooltip')).toHaveStyle({
+      left: '36px',
+      top: '12px',
+      width: '132px',
+      maxHeight: '66px',
+    });
+
+    vi.spyOn(preview, 'getBoundingClientRect').mockReturnValue(
+      domRect({ left: 0, right: 100, top: 0, bottom: 40 }),
+    );
+    fireEvent(window, new Event('resize'));
+
+    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
   });
 
   it('navigates without changing the URL hash', async () => {
