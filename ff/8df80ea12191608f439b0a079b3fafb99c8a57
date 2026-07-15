@@ -1,0 +1,23 @@
+src/components/MarkdownPreview.test.tsx
+  s_31c438253f7965::t_d7cd9c41c1195a 1,356-358,609-658
+src/components/MarkdownPreview.tsx
+  s_31c438253f7965::t_391aa64772b638 384,392-402,513-514,526,626,734
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ff8df80ea12191608f439b0a079b3fafb99c8a57",
+  "prompts": {},
+  "sessions": {
+    "s_31c438253f7965": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f65c2-36ee-7f50-86f4-824ad18b4edd",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
