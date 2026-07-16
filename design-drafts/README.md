@@ -47,6 +47,7 @@ Start here for Codex handoff:
 - [`archive/2026-07-16-document-outline-layout/`](./archive/2026-07-16-document-outline-layout/): current wide, integrated, and compact outline layout with a `760px` compact threshold and stable smooth-scroll navigation.
 - [`archive/2026-07-16-document-outline-scrollbar/`](./archive/2026-07-16-document-outline-scrollbar/): hides the outline's internal scrollbar while preserving independent scrolling.
 - [`archive/2026-07-16-file-tree-version-scroll/`](./archive/2026-07-16-file-tree-version-scroll/): keeps file and version lists independently scrollable while preserving the sidebar header and footer.
+- [`archive/2026-07-16-wide-outline-width/`](./archive/2026-07-16-wide-outline-width/): expands the detached outline to `240px` on extra-wide previews without moving the centered document.
 
 ### Superseded Static Drafts
 
