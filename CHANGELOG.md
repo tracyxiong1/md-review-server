@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.8.0](https://github.com/tracyxiong1/md-review-server/compare/v0.7.0...v0.8.0) (2026-07-16)
+
+
+### Features
+
+* keep file tree sections independently scrollable ([0dbd5f3](https://github.com/tracyxiong1/md-review-server/commit/0dbd5f3757a6ce778a7d441538a550ba13d6f09c))
+
 ## [0.7.0](https://github.com/tracyxiong1/md-review-server/compare/v0.6.2...v0.7.0) (2026-07-15)
 
 
