@@ -2,6 +2,14 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.8.2](https://github.com/tracyxiong1/md-review-server/compare/v0.8.1...v0.8.2) (2026-07-16)
+
+
+### Bug Fixes
+
+* **docs:** refresh README and review demos ([a370cba](https://github.com/tracyxiong1/md-review-server/commit/a370cbab91f025db83f0f1ccbe47b4dfd5263954))
+* **docs:** refresh README and review demos ([aa86d48](https://github.com/tracyxiong1/md-review-server/commit/aa86d48c324792e7f8af0860e06c73e1e902c8c2))
+
 ## [0.8.1](https://github.com/tracyxiong1/md-review-server/compare/v0.8.0...v0.8.1) (2026-07-16)
 
 
