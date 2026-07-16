@@ -1,0 +1,25 @@
+design-drafts/archive/2026-07-16-wide-outline-width/BRIEF.md
+  s_1be0948b979c38::t_fbedbec5d140ca 1-33
+src/styles/markdown.css
+  s_1be0948b979c38::t_8a738a94a1ae29 531-536
+src/styles/markdown.test.ts
+  s_1be0948b979c38::t_f9150d15534f8b 38-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "32cf45d897a90d93ee10d4f5c0c87dfec3d8bd3c",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
