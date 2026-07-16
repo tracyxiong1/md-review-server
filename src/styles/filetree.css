@@ -2,10 +2,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background-color: var(--bg-secondary);
 }
 
 .file-tree-header {
+  flex: 0 0 auto;
   padding: 12px;
   border-bottom: 1px solid var(--border-secondary);
   background-color: var(--bg-secondary);
@@ -49,6 +51,7 @@
 
 .file-tree-footer {
   display: flex;
+  flex: 0 0 auto;
   flex-direction: column;
   gap: 8px;
   padding: 0 8px 12px;
@@ -182,8 +185,8 @@
 }
 
 .file-tree-content {
-  flex: 1;
-  min-height: 0;
+  flex: 1 1 auto;
+  min-height: 120px;
   overflow: auto;
   padding: 10px 8px;
 }
@@ -292,9 +295,21 @@
 }
 
 .file-tree-versions {
-  flex: 0 0 auto;
-  padding: 10px 8px 12px;
+  display: flex;
+  max-height: 45%;
+  min-height: 0;
+  flex: 0 1 auto;
+  flex-direction: column;
+  padding: 10px 0 12px;
+  overflow: hidden;
   border-top: 1px solid var(--border-secondary);
+}
+
+.file-tree-version-list {
+  min-height: 0;
+  padding: 0 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .version-row {
@@ -350,19 +365,29 @@
 }
 
 /* Scrollbar styling */
-.file-tree-content::-webkit-scrollbar {
-  width: 8px;
+:is(.file-tree-content, .file-tree-version-list)::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.file-tree-content::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+:is(.file-tree-content, .file-tree-version-list)::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.file-tree-content::-webkit-scrollbar-thumb {
+:is(.file-tree-content, .file-tree-version-list)::-webkit-scrollbar-thumb {
   background: var(--border-primary);
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
-.file-tree-content::-webkit-scrollbar-thumb:hover {
+:is(.file-tree-content, .file-tree-version-list)::-webkit-scrollbar-thumb:hover {
   background: var(--text-tertiary);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  :is(.file-tree-content, .file-tree-version-list) {
+    /* stylelint-disable plugin/use-baseline -- Firefox fallback for the WebKit rules above. */
+    scrollbar-color: var(--border-primary) transparent;
+    scrollbar-width: thin;
+    /* stylelint-enable plugin/use-baseline */
+  }
 }

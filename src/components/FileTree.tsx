@@ -440,30 +440,34 @@ export const FileTree = ({
       </div>
       <div className="file-tree-versions">
         <div className="section-label">Versions</div>
-        {versionRows.length > 0 ? (
-          versionRows.map((row) => (
-            <button
-              key={row.path}
-              className={`version-row ${row.isCurrent ? 'current' : ''}`}
-              type="button"
-              aria-label={getVersionRowAriaLabel(row)}
-              onClick={() => onFileSelect(row.path)}
-            >
-              <span className="version-row-label">
-                <span>{row.label}</span>
-                {row.state !== 'archived' && <span className="version-row-state">{row.state}</span>}
-              </span>
-              <span className={row.openCount > 0 ? 'tree-count-badge' : 'version-row-meta'}>
-                {getVersionRowMeta(row)}
-              </span>
-            </button>
-          ))
-        ) : (
-          <div className="version-row muted">
-            <span>Current</span>
-            <span>single</span>
-          </div>
-        )}
+        <div className="file-tree-version-list">
+          {versionRows.length > 0 ? (
+            versionRows.map((row) => (
+              <button
+                key={row.path}
+                className={`version-row ${row.isCurrent ? 'current' : ''}`}
+                type="button"
+                aria-label={getVersionRowAriaLabel(row)}
+                onClick={() => onFileSelect(row.path)}
+              >
+                <span className="version-row-label">
+                  <span>{row.label}</span>
+                  {row.state !== 'archived' && (
+                    <span className="version-row-state">{row.state}</span>
+                  )}
+                </span>
+                <span className={row.openCount > 0 ? 'tree-count-badge' : 'version-row-meta'}>
+                  {getVersionRowMeta(row)}
+                </span>
+              </button>
+            ))
+          ) : (
+            <div className="version-row muted">
+              <span>Current</span>
+              <span>single</span>
+            </div>
+          )}
+        </div>
       </div>
       <div className="file-tree-footer">
         <ThemeToggle />

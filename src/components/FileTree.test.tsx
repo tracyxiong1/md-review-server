@@ -93,7 +93,7 @@ describe('FileTree', () => {
     const user = userEvent.setup();
     const onFileSelect = vi.fn();
 
-    render(
+    const { container } = render(
       <FileTree
         files={files}
         selectedFile="docs/guide.v2.md"
@@ -105,6 +105,9 @@ describe('FileTree', () => {
     expect(screen.getByRole('button', { name: 'v2 current 1 open comment' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'v1 reviewed 1 done comment' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'draft archived' })).toBeInTheDocument();
+    expect(container.querySelector('.file-tree-version-list')).toContainElement(
+      screen.getByRole('button', { name: 'v2 current 1 open comment' }),
+    );
 
     await user.click(screen.getByRole('button', { name: 'v1 reviewed 1 done comment' }));
 
