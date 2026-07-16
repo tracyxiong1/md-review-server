@@ -1,0 +1,53 @@
+DESIGN.md
+  s_1be0948b979c38::t_c2416622b07da0 238,241
+design-drafts/README.md
+  s_1be0948b979c38::t_8d7a33a1f5e607 48-49
+design-drafts/archive/2026-07-16-document-outline-scrollbar/BRIEF.md
+  s_1be0948b979c38::t_617fc92745394f 1-29
+design-drafts/archive/2026-07-16-document-outline-scrollbar/DECISION.md
+  s_1be0948b979c38::t_ed70c7c8fa8203 1-31
+design-drafts/archive/2026-07-16-file-tree-version-scroll/BRIEF.md
+  s_1be0948b979c38::t_3d741af8eb935f 1-31
+design-drafts/archive/2026-07-16-file-tree-version-scroll/DECISION.md
+  s_1be0948b979c38::t_30bdcdde5c736c 1-30
+design-drafts/runtime-baseline/README.md
+  s_1be0948b979c38::t_2b0a1f831ee89e 54-56
+design-drafts/runtime-baseline/fragments/04-dark-expanded-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_2aecf618f0c9f4 1
+design-drafts/runtime-baseline/fragments/05-light-expanded-comments-open-with-comments.root.html
+  s_1be0948b979c38::t_741738efcd2d3e 1
+design-drafts/runtime-baseline/html/01-dark-collapsed-comments-closed-empty.html
+  s_1be0948b979c38::t_771e2354e8e926 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144
+design-drafts/runtime-baseline/html/02-dark-collapsed-comments-open-empty.html
+  s_1be0948b979c38::t_4fc77ccf362004 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144
+design-drafts/runtime-baseline/html/03-dark-collapsed-comments-open-with-comments.html
+  s_1be0948b979c38::t_9d79bc59df66d8 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144
+design-drafts/runtime-baseline/html/04-dark-expanded-comments-open-with-comments.html
+  s_1be0948b979c38::t_ff1d84b8bf4b22 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144,3167
+design-drafts/runtime-baseline/html/05-light-expanded-comments-open-with-comments.html
+  s_1be0948b979c38::t_ef5423d2601cce 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144,3167
+design-drafts/runtime-baseline/html/06-light-collapsed-comments-closed-empty.html
+  s_1be0948b979c38::t_49f15aa77d3fcb 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144
+design-drafts/runtime-baseline/html/07-dark-color-compatibility.html
+  s_1be0948b979c38::t_73fb6fba8c29b4 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144
+design-drafts/runtime-baseline/html/08-light-color-compatibility.html
+  s_1be0948b979c38::t_74c978e2ef323c 146,151,195,329-330,439-445,449-455,509-511,514-515,518,520,523,526-534,949-954,1118-1144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6a5cb08902d30a550f8d019bf33cb5f7c178a51d",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
