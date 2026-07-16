@@ -296,8 +296,12 @@
   max-height: calc(100vh - 100px);
   padding: 24px 12px;
   overflow-y: auto;
-  /* stylelint-disable-next-line plugin/use-baseline -- Native thin scrollbars are a progressive enhancement. */
-  scrollbar-width: thin;
+  /* stylelint-disable-next-line plugin/use-baseline -- WebKit fallback follows for older browsers. */
+  scrollbar-width: none;
+}
+
+.document-outline::-webkit-scrollbar {
+  display: none;
 }
 
 .markdown-content .document-outline-list,
@@ -459,6 +463,33 @@
   flex: 1;
   overflow: auto;
   padding: 24px 0 72px;
+}
+
+.markdown-reader-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.markdown-reader-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.markdown-reader-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 999px;
+}
+
+.markdown-reader-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .markdown-reader-scroll {
+    /* stylelint-disable plugin/use-baseline -- Firefox fallback for the WebKit rules above. */
+    scrollbar-color: var(--border-primary) transparent;
+    scrollbar-width: thin;
+    /* stylelint-enable plugin/use-baseline */
+  }
 }
 
 .markdown-reader {

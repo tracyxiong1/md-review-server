@@ -7,7 +7,34 @@ const moduleUrl = import.meta.url;
 const css = readFileSync(new URL('./markdown.css', moduleUrl), 'utf8');
 const stylesheet = css.replace(/\/\*[\s\S]*?\*\//g, '');
 
-describe('Mermaid markdown styles', () => {
+describe('Markdown styles', () => {
+  it('hides the document outline scrollbar without disabling scrolling', () => {
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.document-outline\s*\{[^}]*overflow-y:\s*auto;[^}]*scrollbar-width:\s*none;/ms,
+    );
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.document-outline::-webkit-scrollbar\s*\{[^}]*display:\s*none;/ms,
+    );
+  });
+
+  it('uses a compact low-contrast scrollbar for the document page', () => {
+    expect(stylesheet).toMatch(
+      /@supports not selector\(::-webkit-scrollbar\)\s*\{\s*\.markdown-reader-scroll\s*\{[^}]*scrollbar-color:\s*var\(--border-primary\) transparent;[^}]*scrollbar-width:\s*thin;/ms,
+    );
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.markdown-reader-scroll::-webkit-scrollbar\s*\{[^}]*width:\s*6px;[^}]*height:\s*6px;/ms,
+    );
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.markdown-reader-scroll::-webkit-scrollbar-track\s*\{[^}]*background:\s*transparent;/ms,
+    );
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.markdown-reader-scroll::-webkit-scrollbar-thumb\s*\{[^}]*background:\s*var\(--border-primary\);[^}]*border-radius:\s*999px;/ms,
+    );
+    expect(stylesheet).toMatch(
+      /^[ \t]*\.markdown-reader-scroll::-webkit-scrollbar-thumb:hover\s*\{[^}]*background:\s*var\(--text-tertiary\);/ms,
+    );
+  });
+
   it('reserves a compact action rail around the inline preview', () => {
     expect(stylesheet).toMatch(
       /^[ \t]*\.mermaid-pre\s*\{[^}]*--markdown-pre-padding:\s*36px 16px 4px;/ms,
