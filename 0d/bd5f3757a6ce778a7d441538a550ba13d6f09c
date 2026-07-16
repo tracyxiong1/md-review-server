@@ -1,0 +1,23 @@
+src/components/FileTree.test.tsx
+  s_1be0948b979c38::t_a4decb6046e814 96,108-110
+src/styles/filetree.test.ts
+  s_1be0948b979c38::t_849b568fc84802 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0dbd5f3757a6ce778a7d441538a550ba13d6f09c",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
