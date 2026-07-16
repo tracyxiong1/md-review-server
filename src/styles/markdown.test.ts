@@ -35,6 +35,15 @@ describe('Markdown styles', () => {
     );
   });
 
+  it('widens only the detached outline on extra-wide previews', () => {
+    expect(stylesheet).toMatch(
+      /@container markdown-preview \(width >= 1240px\)[\s\S]*?\.markdown-reader\.with-document-outline \.document-outline-column\s*\{[^}]*left:\s*24px;[^}]*width:\s*160px;/m,
+    );
+    expect(stylesheet).toMatch(
+      /@container markdown-preview \(width >= 1440px\)\s*\{\s*\.markdown-reader\.with-document-outline \.document-outline-column\s*\{[^}]*width:\s*240px;/ms,
+    );
+  });
+
   it('reserves a compact action rail around the inline preview', () => {
     expect(stylesheet).toMatch(
       /^[ \t]*\.mermaid-pre\s*\{[^}]*--markdown-pre-padding:\s*36px 16px 4px;/ms,
