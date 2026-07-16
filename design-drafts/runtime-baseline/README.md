@@ -51,6 +51,9 @@ Detailed DOM measurements are stored in [cases.json](./cases.json).
 - Comments panel width is about `300px`.
 - Collapsed sidebar width is about `46px`.
 - Heading navigation is `160px` when the document card is at least `760px` wide and a divider-free `32px` tick rail below that threshold.
+- Long outlines remain independently scrollable, but their internal scrollbar is visually hidden.
+- The main document scrollbar remains visible: WebKit browsers use `6px`, while Firefox uses its compact `thin` width. Both use a transparent track and a low-contrast neutral thumb; WebKit strengthens the thumb on hover.
+- File rows and version rows scroll independently. The file list keeps a `120px` minimum height, while the version section uses at most `45%` of the sidebar.
 - At the `785px` baseline viewport, card widths are `697px` with both side panels collapsed, `459px` with comments open, and `265px` with both file and comments panels open. Each case uses the compact rail so reading width takes priority.
 - Comments header without actions is about `113px` high.
 - Comments header with `Copy All` and `Clear` actions is about `143px` high.

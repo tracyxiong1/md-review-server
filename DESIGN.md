@@ -235,10 +235,10 @@ Components are compact, familiar, and state-explicit. They should preserve the c
 
 ### Navigation
 
-- **File Tree:** 30px rows, 7px radius, muted labels, active row uses `bg-tertiary` and primary ink. Counts use compact blue badges.
+- **File Tree:** 30px rows, 7px radius, muted labels, active row uses `bg-tertiary` and primary ink. Counts use compact blue badges. Keep the file list and version history independently scrollable; reserve at least `120px` for files and cap versions at `45%` of sidebar height so the footer stays visible.
 - **Sidebars:** Widths are utilitarian and resizable. Collapsed sidebars use 42px to 46px rails with icon-only buttons.
 - **Top Bar:** 52px height, filename first, view controls second. Avoid extra toolbar density unless the workflow requires it.
-- **Document Outline:** On previews at least `1240px` wide, place the `160px` text outline near the preview's left edge while the `820px` document card remains centered. At medium widths, integrate the full outline with the reader. Below a `760px` document-card width, switch to a divider-free `32px` H1-H6 tick rail so the document keeps priority. The active heading uses review blue. Compact-rail tooltips show heading level and full title, stay inside the visible preview boundary, and never cover the comments panel.
+- **Document Outline:** On previews at least `1240px` wide, place the `160px` text outline near the preview's left edge while the `820px` document card remains centered. At medium widths, integrate the full outline with the reader. Below a `760px` document-card width, switch to a divider-free `32px` H1-H6 tick rail so the document keeps priority. Keep the outline scrollable while hiding its internal scrollbar. The active heading uses review blue. Compact-rail tooltips show heading level and full title, stay inside the visible preview boundary, and never cover the comments panel. Keep the main document scrollbar visible but quiet: WebKit browsers use `6px`; Firefox uses its compact `thin` width. Both use a transparent track, neutral thumb, and stronger hover feedback where supported.
 
 ### Comments Panel
 
