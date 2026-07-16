@@ -1,0 +1,21 @@
+README.md
+  s_1be0948b979c38::t_4bf17d678b7231 7,9-23,30-62,163,168-176,207-218,227-233,235,239-251,263-276
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "aa86d48c324792e7f8af0860e06c73e1e902c8c2",
+  "prompts": {},
+  "sessions": {
+    "s_1be0948b979c38": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f657d-6a52-7e53-86f5-570e6ae0d9f2",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
