@@ -1,0 +1,33 @@
+README.md
+  s_070f77a8b48f7f::t_a0ffdae12ecd57 37
+design-drafts/archive/2026-07-17-local-markdown-images/BRIEF.md
+  s_070f77a8b48f7f::t_49ccc4bffd669f 1-32
+design-drafts/archive/2026-07-17-local-markdown-images/DECISION.md
+  s_070f77a8b48f7f::t_079794f65e45e5 1-38
+server/app.js
+  s_070f77a8b48f7f::t_c4c2bfbba0c9da 2-3,7-17,114-130,213-257
+server/app.test.js
+  s_070f77a8b48f7f::t_a3e8e097d5a789 1,109-141
+src/components/MarkdownPreview.test.tsx
+  s_070f77a8b48f7f::t_c69ccc7cf7c2c3 97-136
+src/components/MarkdownPreview.tsx
+  s_070f77a8b48f7f::t_7cc184fb6a9a07 64,68-79,317-320,366-369,517-518
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8c58dc14804c9978979093e43222d16842c49a87",
+  "prompts": {},
+  "sessions": {
+    "s_070f77a8b48f7f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f6f64-a75d-74e1-a541-652b3cc56bad",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
