@@ -2,6 +2,14 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.9.0](https://github.com/tracyxiong1/md-review-server/compare/v0.8.2...v0.9.0) (2026-07-17)
+
+
+### Features
+
+* support local Markdown images ([f356ba8](https://github.com/tracyxiong1/md-review-server/commit/f356ba8386ea3a118d0ca74a72cd6fcf22278826))
+* support local Markdown images ([8c58dc1](https://github.com/tracyxiong1/md-review-server/commit/8c58dc14804c9978979093e43222d16842c49a87))
+
 ## [0.8.2](https://github.com/tracyxiong1/md-review-server/compare/v0.8.1...v0.8.2) (2026-07-16)
 
 
