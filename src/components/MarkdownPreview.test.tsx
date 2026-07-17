@@ -94,6 +94,46 @@ describe('MarkdownPreview', () => {
     expect(screen.getByTestId('mermaid-block').parentElement).toHaveClass('mermaid-pre');
   });
 
+  it('loads relative images through the local asset endpoint', () => {
+    render(
+      <MarkdownPreview
+        {...baseProps}
+        content="![Diagram](../images/diagram.png)"
+        filePath="docs/guide.md"
+        comments={[]}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'Diagram' })).toHaveAttribute(
+      'src',
+      '/api/assets?file=docs%2Fguide.md&path=..%2Fimages%2Fdiagram.png',
+    );
+  });
+
+  it('uses the markdown filename as the image base in CLI mode', () => {
+    render(<MarkdownPreview {...baseProps} content="![Diagram](./diagram.png)" comments={[]} />);
+
+    expect(screen.getByRole('img', { name: 'Diagram' })).toHaveAttribute(
+      'src',
+      '/api/assets?file=test.md&path=.%2Fdiagram.png',
+    );
+  });
+
+  it('keeps remote image URLs unchanged', () => {
+    render(
+      <MarkdownPreview
+        {...baseProps}
+        content="![Remote](https://example.com/diagram.png)"
+        comments={[]}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'Remote' })).toHaveAttribute(
+      'src',
+      'https://example.com/diagram.png',
+    );
+  });
+
   it('collapses the comments sidebar by default when there are no comments', () => {
     render(<MarkdownPreview {...baseProps} comments={[]} />);
 

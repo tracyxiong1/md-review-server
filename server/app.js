@@ -1,9 +1,20 @@
 import { Hono } from 'hono';
-import { readFile, readdir } from 'fs/promises';
-import { basename, dirname, join, relative, resolve } from 'path';
+import { readFile, readdir, realpath } from 'fs/promises';
+import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from 'path';
 import { FileCommentStore } from './comment-store.js';
 
 const VERSIONED_MARKDOWN_RE = /^(?<stem>.+?)(?:\.v(?<version>\d+))?(?<ext>\.md|\.markdown|\.mdx)$/;
+const IMAGE_CONTENT_TYPES = new Map([
+  ['.avif', 'image/avif'],
+  ['.bmp', 'image/bmp'],
+  ['.gif', 'image/gif'],
+  ['.ico', 'image/x-icon'],
+  ['.jpeg', 'image/jpeg'],
+  ['.jpg', 'image/jpeg'],
+  ['.png', 'image/png'],
+  ['.svg', 'image/svg+xml'],
+  ['.webp', 'image/webp'],
+]);
 
 export function isMarkdownFile(filename) {
   return filename.endsWith('.md') || filename.endsWith('.markdown') || filename.endsWith('.mdx');
@@ -100,6 +111,23 @@ function requireWritable(c, readonly) {
   return null;
 }
 
+function isPathWithin(rootPath, candidatePath) {
+  const relativePath = relative(rootPath, candidatePath);
+  return (
+    relativePath === '' ||
+    (relativePath !== '..' && !relativePath.startsWith(`..${sep}`) && !isAbsolute(relativePath))
+  );
+}
+
+function decodeLocalAssetPath(assetPath) {
+  const pathname = assetPath.split(/[?#]/, 1)[0];
+  try {
+    return decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
+}
+
 export function createApp(options = {}) {
   const app = new Hono();
   const markdownFilePath = options.markdownFilePath;
@@ -179,6 +207,51 @@ export function createApp(options = {}) {
     } catch (err) {
       console.error('Error reading markdown:', err.message);
       return jsonError(c, 'Failed to read markdown file');
+    }
+  });
+
+  app.get('/api/assets', async (c) => {
+    const markdownPath = c.req.query('file');
+    const assetPath = c.req.query('path');
+    const decodedAssetPath = assetPath ? decodeLocalAssetPath(assetPath) : null;
+
+    if (!markdownPath || !decodedAssetPath || !isMarkdownFile(markdownPath)) {
+      return jsonError(c, 'Invalid local image request', 400);
+    }
+
+    const markdownFile = resolve(rootDir, markdownPath);
+    const requestedAsset = resolve(dirname(markdownFile), decodedAssetPath);
+
+    if (!isPathWithin(rootDir, markdownFile) || !isPathWithin(rootDir, requestedAsset)) {
+      return jsonError(c, 'Invalid local image path', 403);
+    }
+
+    try {
+      const [realRoot, realAsset] = await Promise.all([
+        realpath(rootDir),
+        realpath(requestedAsset),
+      ]);
+      if (!isPathWithin(realRoot, realAsset)) {
+        return jsonError(c, 'Invalid local image path', 403);
+      }
+
+      const contentType = IMAGE_CONTENT_TYPES.get(extname(realAsset).toLowerCase());
+      if (!contentType) {
+        return jsonError(c, 'Unsupported local image type', 415);
+      }
+
+      const data = await readFile(realAsset);
+      return c.body(data, 200, {
+        'Cache-Control': 'no-cache',
+        'Content-Type': contentType,
+        'X-Content-Type-Options': 'nosniff',
+      });
+    } catch (err) {
+      if (err?.code === 'ENOENT' || err?.code === 'ENOTDIR') {
+        return jsonError(c, 'Local image not found', 404);
+      }
+      console.error('Error reading local image:', err.message);
+      return jsonError(c, 'Failed to read local image');
     }
   });
 
