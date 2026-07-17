@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from 'fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -104,6 +104,39 @@ describe('review API', () => {
     await expect(unversionedResponse.json()).resolves.toMatchObject({
       selectedFile: 'guide.v2.md',
     });
+  });
+
+  it('serves local images relative to a nested markdown file', async () => {
+    await mkdir(join(tempDir, 'docs'));
+    await mkdir(join(tempDir, 'images'));
+    await writeFile(join(tempDir, 'docs', 'guide.md'), '# Nested guide\n');
+    await writeFile(join(tempDir, 'images', 'diagram.png'), Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+
+    const app = createApp({ baseDir: tempDir });
+    const response = await app.request(
+      '/api/assets?file=docs%2Fguide.md&path=..%2Fimages%2Fdiagram.png',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('image/png');
+    expect(response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(new Uint8Array(await response.arrayBuffer())).toEqual(
+      new Uint8Array([0x89, 0x50, 0x4e, 0x47]),
+    );
+  });
+
+  it('rejects local image paths outside the review root', async () => {
+    const app = createApp({ baseDir: tempDir });
+    const response = await app.request('/api/assets?file=guide.v1.md&path=..%2Foutside.png');
+
+    expect(response.status).toBe(403);
+  });
+
+  it('rejects non-image files from the local image endpoint', async () => {
+    const app = createApp({ baseDir: tempDir });
+    const response = await app.request('/api/assets?file=guide.v1.md&path=guide.v1.md');
+
+    expect(response.status).toBe(415);
   });
 
   it('creates, lists, patches, batch patches, and deletes comments', async () => {

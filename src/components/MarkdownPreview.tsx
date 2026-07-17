@@ -61,8 +61,21 @@ const OUTLINE_SCROLL_KEYS = new Set([
   'PageUp',
   ' ',
 ]);
+const EXTERNAL_IMAGE_SOURCE_RE = /^(?:[a-z][a-z\d+.-]*:|\/\/|\/|#)/i;
 
 const getCommentText = (comment: Comment) => comment.comment || comment.text || '';
+
+const getMarkdownImageSource = (source: string | undefined, markdownFile: string) => {
+  if (!source || EXTERNAL_IMAGE_SOURCE_RE.test(source)) {
+    return source;
+  }
+
+  const params = new URLSearchParams({
+    file: markdownFile,
+    path: source,
+  });
+  return `/api/assets?${params.toString()}`;
+};
 
 const getStatusLabel = (status = 'resolved') =>
   ({
@@ -301,7 +314,10 @@ const ProcessedCommentMarker = ({ line, comments, label, top }: ProcessedComment
   );
 };
 
-const createComponentsWithLinePosition = (markerLines: Set<number>): Components => {
+const createComponentsWithLinePosition = (
+  markerLines: Set<number>,
+  markdownFile: string,
+): Components => {
   const withLineMarker = (
     Tag: ElementType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -347,6 +363,10 @@ const createComponentsWithLinePosition = (markerLines: Set<number>): Components 
         </code>
       );
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+    img: ({ node, src, ...props }: any) => (
+      <img {...props} src={getMarkdownImageSource(src, markdownFile)} />
+    ),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     p: (props: any) => withLineMarker('p', props),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -494,8 +514,8 @@ export const MarkdownPreview = ({
     [markerGroups],
   );
   const componentsWithLinePosition = useMemo(
-    () => createComponentsWithLinePosition(markerLines),
-    [markerLines],
+    () => createComponentsWithLinePosition(markerLines, filePath || filename),
+    [filePath, filename, markerLines],
   );
   const openCommentCount = useMemo(
     () => comments.filter((comment) => (comment.status || 'open') === 'open').length,
