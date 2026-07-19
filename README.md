@@ -2,7 +2,7 @@
 
 English | [简体中文](./README-zh.md)
 
-[![npm version](https://img.shields.io/npm/v/md-review-server.svg)](https://www.npmjs.com/package/md-review-server)
+[![npm version](https://badgen.net/npm/v/md-review-server)](https://www.npmjs.com/package/md-review-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-md--review--server-black.svg)](https://github.com/tracyxiong1/md-review-server)
 
@@ -292,9 +292,11 @@ The project uses Release Please through GitHub Actions. Conventional commits mer
 
 Common commit prefixes:
 
-- `feat:` creates a minor release
+- `feat:` creates a patch release before `1.0.0`, then a minor release
 - `fix:` creates a patch release
 - `feat!:` and `fix!:` or a `BREAKING CHANGE:` footer create a major release
+
+For a planned pre-1.0 milestone, add `Release-As: 0.10.0` to the commit body to request that version explicitly.
 
 Pushing a `v*.*.*` tag manually still triggers npm publishing, but it does not update the changelog. Use the Release Please PR for normal releases.
 

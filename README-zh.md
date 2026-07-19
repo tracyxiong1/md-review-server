@@ -2,7 +2,7 @@
 
 [English](./README.md) | 简体中文
 
-[![npm version](https://img.shields.io/npm/v/md-review-server.svg)](https://www.npmjs.com/package/md-review-server)
+[![npm version](https://badgen.net/npm/v/md-review-server)](https://www.npmjs.com/package/md-review-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-md--review--server-black.svg)](https://github.com/tracyxiong1/md-review-server)
 
@@ -285,9 +285,11 @@ pnpm lint
 
 常用提交前缀：
 
-- `feat:` 进入 minor release。
+- `feat:` 在 `1.0.0` 之前进入 patch release，之后进入 minor release。
 - `fix:` 进入 patch release。
 - `feat!:`、`fix!:` 或带 `BREAKING CHANGE:` footer 的提交进入 major release。
+
+如果需要发布 pre-1.0 阶段性版本，可在 commit body 中添加 `Release-As: 0.10.0` 显式指定版本。
 
 手动推送 `v*.*.*` tag 仍会触发 npm 发布，但不会自动补写 CHANGELOG。常规发版使用 Release Please 生成的 release PR。
 
