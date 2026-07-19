@@ -1,0 +1,25 @@
+.release-please-manifest.json
+  s_05801ec6636678::t_4d3d1f23dad6ad 2
+CHANGELOG.md
+  s_05801ec6636678::t_8e644f092cc37b 5-11
+package.json
+  s_05801ec6636678::t_6c5386c7faae74 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "534cc4def2f401662a5c4b91888fda59ce8dd60a",
+  "prompts": {},
+  "sessions": {
+    "s_05801ec6636678": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f795e-6bab-7d12-b7fd-75eea9647aff",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
