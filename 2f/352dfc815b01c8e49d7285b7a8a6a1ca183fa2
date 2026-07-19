@@ -1,0 +1,45 @@
+README.md
+  s_05801ec6636678::t_cfdfb97ec91e79 180-191,237,240,252-266
+package.json
+  s_05801ec6636678::t_9e7636f31df00d 18
+server/app.js
+  s_05801ec6636678::t_3e73e956fc3f9b 5,142-146,282-322
+server/app.test.js
+  s_05801ec6636678::t_ef28d709d7eda4 4,16,259-391
+server/document-lifecycle-store.js
+  s_05801ec6636678::t_17693c10e334a5 1-322
+server/document-lifecycle-store.test.js
+  s_05801ec6636678::t_e15caa055f8818 1-162
+src/components/CliModeApp.tsx
+  s_05801ec6636678::t_12d264a5438dfd 5,13
+src/components/DevModeApp.tsx
+  s_05801ec6636678::t_a853526de71e35 5,100
+src/hooks/useAnalytics.test.ts
+  s_05801ec6636678::t_dc4a656b1527a5 20,68-118
+src/hooks/useAnalytics.ts
+  s_05801ec6636678::t_07db9040aa5af7 16,24,31,65,68-69,81,84,99-106,110,113,130-135,158
+src/hooks/useComments.ts
+  s_05801ec6636678::t_8df265a7a5d3b8 3,96
+src/hooks/useDocumentAnalytics.test.ts
+  s_05801ec6636678::t_eb95e4eef3ea98 1-150
+src/hooks/useDocumentAnalytics.ts
+  s_05801ec6636678::t_43f23b183b2486 1-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2f352dfc815b01c8e49d7285b7a8a6a1ca183fa2",
+  "prompts": {},
+  "sessions": {
+    "s_05801ec6636678": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f795e-6bab-7d12-b7fd-75eea9647aff",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
