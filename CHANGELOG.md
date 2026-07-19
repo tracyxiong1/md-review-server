@@ -2,6 +2,46 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.10.0](https://github.com/tracyxiong1/md-review-server/compare/v0.9.1...v0.10.0) (2026-07-19)
+
+
+### Features
+
+* add anonymous analytics tracking ([1b177dc](https://github.com/tracyxiong1/md-review-server/commit/1b177dc706a762f776f7d5e06e9c7a5683912707))
+* add comment reply persistence ([9b72466](https://github.com/tracyxiong1/md-review-server/commit/9b72466df80201ad51d1ba71558bb5daabef2407))
+* add interactive Mermaid diagram viewer ([#8](https://github.com/tracyxiong1/md-review-server/issues/8)) ([7f21725](https://github.com/tracyxiong1/md-review-server/commit/7f21725448d6aed1325e8561b42b612f26067755))
+* add responsive document outline navigation ([#13](https://github.com/tracyxiong1/md-review-server/issues/13)) ([89fe839](https://github.com/tracyxiong1/md-review-server/commit/89fe839e30ec37e834e149c03515331c8a4b039a))
+* add review summary navigation ([b291da5](https://github.com/tracyxiong1/md-review-server/commit/b291da56b32df540d3f3e106d311ede1e984c742))
+* add threaded comment replies UI ([13b6f13](https://github.com/tracyxiong1/md-review-server/commit/13b6f131fc3343eb950dfd9c0e6a99f787c3ceb3))
+* keep file tree sections independently scrollable ([0dbd5f3](https://github.com/tracyxiong1/md-review-server/commit/0dbd5f3757a6ce778a7d441538a550ba13d6f09c))
+* refine markdown review experience ([0e5e6cc](https://github.com/tracyxiong1/md-review-server/commit/0e5e6ccb92f90f75a459810314eab2c2ca4241ce))
+* **review:** refine compact workbench controls ([2e16be2](https://github.com/tracyxiong1/md-review-server/commit/2e16be2128e9bed6dbd07013fab3fc6f82e2d05b))
+* support local Markdown images ([f356ba8](https://github.com/tracyxiong1/md-review-server/commit/f356ba8386ea3a118d0ca74a72cd6fcf22278826))
+* support local Markdown images ([8c58dc1](https://github.com/tracyxiong1/md-review-server/commit/8c58dc14804c9978979093e43222d16842c49a87))
+
+
+### Bug Fixes
+
+* add branded review favicon ([1ef8898](https://github.com/tracyxiong1/md-review-server/commit/1ef8898f5aeb93cbea40bfef57620827496a75c3))
+* align collapsed sidebar theme control ([444ea0f](https://github.com/tracyxiong1/md-review-server/commit/444ea0f91932ffb351565563d9ab77cd5077f483))
+* align comment markers with source lines ([3e0753a](https://github.com/tracyxiong1/md-review-server/commit/3e0753a201b8be67174c3f81a7fef68d4283e912))
+* align diff viewer dark theme ([13baebd](https://github.com/tracyxiong1/md-review-server/commit/13baebdd90b7fe8164314fd01cdf4ffe97e2b5a6))
+* contain focus in Mermaid viewer ([f66559f](https://github.com/tracyxiong1/md-review-server/commit/f66559f01560bb6bf7bedc734358fc47a5802ace))
+* **docs:** refresh README and review demos ([a370cba](https://github.com/tracyxiong1/md-review-server/commit/a370cbab91f025db83f0f1ccbe47b4dfd5263954))
+* **docs:** refresh README and review demos ([aa86d48](https://github.com/tracyxiong1/md-review-server/commit/aa86d48c324792e7f8af0860e06c73e1e902c8c2))
+* harden review layout for long content ([67ddc10](https://github.com/tracyxiong1/md-review-server/commit/67ddc109790992bcb1dd371529014942a34cb5d8))
+* hide historical files from default list ([0ffbc28](https://github.com/tracyxiong1/md-review-server/commit/0ffbc280fd5495fc393bafe0d65e5f77948fe18f))
+* improve diagram and code theme contrast ([e1be0bf](https://github.com/tracyxiong1/md-review-server/commit/e1be0bfbcfa209111731f34acfb9779984620013))
+* make reply time test timezone-safe ([c6b278e](https://github.com/tracyxiong1/md-review-server/commit/c6b278e74bd87ecceb1b86ee5022cb4759798eef))
+* preserve Mermaid viewer focus modality ([dd3d06b](https://github.com/tracyxiong1/md-review-server/commit/dd3d06b9c48c3b0b87b233f60e1165fd5547ee14))
+* refresh diff viewer on theme changes ([e4514bf](https://github.com/tracyxiong1/md-review-server/commit/e4514bf4d64542e118b2d532ff5c5963114b5881))
+* restore Mermaid trigger focus without pointer highlight ([ad8d3f5](https://github.com/tracyxiong1/md-review-server/commit/ad8d3f5e915d356507efa47a381e64526004ecfd))
+* track anonymized document lifecycle depth ([3020ae8](https://github.com/tracyxiong1/md-review-server/commit/3020ae8b7f86b533e2cb7ddc93c5825ad88e6b72))
+* track anonymized document lifecycle depth ([2f352df](https://github.com/tracyxiong1/md-review-server/commit/2f352dfc815b01c8e49d7285b7a8a6a1ca183fa2))
+* track Mermaid viewer interaction modality ([774ff33](https://github.com/tracyxiong1/md-review-server/commit/774ff33c2778d0c0d2153c51b73f787cb02153d3))
+* unify sidebar icon sizing ([60da321](https://github.com/tracyxiong1/md-review-server/commit/60da3217002d32cede5ba32e6c22ce38336838a2))
+* widen outline on extra-wide previews ([32cf45d](https://github.com/tracyxiong1/md-review-server/commit/32cf45d897a90d93ee10d4f5c0c87dfec3d8bd3c))
+
 ## [0.9.1](https://github.com/tracyxiong1/md-review-server/compare/v0.9.0...v0.9.1) (2026-07-19)
 
 
