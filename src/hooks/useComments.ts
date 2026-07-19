@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CreateCommentInput, ReviewComment, ReviewCommentReplyAuthor } from '../types/review';
+import { syncDocumentAnalytics } from './useDocumentAnalytics';
 
 interface ReviewSession {
   readonly: boolean;
@@ -92,6 +93,7 @@ export const useComments = (filePath?: string | null): UseCommentsData => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),
       });
+      void syncDocumentAnalytics(input.file);
       reload();
     },
     [reload],

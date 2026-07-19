@@ -15,6 +15,7 @@
     "server/analytics.js",
     "server/app.js",
     "server/comment-store.js",
+    "server/document-lifecycle-store.js",
     "server/index.js",
     "skills"
   ],

@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp } from './app.js';
 
 describe('review API', () => {
@@ -13,6 +13,7 @@ describe('review API', () => {
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     await rm(tempDir, { recursive: true, force: true });
   });
 
@@ -253,6 +254,139 @@ describe('review API', () => {
       await readFile(join(tempDir, '.reviews', 'guide.v1.review.json'), 'utf-8'),
     );
     expect(sidecar.comments).toEqual([]);
+  });
+
+  it('initializes and syncs document lifecycle analytics after the first comment', async () => {
+    const app = createApp({
+      baseDir: tempDir,
+      reviewDir: '.reviews',
+      readonly: false,
+      analytics: {
+        enabled: true,
+        provider: 'umami',
+        scriptUrl: 'https://cloud.umami.is/script.js',
+        websiteId: 'website-id',
+        sanitizedPath: '/review',
+      },
+    });
+
+    const createResponse = await app.request('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file: 'guide.v1.md',
+        startLine: 1,
+        endLine: 1,
+        selectedText: 'Guide',
+        comment: 'Start the review lifecycle',
+      }),
+    });
+    expect(createResponse.status).toBe(201);
+
+    const syncResponse = await app.request('/api/document-analytics/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: 'guide.v1.md' }),
+    });
+    expect(syncResponse.status).toBe(200);
+    const { events } = await syncResponse.json();
+    expect(events.map((event) => event.name)).toEqual([
+      'document_initialized',
+      'document_opened',
+      'review_round_started',
+    ]);
+    expect(events[0].data).toEqual({
+      document_id: expect.any(String),
+    });
+    expect(JSON.stringify(events)).not.toContain('guide.v1.md');
+
+    const ackResponse = await app.request('/api/document-analytics/ack', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file: 'guide.v1.md',
+        eventIds: events.map((event) => event.id),
+      }),
+    });
+    expect(ackResponse.status).toBe(204);
+
+    const emptySyncResponse = await app.request('/api/document-analytics/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: 'guide.v1.md' }),
+    });
+    await expect(emptySyncResponse.json()).resolves.toEqual({ events: [] });
+
+    const lifecycle = JSON.parse(
+      await readFile(join(tempDir, '.reviews', 'guide.md.document.json'), 'utf-8'),
+    );
+    expect(lifecycle.document).toMatchObject({
+      id: expect.any(String),
+      key: 'guide.md',
+      revisionSeq: 0,
+      roundSeq: 1,
+    });
+    expect(lifecycle.analytics.pendingEvents).toEqual([]);
+  });
+
+  it('does not create lifecycle analytics state when analytics is disabled', async () => {
+    const app = createApp({
+      baseDir: tempDir,
+      reviewDir: '.reviews',
+      readonly: false,
+      analytics: { enabled: false },
+    });
+
+    const createResponse = await app.request('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file: 'guide.v1.md',
+        startLine: 1,
+        endLine: 1,
+        selectedText: 'Guide',
+        comment: 'No lifecycle analytics',
+      }),
+    });
+    expect(createResponse.status).toBe(201);
+
+    const syncResponse = await app.request('/api/document-analytics/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: 'guide.v1.md' }),
+    });
+    await expect(syncResponse.json()).resolves.toEqual({ events: [] });
+    await expect(
+      readFile(join(tempDir, '.reviews', 'guide.md.document.json'), 'utf-8'),
+    ).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('keeps comment creation successful when lifecycle analytics cannot be recorded', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const app = createApp({
+      baseDir: tempDir,
+      reviewDir: '.reviews',
+      readonly: false,
+      analytics: { enabled: true },
+    });
+
+    const createResponse = await app.request('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file: 'missing.md',
+        startLine: 1,
+        endLine: 1,
+        selectedText: 'Missing',
+        comment: 'Analytics must not break comments',
+      }),
+    });
+
+    expect(createResponse.status).toBe(201);
+    expect(warn).toHaveBeenCalledWith(
+      'Failed to record document lifecycle analytics:',
+      expect.objectContaining({ code: 'ENOENT' }),
+    );
   });
 
   it('rejects write requests in readonly mode', async () => {

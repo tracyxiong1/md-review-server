@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { useFileWatch } from '../hooks/useFileWatch';
 import { useComments } from '../hooks/useComments';
+import { useDocumentAnalytics } from '../hooks/useDocumentAnalytics';
 import { MarkdownPreview } from './MarkdownPreview';
 import { ErrorDisplay } from './ErrorDisplay';
 
@@ -9,6 +10,7 @@ export const CliModeApp = () => {
   const { content, filename, loading, error, reload } = useMarkdown();
   const [commentsFile, setCommentsFile] = useState<string | null>(null);
   const commentState = useComments(commentsFile);
+  useDocumentAnalytics(filename, content);
 
   useEffect(() => {
     setCommentsFile(filename);

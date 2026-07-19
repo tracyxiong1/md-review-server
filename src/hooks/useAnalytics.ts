@@ -13,6 +13,7 @@ interface ReviewSession {
 }
 
 type UmamiPayload = Record<string, unknown>;
+type UmamiEventData = Record<string, string | number | boolean>;
 
 declare global {
   interface Window {
@@ -20,12 +21,14 @@ declare global {
       getSession?: () => unknown;
     };
     __mdReviewUmamiBeforeSend?: (type: string, payload: UmamiPayload) => UmamiPayload | false;
+    __mdReviewTrackEvent?: (name: string, data: UmamiEventData) => Promise<boolean>;
   }
 }
 
 const SCRIPT_ID = 'md-review-umami-script';
 const BEFORE_SEND_HANDLER = '__mdReviewUmamiBeforeSend';
 const FALLBACK_DELAY_MS = 3000;
+export const ANALYTICS_READY_EVENT = 'md-review:analytics-ready';
 
 function getFallbackEndpoint(scriptUrl: string) {
   try {
@@ -59,10 +62,11 @@ function writeCache(cacheKey: string, cache: string) {
   }
 }
 
-async function sendFallbackPageview(
+async function sendDirectEvent(
   config: Required<Pick<AnalyticsConfig, 'scriptUrl' | 'websiteId'>> &
     Pick<AnalyticsConfig, 'sanitizedPath'>,
-) {
+  event?: { name: string; data: UmamiEventData },
+): Promise<boolean> {
   const sanitizedPath = config.sanitizedPath || '/review';
   const cacheKey = `md-review:umami-cache:${config.websiteId}`;
   const cache = readCache(cacheKey);
@@ -74,9 +78,10 @@ async function sendFallbackPageview(
     hostname: window.location.hostname,
     url: window.location.href,
     referrer: document.referrer,
+    ...(event ? { name: event.name, data: event.data } : {}),
   });
 
-  if (!payload) return;
+  if (!payload) return false;
 
   try {
     const response = await fetch(getFallbackEndpoint(config.scriptUrl), {
@@ -91,12 +96,21 @@ async function sendFallbackPageview(
       },
       body: JSON.stringify({ type: 'event', payload: { ...payload, url: sanitizedPath } }),
     });
-    const result = (await response.json()) as { cache?: string; disabled?: boolean };
+    if (!response.ok) {
+      return false;
+    }
+
+    const result = (await response.json().catch(() => ({}))) as {
+      cache?: string;
+      disabled?: boolean;
+    };
     if (result.cache) {
       writeCache(cacheKey, result.cache);
     }
+    return !result.disabled;
   } catch {
     // Analytics should never affect the review UI.
+    return false;
   }
 }
 
@@ -113,6 +127,12 @@ function installUmami(
     title: 'Markdown Review',
     url: sanitizedPath,
   });
+  window.__mdReviewTrackEvent = (name, data) =>
+    sendDirectEvent(config, {
+      name,
+      data,
+    });
+  window.dispatchEvent(new Event(ANALYTICS_READY_EVENT));
 
   const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
   if (existingScript) {
@@ -135,7 +155,7 @@ function installUmami(
 
   window.setTimeout(() => {
     if (!window.umami) {
-      void sendFallbackPageview(config);
+      void sendDirectEvent(config);
     }
   }, FALLBACK_DELAY_MS);
 }
