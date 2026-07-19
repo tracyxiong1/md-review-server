@@ -1,0 +1,25 @@
+README.md
+  s_05801ec6636678::t_095c769b0086ee 5,295,299-300
+release-please-config.json
+  s_05801ec6636678::t_09b6702f4443c1 8-9
+README-zh.md
+  s_05801ec6636678::t_911028357b4014 5,288,292-293
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bcf939ba05c31d67ff4df5688330e1011cf608e8",
+  "prompts": {},
+  "sessions": {
+    "s_05801ec6636678": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f795e-6bab-7d12-b7fd-75eea9647aff",
+        "model": "unknown"
+      },
+      "human_author": "tracyxiong1 <xiongle_2005@qq.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
