@@ -2,6 +2,14 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.9.3](https://github.com/tracyxiong1/md-review-server/compare/v0.9.2...v0.9.3) (2026-07-19)
+
+
+### Bug Fixes
+
+* **docs:** repair npm badge and release policy ([68165a9](https://github.com/tracyxiong1/md-review-server/commit/68165a98da77f35cf357c4af4f051da1a59b9c84))
+* **docs:** repair npm badge and release policy ([bcf939b](https://github.com/tracyxiong1/md-review-server/commit/bcf939ba05c31d67ff4df5688330e1011cf608e8))
+
 ## [0.9.2](https://github.com/tracyxiong1/md-review-server/compare/v0.9.1...v0.9.2) (2026-07-19)
 
 
