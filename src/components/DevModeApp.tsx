@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useFileList } from '../hooks/useFileList';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { useComments } from '../hooks/useComments';
+import { useDocumentAnalytics } from '../hooks/useDocumentAnalytics';
 import { useReviewSummary } from '../hooks/useReviewSummary';
 import { useResizable } from '../hooks/useResizable';
 import { useFileWatch } from '../hooks/useFileWatch';
@@ -96,6 +97,7 @@ export const DevModeApp = () => {
     error: markdownError,
     reload,
   } = useMarkdown(selectedFile);
+  useDocumentAnalytics(selectedFile, content);
   const previousVersionFile = findPreviousVersionFile(selectedFile, files);
   const {
     content: previousVersionContent,

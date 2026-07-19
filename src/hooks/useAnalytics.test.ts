@@ -17,6 +17,7 @@ describe('useAnalytics', () => {
     vi.restoreAllMocks();
     document.head.innerHTML = '';
     delete window.__mdReviewUmamiBeforeSend;
+    delete window.__mdReviewTrackEvent;
     delete window.umami;
     window.localStorage.clear();
   });
@@ -61,6 +62,57 @@ describe('useAnalytics', () => {
       referrer: '',
       title: 'Markdown Review',
       hostname: 'md-review-server',
+    });
+  });
+
+  it('sends custom events directly with sanitized page metadata', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
+      if (String(input) === '/api/session') {
+        return jsonResponse({
+          analytics: {
+            enabled: true,
+            provider: 'umami',
+            scriptUrl: 'https://cloud.umami.is/script.js',
+            websiteId: 'website-id',
+            sanitizedPath: '/review',
+          },
+        });
+      }
+
+      return jsonResponse({ cache: 'cache-token' });
+    });
+
+    renderHook(() => useAnalytics());
+
+    await waitFor(() => {
+      expect(window.__mdReviewTrackEvent).toBeTypeOf('function');
+    });
+
+    await expect(
+      window.__mdReviewTrackEvent?.('document_opened', {
+        document_id: 'document-1',
+        open_seq: 2,
+      }),
+    ).resolves.toBe(true);
+
+    const sendCall = fetchMock.mock.calls.find(
+      ([input]) => String(input) === 'https://gateway.umami.is/api/send',
+    );
+    const body = JSON.parse(String(sendCall?.[1]?.body));
+    expect(body).toMatchObject({
+      type: 'event',
+      payload: {
+        website: 'website-id',
+        hostname: 'md-review-server',
+        url: '/review',
+        referrer: '',
+        title: 'Markdown Review',
+        name: 'document_opened',
+        data: {
+          document_id: 'document-1',
+          open_seq: 2,
+        },
+      },
     });
   });
 

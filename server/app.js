@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { readFile, readdir, realpath } from 'fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from 'path';
 import { FileCommentStore } from './comment-store.js';
+import { DocumentLifecycleStore } from './document-lifecycle-store.js';
 
 const VERSIONED_MARKDOWN_RE = /^(?<stem>.+?)(?:\.v(?<version>\d+))?(?<ext>\.md|\.markdown|\.mdx)$/;
 const IMAGE_CONTENT_TYPES = new Map([
@@ -135,6 +136,11 @@ export function createApp(options = {}) {
   const rootDir = markdownFilePath ? dirname(markdownFilePath) : baseDir;
   const readonly = Boolean(options.readonly);
   const store = new FileCommentStore({
+    rootDir,
+    reviewDir: options.reviewDir || '.reviews',
+  });
+  const analyticsEnabled = Boolean(options.analytics?.enabled) && !readonly;
+  const documentLifecycleStore = new DocumentLifecycleStore({
     rootDir,
     reviewDir: options.reviewDir || '.reviews',
   });
@@ -273,7 +279,47 @@ export function createApp(options = {}) {
     if (readonlyResponse) return readonlyResponse;
 
     try {
-      return c.json(await store.createComment(await readJson(c)), 201);
+      const input = await readJson(c);
+      const comment = await store.createComment(input);
+
+      if (analyticsEnabled) {
+        try {
+          await documentLifecycleStore.recordReview(input.file);
+        } catch (err) {
+          console.warn('Failed to record document lifecycle analytics:', err);
+        }
+      }
+
+      return c.json(comment, 201);
+    } catch (err) {
+      return jsonError(c, err.message, 400);
+    }
+  });
+
+  app.post('/api/document-analytics/sync', async (c) => {
+    if (!analyticsEnabled) {
+      return c.json({ events: [] });
+    }
+
+    try {
+      const input = await readJson(c);
+      return c.json({
+        events: await documentLifecycleStore.sync(input.file),
+      });
+    } catch (err) {
+      return jsonError(c, err.message, 400);
+    }
+  });
+
+  app.post('/api/document-analytics/ack', async (c) => {
+    if (!analyticsEnabled) {
+      return new Response(null, { status: 204 });
+    }
+
+    try {
+      const input = await readJson(c);
+      await documentLifecycleStore.ack(input.file, input.eventIds);
+      return new Response(null, { status: 204 });
     } catch (err) {
       return jsonError(c, err.message, 400);
     }

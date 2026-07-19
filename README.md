@@ -177,7 +177,18 @@ md-review-server skill doctor           # 检查安装版本和状态
 
 ## 匿名访问统计
 
-`md-review-server` 默认使用 Umami 统计匿名 PV/UV，用于了解工具使用量。统计逻辑只注入 Umami pageview script，并在发送前把页面路径统一改写为 `/review`，同时清空 referrer、固定标题和 hostname；不会上报 Markdown 文件名、本地路径、正文、评论内容或选区内容。
+`md-review-server` 默认使用 Umami 统计匿名 PV/UV 和文档使用深度。页面事件在发送前会把路径统一改写为 `/review`，清空 referrer，并固定标题和 hostname；仍会包含 Umami 标准采集的屏幕尺寸和浏览器语言。
+
+文档生命周期从第一次创建评论开始；仅预览文档不会创建生命周期数据。服务端会在本地 `.reviews/<文档名>.document.json` 中生成随机 UUID，并将 `.v1`、`.v2` 等版本化文件归入同一个文档。普通文件重命名不会自动沿用原文档 ID。
+
+发送到 Umami 的生命周期事件只有：
+
+- `document_initialized`：文档第一次进入评审，只发送 `document_id`
+- `document_opened`：一次有效访问，同一文档 30 分钟内只计一次，发送 `document_id`、`open_seq`
+- `document_revised`：发现一个此前未见过的内容版本，发送 `document_id`、`revision_seq`、`round_seq`
+- `review_round_started`：某个内容版本第一次收到评论，发送 `document_id`、`revision_seq`、`round_seq`
+
+不会向 Umami 上报 Markdown 文件名、本地路径、正文、评论内容、选区内容或内容摘要。内容摘要只保存在本地，用于识别已经见过的版本。发送失败的事件会留在本地待发送队列中，成功后再确认删除。
 
 如果不希望发送匿名访问统计，可以关闭：
 
@@ -223,9 +234,10 @@ guide.v2.md
 
 ```text
 docs/.reviews/guide.v2.review.json
+docs/.reviews/guide.md.document.json
 ```
 
-评论记录包括源文件、行号、选区文本、上下文、状态、回复和处理后的目标文件位置。支持的评论状态包括：
+评论记录包括源文件、行号、选区文本、上下文、状态、回复和处理后的目标文件位置。其中 `.review.json` 保存单个版本的评论，`.document.json` 保存同一版本系列的本地生命周期状态。支持的评论状态包括：
 
 - `open`：等待 Codex 处理或等待用户补充。
 - `resolved`：评论已经完整处理。
@@ -237,19 +249,21 @@ docs/.reviews/guide.v2.review.json
 
 ### HTTP API
 
-| Method | Path                  | 用途                                   |
-| ------ | --------------------- | -------------------------------------- |
-| GET    | `/api/health`         | 检查服务状态                           |
-| GET    | `/api/session`        | 获取模式、根目录、活动文件和只读状态   |
-| GET    | `/api/files`          | 获取目录模式中的 Markdown 文件列表     |
-| GET    | `/api/markdown`       | 读取单文件模式中的 Markdown            |
-| GET    | `/api/markdown/:path` | 读取目录模式中的指定 Markdown          |
-| GET    | `/api/watch`          | 订阅文件变更事件                       |
-| GET    | `/api/comments`       | 按文件、状态或目标文件读取评论         |
-| POST   | `/api/comments`       | 创建评论                               |
-| PATCH  | `/api/comments/:id`   | 更新评论、追加回复或回写处理结果       |
-| PATCH  | `/api/comments`       | 批量回写评论状态、回复和新版本目标位置 |
-| DELETE | `/api/comments/:id`   | 删除评论                               |
+| Method | Path                           | 用途                                   |
+| ------ | ------------------------------ | -------------------------------------- |
+| GET    | `/api/health`                  | 检查服务状态                           |
+| GET    | `/api/session`                 | 获取模式、根目录、活动文件和只读状态   |
+| GET    | `/api/files`                   | 获取目录模式中的 Markdown 文件列表     |
+| GET    | `/api/markdown`                | 读取单文件模式中的 Markdown            |
+| GET    | `/api/markdown/:path`          | 读取目录模式中的指定 Markdown          |
+| GET    | `/api/watch`                   | 订阅文件变更事件                       |
+| GET    | `/api/comments`                | 按文件、状态或目标文件读取评论         |
+| POST   | `/api/comments`                | 创建评论                               |
+| PATCH  | `/api/comments/:id`            | 更新评论、追加回复或回写处理结果       |
+| PATCH  | `/api/comments`                | 批量回写评论状态、回复和新版本目标位置 |
+| DELETE | `/api/comments/:id`            | 删除评论                               |
+| POST   | `/api/document-analytics/sync` | 读取本地待发送的脱敏文档生命周期事件   |
+| POST   | `/api/document-analytics/ack`  | 确认已成功发送的文档生命周期事件       |
 
 ## 本地开发
 

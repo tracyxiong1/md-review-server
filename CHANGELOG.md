@@ -2,6 +2,13 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.9.1](https://github.com/tracyxiong1/md-review-server/compare/v0.9.0...v0.9.1) (2026-07-19)
+
+
+### Bug Fixes
+
+* track anonymized document lifecycle depth ([2f352df](https://github.com/tracyxiong1/md-review-server/commit/2f352dfc815b01c8e49d7285b7a8a6a1ca183fa2))
+
 ## [0.9.0](https://github.com/tracyxiong1/md-review-server/compare/v0.8.2...v0.9.0) (2026-07-17)
 
 
