@@ -2,6 +2,14 @@
 
 This changelog is maintained by Release Please. Future release pull requests update this file automatically from Conventional Commit messages.
 
+## [0.9.2](https://github.com/tracyxiong1/md-review-server/compare/v0.9.1...v0.9.2) (2026-07-19)
+
+
+### Bug Fixes
+
+* **docs:** add English README ([ed253db](https://github.com/tracyxiong1/md-review-server/commit/ed253dbef496194282b939967fbda9de527e51fc))
+* **docs:** add English README ([4b22fbe](https://github.com/tracyxiong1/md-review-server/commit/4b22fbedd75d4aa00e64d4f8a60e3ee17ad684cf))
+
 ## [0.9.1](https://github.com/tracyxiong1/md-review-server/compare/v0.9.0...v0.9.1) (2026-07-19)
 
 
